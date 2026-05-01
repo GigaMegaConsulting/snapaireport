@@ -42,7 +42,7 @@ Recommendation: **aiclarity.ca** or **aibizaudit.com**. Register via Namecheap (
 | Layer | Tool | Cost |
 |---|---|---|
 | Landing page | Next.js on Vercel | Free (hobby) |
-| Voice intake | VAPI | ~$0.05–$0.10/min voice |
+| Voice intake | Retell AI | ~$0.08/min voice |
 | Report generation | Claude API (Sonnet) | ~$0.50–$1.00/report |
 | Report format | PDF via `@react-pdf/renderer` or Puppeteer | Free |
 | Email delivery | Resend | Free (100 emails/day) |
@@ -62,11 +62,11 @@ Recommendation: **aiclarity.ca** or **aibizaudit.com**. Register via Namecheap (
 - [ ] Create GitHub repo: `gigamegamania/ai-assessment`
 - [ ] Connect to Vercel (auto-deploy on main push)
 - [ ] Landing page: value prop, how it works, book free beta call, Stripe link
-- [ ] VAPI agent: structured 20-min intake (see questions below)
+- [ ] Retell AI agent: structured 20-min intake (see questions below)
 - [ ] Claude report generator: takes VAPI transcript → outputs structured report
 - [ ] PDF renderer: formats the report
 - [ ] Resend: auto-emails PDF to client
-- [ ] Make.com: glues VAPI → Claude → PDF → Resend
+- [ ] Make.com: glues Retell → Claude → PDF → Resend
 - [ ] Logo + basic brand identity (Canva)
 - [ ] Free beta: 2–3 clients from Giga's network for testimonials
 
@@ -83,7 +83,7 @@ Recommendation: **aiclarity.ca** or **aibizaudit.com**. Register via Namecheap (
 
 ---
 
-## VAPI Intake Questions (20–30 min)
+## Retell AI Intake Questions (20–30 min)
 
 These are the structured questions the voice agent asks:
 
