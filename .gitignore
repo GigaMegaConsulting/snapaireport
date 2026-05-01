@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Assessment data (contains client PII)
+data/assessments/*.json
+data/assessments/*.pdf
