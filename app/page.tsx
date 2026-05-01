@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CalEmbed from "./CalEmbed";
 
 export default function Home() {
   return (
@@ -179,22 +180,13 @@ export default function Home() {
 
       {/* CTA / Booking */}
       <section id="book" className="mx-auto max-w-4xl px-6 py-20">
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-12 text-center">
+        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Find Your AI Opportunities?</h2>
           <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
             Book your free 20-minute assessment. No prep, no commitment. Just clear, actionable insights.
           </p>
-          <div className="flex flex-col items-center gap-4">
-            <Link
-              href="https://cal.com/gigamega/ai-assessment"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-blue-600 text-white font-semibold px-8 py-4 rounded-lg hover:bg-blue-500 transition text-lg shadow-lg shadow-blue-600/20"
-            >
-              Book on Cal.com
-            </Link>
-            <p className="text-sm text-slate-500">Or email us: hello@gigamega.ca</p>
-          </div>
+          <CalEmbed />
+          <p className="text-sm text-slate-500 mt-6">Or email us: hello@gigamega.ca</p>
         </div>
       </section>
 
