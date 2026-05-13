@@ -2,283 +2,535 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
 import type { ReportAnalysis } from '@/types/report';
 
-const COLORS = {
-  bg: '#0f172a',
-  bgCard: '#1e293b',
-  bgCardAlt: '#172033',
-  text: '#f8fafc',
-  muted: '#94a3b8',
-  accent: '#3b82f6',
-  accentDim: '#1d4ed8',
-  green: '#22c55e',
-  yellow: '#eab308',
-  red: '#ef4444',
-  border: '#334155',
+// Paper/blueprint palette — mirrors app/globals.css so the PDF matches the
+// snapaireport.com look exactly (paper background, ink black, forest accent,
+// stamp red, mono eyebrows, serif titles).
+const C = {
+  paper: '#faf8f1',
+  paper2: '#f3f0e6',
+  ink: '#0a0a0a',
+  ink2: '#525252',
+  ink3: '#a3a3a3',
+  rule: '#dcd9ce',         // approximation of rgba(10,10,10,0.12) on paper
+  ruleStrong: '#b6b0a1',   // approximation of rgba(10,10,10,0.28) on paper
+  accent: '#1a4d3a',
+  accent2: '#2d6b54',
+  stamp: '#bf2127',
+  amber: '#a35a00',
 };
 
+const FONT_SANS = 'Helvetica';
+const FONT_SANS_BOLD = 'Helvetica-Bold';
+const FONT_SERIF_BOLD = 'Times-Bold';
+const FONT_MONO = 'Courier';
+const FONT_MONO_BOLD = 'Courier-Bold';
+
 const styles = StyleSheet.create({
+  // ── Page ───────────────────────────────────────────────────────────
+  // NOTE: do NOT set `lineHeight` on Page or on the footer style.
+  // @react-pdf v4.5 silently drops `fixed` Text from output when either has
+  // an explicit lineHeight. Body lineHeight is applied per-Text below.
   page: {
-    backgroundColor: COLORS.bg,
-    color: COLORS.text,
-    paddingTop: 48,
+    backgroundColor: C.paper,
+    color: C.ink,
+    paddingTop: 56,
     paddingBottom: 64,
-    paddingHorizontal: 48,
+    paddingHorizontal: 56,
     fontSize: 10,
-    fontFamily: 'Helvetica',
-    lineHeight: 1.5,
+    fontFamily: FONT_SANS,
   },
+
+  // ── Cover ──────────────────────────────────────────────────────────
   cover: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    justifyContent: 'space-between',
   },
-  coverEyebrow: {
-    fontSize: 11,
-    color: COLORS.accent,
-    letterSpacing: 2,
-    marginBottom: 16,
-    textTransform: 'uppercase',
-  },
-  coverTitle: {
-    fontSize: 36,
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.text,
-    marginBottom: 24,
-  },
-  coverDivider: {
-    width: 64,
-    height: 3,
-    backgroundColor: COLORS.accent,
-    marginBottom: 32,
-  },
-  coverClient: {
-    fontSize: 18,
-    color: COLORS.text,
-    marginBottom: 6,
-  },
-  coverDate: {
-    fontSize: 12,
-    color: COLORS.muted,
-    marginBottom: 48,
-  },
-  coverPreparedBy: {
-    fontSize: 11,
-    color: COLORS.muted,
-  },
-  sectionHeader: {
-    fontSize: 18,
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.text,
-    marginBottom: 4,
-  },
-  sectionAccent: {
-    width: 32,
-    height: 2,
-    backgroundColor: COLORS.accent,
-    marginBottom: 14,
-  },
-  sectionWrap: {
-    marginBottom: 24,
-  },
-  bullet: {
-    flexDirection: 'row',
-    marginBottom: 8,
-  },
-  bulletDot: {
-    color: COLORS.accent,
-    marginRight: 8,
-    fontFamily: 'Helvetica-Bold',
-  },
-  bulletText: {
-    flex: 1,
-    color: COLORS.text,
-  },
-  scoreRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 18,
-  },
-  scoreOverall: {
-    fontSize: 64,
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.accent,
-    marginRight: 16,
-  },
-  scoreOverallSlash: {
-    fontSize: 18,
-    color: COLORS.muted,
-  },
-  scoreLabel: {
-    fontSize: 12,
-    color: COLORS.muted,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  table: {
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-  tableLabel: {
-    flex: 2,
-    color: COLORS.text,
-  },
-  tableValue: {
-    flex: 1,
-    textAlign: 'right',
-    color: COLORS.accent,
-    fontFamily: 'Helvetica-Bold',
-  },
-  card: {
-    backgroundColor: COLORS.bgCard,
-    borderRadius: 6,
-    padding: 14,
-    marginBottom: 12,
-    borderLeftWidth: 3,
-    borderLeftColor: COLORS.accent,
-  },
-  cardTitle: {
-    fontSize: 12,
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.text,
-    marginBottom: 6,
-  },
-  cardDesc: {
-    color: COLORS.text,
-    marginBottom: 10,
-  },
-  cardMetaRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  metaPill: {
-    fontSize: 9,
-    color: COLORS.muted,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    marginRight: 6,
-    marginBottom: 4,
-  },
-  riskCard: {
-    backgroundColor: COLORS.bgCard,
-    borderRadius: 6,
-    padding: 14,
-    marginBottom: 12,
-    borderLeftWidth: 3,
-  },
-  riskHeader: {
+  coverHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 6,
+    marginBottom: 36,
   },
-  riskFlag: {
-    flex: 1,
-    fontSize: 12,
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.text,
-    marginRight: 8,
-  },
-  severityBadge: {
+  coverEyebrow: {
+    fontFamily: FONT_MONO,
     fontSize: 9,
-    fontFamily: 'Helvetica-Bold',
+    letterSpacing: 1.8,
+    color: C.ink2,
+    textTransform: 'uppercase',
+  },
+  coverStamp: {
+    fontFamily: FONT_MONO_BOLD,
+    fontSize: 9,
+    letterSpacing: 1.6,
+    color: C.stamp,
+    textTransform: 'uppercase',
+    borderWidth: 1.2,
+    borderColor: C.stamp,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 4,
-    color: COLORS.text,
+  },
+  coverMain: {
+    marginTop: 40,
+  },
+  coverTitle: {
+    fontFamily: FONT_SERIF_BOLD,
+    fontSize: 44,
+    color: C.ink,
+    lineHeight: 1.05,
+    marginBottom: 14,
+  },
+  coverSubtitle: {
+    fontFamily: FONT_SANS,
+    fontSize: 13,
+    color: C.ink2,
+    marginBottom: 28,
+    maxWidth: 380,
+    lineHeight: 1.5,
+  },
+  coverDivider: {
+    width: 56,
+    height: 1.5,
+    backgroundColor: C.ink,
+    marginBottom: 28,
+  },
+  coverMetaRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  coverMetaLabel: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    color: C.ink3,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    width: 96,
+    paddingTop: 2,
   },
-  mitigation: {
-    color: COLORS.muted,
+  coverMetaValue: {
+    fontFamily: FONT_SANS,
+    fontSize: 13,
+    color: C.ink,
+  },
+
+  // ── Section header ─────────────────────────────────────────────────
+  sectionWrap: {
+    marginBottom: 22,
+  },
+  sectionHead: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 14,
+  },
+  sectionLetter: {
+    fontFamily: FONT_MONO,
+    fontSize: 9,
+    letterSpacing: 1.5,
+    color: C.ink3,
+    textTransform: 'uppercase',
+    width: 28,
+  },
+  sectionTitle: {
+    fontFamily: FONT_SERIF_BOLD,
+    fontSize: 18,
+    color: C.ink,
+    flex: 1,
+  },
+  sectionRule: {
+    height: 0.6,
+    backgroundColor: C.rule,
+    marginBottom: 14,
+  },
+
+  // ── Body text helpers ──────────────────────────────────────────────
+  body: {
+    fontSize: 10.5,
+    color: C.ink,
+    lineHeight: 1.55,
+    marginBottom: 8,
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    marginBottom: 7,
+  },
+  bulletMark: {
+    fontFamily: FONT_MONO,
+    color: C.accent,
+    width: 14,
+    fontSize: 10.5,
+  },
+  bulletText: {
+    flex: 1,
+    fontSize: 10.5,
+    color: C.ink,
+    lineHeight: 1.55,
+  },
+
+  // ── Score ──────────────────────────────────────────────────────────
+  scoreCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingTop: 4,
+    paddingBottom: 18,
+    borderBottomWidth: 0.6,
+    borderBottomColor: C.rule,
+    marginBottom: 14,
+  },
+  scoreBig: {
+    fontFamily: FONT_SERIF_BOLD,
+    fontSize: 72,
+    color: C.accent,
+    lineHeight: 1,
+    marginRight: 4,
+  },
+  scoreOf: {
+    fontFamily: FONT_SANS,
+    fontSize: 16,
+    color: C.ink3,
+    paddingBottom: 10,
+    marginRight: 18,
+  },
+  scoreLabelBlock: {
+    flex: 1,
+    paddingBottom: 8,
+  },
+  scoreLabelEyebrow: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    color: C.ink3,
+    textTransform: 'uppercase',
+    marginBottom: 3,
+  },
+  scoreLabelText: {
+    fontFamily: FONT_SANS_BOLD,
+    fontSize: 11,
+    color: C.ink,
+  },
+  scoreBreakRow: {
+    flexDirection: 'row',
+    paddingVertical: 7,
+    borderBottomWidth: 0.4,
+    borderBottomColor: C.rule,
+  },
+  scoreBreakLabel: {
+    flex: 1,
     fontSize: 10,
+    color: C.ink,
+    fontFamily: FONT_SANS,
   },
-  mitigationLabel: {
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.text,
+  scoreBreakValue: {
+    fontFamily: FONT_MONO_BOLD,
+    fontSize: 10,
+    color: C.accent,
+    width: 60,
+    textAlign: 'right',
+  },
+
+  // ── Card (quick win / opportunity) ─────────────────────────────────
+  card: {
+    borderTopWidth: 0.6,
+    borderTopColor: C.ruleStrong,
+    paddingTop: 12,
+    paddingBottom: 14,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 6,
+  },
+  cardIndex: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    color: C.ink3,
+    textTransform: 'uppercase',
+    width: 36,
+  },
+  cardTitle: {
+    fontFamily: FONT_SANS_BOLD,
+    fontSize: 12,
+    color: C.ink,
+    flex: 1,
+    lineHeight: 1.35,
+  },
+  cardDesc: {
+    fontFamily: FONT_SANS,
+    fontSize: 10.5,
+    color: C.ink2,
+    lineHeight: 1.55,
+    marginLeft: 36,
+    marginBottom: 8,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginLeft: 36,
+  },
+  metaPill: {
+    fontFamily: FONT_MONO,
+    fontSize: 8,
+    letterSpacing: 0.8,
+    color: C.ink2,
+    textTransform: 'uppercase',
+    borderWidth: 0.6,
+    borderColor: C.ruleStrong,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginRight: 6,
+    marginBottom: 4,
+  },
+
+  // ── Risk ───────────────────────────────────────────────────────────
+  riskRow: {
+    flexDirection: 'row',
+    paddingTop: 12,
+    paddingBottom: 12,
+    borderTopWidth: 0.6,
+    borderTopColor: C.ruleStrong,
+  },
+  riskSeverityCol: {
+    width: 80,
+    paddingRight: 12,
+  },
+  riskSeverityBadge: {
+    fontFamily: FONT_MONO_BOLD,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+  },
+  riskBody: {
+    flex: 1,
+  },
+  riskFlag: {
+    fontFamily: FONT_SANS_BOLD,
+    fontSize: 11,
+    color: C.ink,
+    marginBottom: 4,
+    lineHeight: 1.35,
+  },
+  riskMitigation: {
+    fontFamily: FONT_SANS,
+    fontSize: 10,
+    color: C.ink2,
+    lineHeight: 1.55,
+  },
+  riskMitigationLabel: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    color: C.ink3,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+
+  // ── Tool table ─────────────────────────────────────────────────────
+  toolHead: {
+    flexDirection: 'row',
+    borderBottomWidth: 0.6,
+    borderBottomColor: C.ink,
+    paddingBottom: 5,
+    marginBottom: 4,
+  },
+  toolHeadCell: {
+    fontFamily: FONT_MONO,
+    fontSize: 8,
+    letterSpacing: 1.4,
+    color: C.ink2,
+    textTransform: 'uppercase',
   },
   toolRow: {
     flexDirection: 'row',
     paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomWidth: 0.4,
+    borderBottomColor: C.rule,
   },
   toolName: {
-    flex: 2,
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.text,
+    width: 130,
+    paddingRight: 10,
+    fontFamily: FONT_SANS_BOLD,
+    fontSize: 10,
+    color: C.ink,
   },
   toolPurpose: {
-    flex: 4,
-    color: COLORS.text,
-    paddingHorizontal: 8,
+    flex: 1,
+    paddingRight: 10,
+    fontSize: 10,
+    color: C.ink2,
+    lineHeight: 1.5,
   },
   toolCost: {
-    flex: 1.5,
-    color: COLORS.accent,
+    width: 80,
     textAlign: 'right',
+    fontFamily: FONT_MONO,
+    fontSize: 9,
+    color: C.accent,
   },
-  nextStepsBlock: {
-    backgroundColor: COLORS.bgCard,
-    borderRadius: 6,
-    padding: 14,
-    marginBottom: 12,
+
+  // ── Directories block ──────────────────────────────────────────────
+  directoryBlock: {
+    marginTop: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingHorizontal: 14,
+    borderWidth: 0.6,
+    borderColor: C.ruleStrong,
+    backgroundColor: C.paper2,
   },
-  nextStepsLabel: {
-    fontSize: 10,
-    fontFamily: 'Helvetica-Bold',
-    color: COLORS.accent,
+  directoryEyebrow: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    color: C.ink2,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    marginBottom: 6,
+  },
+  directoryIntro: {
+    fontSize: 9.5,
+    color: C.ink2,
+    lineHeight: 1.5,
     marginBottom: 8,
   },
-  ctaBlock: {
-    backgroundColor: COLORS.accent,
-    borderRadius: 6,
-    padding: 18,
-    marginTop: 8,
+  directoryRow: {
+    flexDirection: 'row',
+    marginBottom: 4,
+    alignItems: 'flex-start',
+  },
+  directoryName: {
+    width: 130,
+    fontFamily: FONT_SANS_BOLD,
+    fontSize: 9,
+    color: C.accent,
+  },
+  directoryDesc: {
+    flex: 1,
+    fontSize: 9,
+    color: C.ink2,
+    lineHeight: 1.45,
+  },
+
+  // ── Financial impact ───────────────────────────────────────────────
+  financeBox: {
+    paddingTop: 14,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    borderWidth: 0.8,
+    borderColor: C.ink,
+  },
+  financeEyebrow: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    color: C.ink2,
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  financeBig: {
+    fontFamily: FONT_SERIF_BOLD,
+    fontSize: 40,
+    color: C.accent,
+    lineHeight: 1,
+    marginBottom: 10,
+  },
+  financeFormula: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    color: C.ink2,
+    lineHeight: 1.5,
+  },
+
+  // ── 4-day plan ─────────────────────────────────────────────────────
+  planRow: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    borderBottomWidth: 0.4,
+    borderBottomColor: C.rule,
+  },
+  planDay: {
+    width: 56,
+    fontFamily: FONT_MONO_BOLD,
+    fontSize: 9,
+    letterSpacing: 1.4,
+    color: C.accent,
+    textTransform: 'uppercase',
+    paddingTop: 1,
+  },
+  planAction: {
+    flex: 1,
+    fontSize: 10,
+    color: C.ink,
+    lineHeight: 1.55,
+  },
+
+  // ── Next steps ─────────────────────────────────────────────────────
+  nextBlock: {
+    marginBottom: 12,
+  },
+  nextEyebrow: {
+    fontFamily: FONT_MONO,
+    fontSize: 8.5,
+    letterSpacing: 1.4,
+    color: C.accent,
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  ctaBox: {
+    marginTop: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    backgroundColor: C.ink,
   },
   ctaText: {
-    fontSize: 12,
-    color: '#ffffff',
-    fontFamily: 'Helvetica-Bold',
-    textAlign: 'center',
+    fontFamily: FONT_SANS,
+    fontSize: 11,
+    color: C.paper,
+    lineHeight: 1.55,
   },
+
+  // ── Footer ─────────────────────────────────────────────────────────
+  // @react-pdf renders `fixed` most reliably on a single <Text> per page.
+  // We use one Text holding the whole footer line + hairline rule above.
   footer: {
+    // NOTE: do NOT set `lineHeight` here — @react-pdf has a bug where any
+    // lineHeight on a `fixed render={...}` Text silently drops it from output.
     position: 'absolute',
-    bottom: 24,
-    left: 48,
-    right: 48,
-    fontSize: 8,
-    color: COLORS.muted,
+    bottom: 26,
+    left: 56,
+    right: 56,
     textAlign: 'center',
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    fontFamily: FONT_MONO,
+    fontSize: 8,
+    color: C.ink3,
+  },
+  footerRule: {
+    position: 'absolute',
+    bottom: 40,
+    left: 56,
+    right: 56,
+    height: 0.6,
+    backgroundColor: C.rule,
   },
 });
 
-function severityColor(severity: 'low' | 'medium' | 'high'): string {
-  if (severity === 'high') return COLORS.red;
-  if (severity === 'medium') return COLORS.yellow;
-  return COLORS.green;
+function severityStyle(severity: 'low' | 'medium' | 'high') {
+  if (severity === 'high') {
+    return { color: C.stamp, borderColor: C.stamp, backgroundColor: C.paper };
+  }
+  if (severity === 'medium') {
+    return { color: C.amber, borderColor: C.amber, backgroundColor: C.paper };
+  }
+  return { color: C.accent, borderColor: C.accent, backgroundColor: C.paper };
 }
 
 const SCORE_LABELS: Record<keyof ReportAnalysis['aiReadinessScore']['breakdown'], string> = {
-  digitalFoundation: 'Digital Foundation',
-  processMaturity: 'Process Maturity',
-  teamReadiness: 'Team Readiness',
-  dataQuality: 'Data Quality',
-  leadershipBuyIn: 'Leadership Buy-In',
+  digitalFoundation: 'Digital foundation',
+  processMaturity: 'Process maturity',
+  teamReadiness: 'Team readiness',
+  dataQuality: 'Data quality',
+  leadershipBuyIn: 'Leadership buy-in',
 };
 
 function Footer() {
@@ -287,9 +539,21 @@ function Footer() {
       style={styles.footer}
       fixed
       render={({ pageNumber, totalPages }) =>
-        `Confidential — SnapReport · info@snapaireport.com   ·   Page ${pageNumber} of ${totalPages}`
+        `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`
       }
     />
+  );
+}
+
+function SectionHead({ letter, title }: { letter: string; title: string }) {
+  return (
+    <View>
+      <View style={styles.sectionHead}>
+        <Text style={styles.sectionLetter}>{letter}</Text>
+        <Text style={styles.sectionTitle}>{title}</Text>
+      </View>
+      <View style={styles.sectionRule} />
+    </View>
   );
 }
 
@@ -310,240 +574,264 @@ export function ReportPDF({ analysis, clientName }: ReportPDFProps) {
       title={`AI Business Assessment — ${clientName}`}
       author="SnapReport"
     >
-      {/* Cover */}
+      {/* ───────── Cover ───────── */}
       <Page size="LETTER" style={styles.page}>
         <View style={styles.cover}>
-          <Text style={styles.coverEyebrow}>AI Readiness Report</Text>
-          <Text style={styles.coverTitle}>AI Business Assessment</Text>
-          <View style={styles.coverDivider} />
-          <Text style={styles.coverClient}>Prepared for {clientName}</Text>
-          <Text style={styles.coverDate}>{today}</Text>
-          <Text style={styles.coverPreparedBy}>SnapReport · snapaireport.com</Text>
+          {/* Top header strip */}
+          <View>
+            <View style={styles.coverHeader}>
+              <Text style={styles.coverEyebrow}>SnapReport · v1</Text>
+              <Text style={styles.coverStamp}>Confidential</Text>
+            </View>
+
+            <View style={styles.coverMain}>
+              <Text style={styles.coverEyebrow}>AI Readiness Report</Text>
+              <View style={[styles.coverDivider, { marginTop: 8 }]} />
+              <Text style={styles.coverTitle}>AI Business{'\n'}Assessment</Text>
+              <Text style={styles.coverSubtitle}>
+                A practical, custom-fit look at where AI can save time and unlock
+                growth for your business — in the next 30 days, and beyond.
+              </Text>
+            </View>
+          </View>
+
+          {/* Bottom meta block */}
+          <View>
+            <View style={styles.coverMetaRow}>
+              <Text style={styles.coverMetaLabel}>Prepared for</Text>
+              <Text style={styles.coverMetaValue}>{clientName}</Text>
+            </View>
+            <View style={styles.coverMetaRow}>
+              <Text style={styles.coverMetaLabel}>Issued</Text>
+              <Text style={styles.coverMetaValue}>{today}</Text>
+            </View>
+          </View>
         </View>
-        <Footer />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
       </Page>
 
-      {/* Body */}
+      {/* ───────── Page 2: Summary + Score + Quick wins ───────── */}
       <Page size="LETTER" style={styles.page}>
-        {/* 1. Executive Summary */}
+        {/* A · Executive Summary */}
         <View style={styles.sectionWrap}>
-          <Text style={styles.sectionHeader}>1. Executive Summary</Text>
-          <View style={styles.sectionAccent} />
+          <SectionHead letter="A ·" title="Executive summary" />
           {analysis.executiveSummary.map((point, i) => (
-            <View key={i} style={styles.bullet}>
-              <Text style={styles.bulletDot}>•</Text>
+            <View key={i} style={styles.bulletRow}>
+              <Text style={styles.bulletMark}>—</Text>
               <Text style={styles.bulletText}>{point}</Text>
             </View>
           ))}
         </View>
 
-        {/* 2. AI Readiness Score */}
+        {/* B · AI Readiness Score */}
         <View style={styles.sectionWrap} wrap={false}>
-          <Text style={styles.sectionHeader}>2. AI Readiness Score</Text>
-          <View style={styles.sectionAccent} />
-          <View style={styles.scoreRow}>
-            <Text style={styles.scoreOverall}>
-              {analysis.aiReadinessScore.overall}
-              <Text style={styles.scoreOverallSlash}>/100</Text>
-            </Text>
-            <Text style={styles.scoreLabel}>Overall Readiness</Text>
+          <SectionHead letter="B ·" title="AI readiness score" />
+          <View style={styles.scoreCard}>
+            <Text style={styles.scoreBig}>{analysis.aiReadinessScore.overall}</Text>
+            <Text style={styles.scoreOf}>/ 100</Text>
+            <View style={styles.scoreLabelBlock}>
+              <Text style={styles.scoreLabelEyebrow}>Overall</Text>
+              <Text style={styles.scoreLabelText}>Readiness index</Text>
+            </View>
           </View>
-          <View style={styles.table}>
+          <View>
             {(Object.keys(SCORE_LABELS) as Array<keyof typeof SCORE_LABELS>).map((key) => (
-              <View key={key} style={styles.tableRow}>
-                <Text style={styles.tableLabel}>{SCORE_LABELS[key]}</Text>
-                <Text style={styles.tableValue}>
-                  {analysis.aiReadinessScore.breakdown[key]}/100
+              <View key={key} style={styles.scoreBreakRow}>
+                <Text style={styles.scoreBreakLabel}>{SCORE_LABELS[key]}</Text>
+                <Text style={styles.scoreBreakValue}>
+                  {analysis.aiReadinessScore.breakdown[key]} / 100
                 </Text>
               </View>
             ))}
           </View>
         </View>
 
-        {/* 3. Quick Wins */}
-        <View style={styles.sectionWrap}>
-          <Text style={styles.sectionHeader}>3. Top Quick Wins</Text>
-          <View style={styles.sectionAccent} />
-          {analysis.quickWins.slice(0, 3).map((win, i) => (
-            <View key={i} style={styles.card} wrap={false}>
-              <Text style={styles.cardTitle}>{win.title}</Text>
-              <Text style={styles.cardDesc}>{win.description}</Text>
-              <View style={styles.cardMetaRow}>
-                <Text style={styles.metaPill}>Effort: {win.effort}</Text>
-                <Text style={styles.metaPill}>Impact: {win.impact}</Text>
-                <Text style={styles.metaPill}>Timeline: {win.timeline}</Text>
-                <Text style={styles.metaPill}>Cost: {win.estimatedCost}</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-
-        <Footer />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
       </Page>
 
-      {/* Strategic + Risk + Tools */}
+      {/* ───────── Page 3: Quick wins + Strategic opportunities ───────── */}
       <Page size="LETTER" style={styles.page}>
-        {/* 4. Strategic Opportunities */}
+        {/* C · Quick Wins */}
         <View style={styles.sectionWrap}>
-          <Text style={styles.sectionHeader}>4. Strategic Opportunities</Text>
-          <View style={styles.sectionAccent} />
+          <SectionHead letter="C ·" title="Top quick wins" />
+          {analysis.quickWins.slice(0, 3).map((win, i) => (
+            <View key={i} style={styles.card} wrap={false}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardIndex}>QW.{String(i + 1).padStart(2, '0')}</Text>
+                <Text style={styles.cardTitle}>{win.title}</Text>
+              </View>
+              <Text style={styles.cardDesc}>{win.description}</Text>
+              <View style={styles.metaRow}>
+                <Text style={styles.metaPill}>Effort · {win.effort}</Text>
+                <Text style={styles.metaPill}>Impact · {win.impact}</Text>
+                <Text style={styles.metaPill}>Timeline · {win.timeline}</Text>
+                <Text style={styles.metaPill}>Cost · {win.estimatedCost}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        {/* D · Strategic Opportunities */}
+        <View style={styles.sectionWrap}>
+          <SectionHead letter="D ·" title="Strategic opportunities" />
           {analysis.strategicOpportunities.map((opp, i) => (
             <View key={i} style={styles.card} wrap={false}>
-              <Text style={styles.cardTitle}>{opp.title}</Text>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardIndex}>SO.{String(i + 1).padStart(2, '0')}</Text>
+                <Text style={styles.cardTitle}>{opp.title}</Text>
+              </View>
               <Text style={styles.cardDesc}>{opp.description}</Text>
-              <View style={styles.cardMetaRow}>
-                <Text style={styles.metaPill}>ROI: {opp.roiPotential}</Text>
-                <Text style={styles.metaPill}>Timeline: {opp.timeline}</Text>
+              <View style={styles.metaRow}>
+                <Text style={styles.metaPill}>ROI · {opp.roiPotential}</Text>
+                <Text style={styles.metaPill}>Timeline · {opp.timeline}</Text>
               </View>
             </View>
           ))}
         </View>
 
-        {/* 5. Risk Flags */}
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
+      </Page>
+
+      {/* ───────── Page 4: Risks + Tools ───────── */}
+      <Page size="LETTER" style={styles.page}>
+        {/* E · Risk Flags */}
         <View style={styles.sectionWrap}>
-          <Text style={styles.sectionHeader}>5. Risk Flags</Text>
-          <View style={styles.sectionAccent} />
-          {analysis.riskFlags.map((risk, i) => (
-            <View
-              key={i}
-              style={[styles.riskCard, { borderLeftColor: severityColor(risk.severity) }]}
-              wrap={false}
-            >
-              <View style={styles.riskHeader}>
-                <Text style={styles.riskFlag}>{risk.flag}</Text>
-                <Text
-                  style={[
-                    styles.severityBadge,
-                    { backgroundColor: severityColor(risk.severity) },
-                  ]}
-                >
-                  {risk.severity}
-                </Text>
+          <SectionHead letter="E ·" title="Risk flags" />
+          {analysis.riskFlags.map((risk, i) => {
+            const sev = severityStyle(risk.severity);
+            return (
+              <View key={i} style={styles.riskRow} wrap={false}>
+                <View style={styles.riskSeverityCol}>
+                  <Text
+                    style={[
+                      styles.riskSeverityBadge,
+                      { color: sev.color, borderColor: sev.borderColor },
+                    ]}
+                  >
+                    {risk.severity}
+                  </Text>
+                </View>
+                <View style={styles.riskBody}>
+                  <Text style={styles.riskFlag}>{risk.flag}</Text>
+                  <Text style={styles.riskMitigationLabel}>Mitigation</Text>
+                  <Text style={styles.riskMitigation}>{risk.mitigation}</Text>
+                </View>
               </View>
-              <Text style={styles.mitigation}>
-                <Text style={styles.mitigationLabel}>Mitigation: </Text>
-                {risk.mitigation}
-              </Text>
-            </View>
-          ))}
+            );
+          })}
         </View>
 
-        {/* 6. Recommended Tools */}
+        {/* F · Recommended Tools */}
         <View style={styles.sectionWrap}>
-          <Text style={styles.sectionHeader}>6. Recommended Tools</Text>
-          <View style={styles.sectionAccent} />
-          <View style={styles.table}>
-            {analysis.recommendedTools.map((tool, i) => (
-              <View key={i} style={styles.toolRow} wrap={false}>
-                <Text style={styles.toolName}>
-                  {tool.url ? (
-                    <Link src={tool.url} style={{ color: COLORS.accent, textDecoration: 'none' }}>
-                      {tool.name} ↗
-                    </Link>
-                  ) : (
-                    tool.name
-                  )}
-                </Text>
-                <Text style={styles.toolPurpose}>{tool.purpose}</Text>
-                <Text style={styles.toolCost}>{tool.cost}</Text>
-              </View>
-            ))}
+          <SectionHead letter="F ·" title="Recommended tools" />
+          <View style={styles.toolHead}>
+            <Text style={[styles.toolHeadCell, { width: 130 }]}>Tool</Text>
+            <Text style={[styles.toolHeadCell, { flex: 1 }]}>Purpose</Text>
+            <Text style={[styles.toolHeadCell, { width: 80, textAlign: 'right' }]}>Cost</Text>
           </View>
+          {analysis.recommendedTools.map((tool, i) => (
+            <View key={i} style={styles.toolRow} wrap={false}>
+              <Text style={styles.toolName}>
+                {tool.url ? (
+                  <Link src={tool.url} style={{ color: C.accent, textDecoration: 'none' }}>
+                    {tool.name} ↗
+                  </Link>
+                ) : (
+                  tool.name
+                )}
+              </Text>
+              <Text style={styles.toolPurpose}>{tool.purpose}</Text>
+              <Text style={styles.toolCost}>{tool.cost}</Text>
+            </View>
+          ))}
 
-          {/* Explore more — AI tool directories */}
-          <View style={{ marginTop: 18, padding: 12, borderColor: COLORS.muted, borderWidth: 0.5, borderRadius: 4 }}>
-            <Text style={{ color: COLORS.muted, fontSize: 8, letterSpacing: 1.5, marginBottom: 6, textTransform: 'uppercase' }}>
-              Find more AI tools
-            </Text>
-            <Text style={{ color: COLORS.text, fontSize: 10, marginBottom: 8, lineHeight: 1.5 }}>
-              The AI landscape moves fast. These directories index thousands of tools so you can keep an eye on what&apos;s launching:
+          {/* Tool directories — keep together on one page */}
+          <View style={styles.directoryBlock} wrap={false}>
+            <Text style={styles.directoryEyebrow}>Find more AI tools</Text>
+            <Text style={styles.directoryIntro}>
+              The AI landscape moves fast. These directories index thousands of
+              tools so you can keep an eye on what&apos;s launching:
             </Text>
             {[
               { name: "There's An AI For That", url: 'https://theresanaiforthat.com', desc: 'Largest searchable AI tool index — type a use case, get a sorted list.' },
               { name: 'Futurepedia', url: 'https://www.futurepedia.io', desc: 'Curated AI tools, categorized, with pricing tiers.' },
               { name: 'FutureTools', url: 'https://www.futuretools.io', desc: 'Hand-picked AI tools. Good filters for free-tier finds.' },
             ].map((d) => (
-              <View key={d.url} style={{ flexDirection: 'row', marginBottom: 4 }}>
-                <Text style={{ width: 110, fontSize: 9, color: COLORS.accent }}>
-                  <Link src={d.url} style={{ color: COLORS.accent, textDecoration: 'none' }}>{d.name} ↗</Link>
+              <View key={d.url} style={styles.directoryRow}>
+                <Text style={styles.directoryName}>
+                  <Link src={d.url} style={{ color: C.accent, textDecoration: 'none' }}>{d.name} ↗</Link>
                 </Text>
-                <Text style={{ flex: 1, fontSize: 9, color: COLORS.muted, lineHeight: 1.4 }}>{d.desc}</Text>
+                <Text style={styles.directoryDesc}>{d.desc}</Text>
               </View>
             ))}
           </View>
         </View>
 
-        <Footer />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
       </Page>
 
-      {/* Financial Impact + 4-day plan + Next Steps */}
+      {/* ───────── Page 5: Financial impact + 4-day plan + Next steps ───────── */}
       <Page size="LETTER" style={styles.page}>
-        {/* Financial Impact */}
+        {/* G · Financial Impact */}
         {analysis.financialImpact && (
-          <View style={styles.sectionWrap}>
-            <Text style={styles.sectionHeader}>7. Financial Impact</Text>
-            <View style={styles.sectionAccent} />
-            <View style={{ borderColor: COLORS.accent, borderWidth: 1, padding: 14, marginBottom: 8 }}>
-              <Text style={{ color: COLORS.muted, fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 }}>
-                Net monthly value
-              </Text>
-              <Text style={{ color: COLORS.text, fontSize: 36, marginBottom: 6 }}>
+          <View style={styles.sectionWrap} wrap={false}>
+            <SectionHead letter="G ·" title="Financial impact" />
+            <View style={styles.financeBox}>
+              <Text style={styles.financeEyebrow}>Net monthly value</Text>
+              <Text style={styles.financeBig}>
                 ${analysis.financialImpact.netMonthlySavings.toLocaleString('en-US')}
               </Text>
-              <Text style={{ color: COLORS.muted, fontSize: 9, lineHeight: 1.5 }}>
-                ({analysis.financialImpact.weeklyHoursReclaimed} h/week reclaimed × 4.33 × ${analysis.financialImpact.hourlyRateAssumption}/hr)
-                − ${analysis.financialImpact.monthlyToolCost}/mo tool cost
+              <Text style={styles.financeFormula}>
+                ({analysis.financialImpact.weeklyHoursReclaimed} h/week × 4.33 × ${analysis.financialImpact.hourlyRateAssumption}/hr)
+                {'\n'}− ${analysis.financialImpact.monthlyToolCost}/mo tool cost
               </Text>
             </View>
           </View>
         )}
 
-        {/* 4-day quick-win plan */}
+        {/* H · 4-Day Plan */}
         {analysis.quickWinPlan && analysis.quickWinPlan.length > 0 && (
           <View style={styles.sectionWrap}>
-            <Text style={styles.sectionHeader}>8. 4-Day Quick-Win Plan</Text>
-            <View style={styles.sectionAccent} />
+            <SectionHead letter="H ·" title="4-day quick-win plan" />
             {analysis.quickWinPlan.map((d) => (
-              <View key={d.day} style={{ flexDirection: 'row', marginBottom: 8 }}>
-                <Text style={{ width: 60, fontSize: 11, color: COLORS.accent, fontWeight: 700 }}>
-                  Day {d.day}
-                </Text>
-                <Text style={{ flex: 1, fontSize: 10, color: COLORS.text, lineHeight: 1.5 }}>{d.action}</Text>
+              <View key={d.day} style={styles.planRow} wrap={false}>
+                <Text style={styles.planDay}>Day {d.day}</Text>
+                <Text style={styles.planAction}>{d.action}</Text>
               </View>
             ))}
           </View>
         )}
 
+        {/* I · Next steps */}
         <View style={styles.sectionWrap}>
-          <Text style={styles.sectionHeader}>9. Next Steps</Text>
-          <View style={styles.sectionAccent} />
+          <SectionHead letter="I ·" title="Next steps" />
 
-          <View style={styles.nextStepsBlock}>
-            <Text style={styles.nextStepsLabel}>This Week</Text>
+          <View style={styles.nextBlock}>
+            <Text style={styles.nextEyebrow}>This week</Text>
             {analysis.nextSteps.immediate.map((step, i) => (
-              <View key={i} style={styles.bullet}>
-                <Text style={styles.bulletDot}>•</Text>
+              <View key={i} style={styles.bulletRow}>
+                <Text style={styles.bulletMark}>—</Text>
                 <Text style={styles.bulletText}>{step}</Text>
               </View>
             ))}
           </View>
 
-          <View style={styles.nextStepsBlock}>
-            <Text style={styles.nextStepsLabel}>Next 30 Days</Text>
+          <View style={styles.nextBlock}>
+            <Text style={styles.nextEyebrow}>Next 30 days</Text>
             {analysis.nextSteps.thirtyDays.map((step, i) => (
-              <View key={i} style={styles.bullet}>
-                <Text style={styles.bulletDot}>•</Text>
+              <View key={i} style={styles.bulletRow}>
+                <Text style={styles.bulletMark}>—</Text>
                 <Text style={styles.bulletText}>{step}</Text>
               </View>
             ))}
           </View>
 
-          <View style={styles.ctaBlock}>
+          <View style={styles.ctaBox} wrap={false}>
             <Text style={styles.ctaText}>{analysis.nextSteps.cta}</Text>
           </View>
         </View>
 
-        <Footer />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
       </Page>
     </Document>
   );

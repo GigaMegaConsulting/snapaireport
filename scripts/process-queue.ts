@@ -177,7 +177,7 @@ Return ONLY valid JSON. No markdown fences, no preamble. Use this exact structur
   "nextSteps": {
     "immediate": ["<action>", "<action>"],
     "thirtyDays": ["<action>", "<action>"],
-    "cta": "Book your implementation strategy call at hello@gigamega.ca"
+    "cta": "Reply to your SnapReport email or write info@snapaireport.com to schedule an implementation review."
   },
   "financialImpact": {
     "weeklyHoursReclaimed": <number>,

@@ -178,7 +178,7 @@ const en = {
         "Claude reads your answers",
         "Report is drafted and rendered as PDF",
         "Lands in your inbox — usually under 5 minutes",
-        "Optional: book a 30-min review with Giga",
+        "Reply if you want a follow-up walkthrough",
       ],
     },
     optionalTag: "optional",
@@ -692,10 +692,10 @@ const en = {
     tipPrefix: "Start with the Quick Wins section",
     tipBody:
       " — those are the high-ROI, low-effort moves you can begin this week.",
-    ctaLabel: "Book Your Review Call →",
+    ctaLabel: "Reply to schedule a review →",
     closing:
-      "On the call, we'll walk through the report together and identify which opportunity to tackle first. Most clients leave with a clear 90-day AI roadmap.",
-    signature: "Giga",
+      "Reply to this email if you'd like a walkthrough — we'll go through the report together and identify which opportunity to tackle first.",
+    signature: "The SnapReport team",
     sigCompany: "SnapReport",
     sigEmail: "info@snapaireport.com",
   },

@@ -110,7 +110,7 @@ Return ONLY valid JSON — no markdown, no explanation, no preamble. Use this ex
   "nextSteps": {
     "immediate": ["<action 1>", "<action 2>"],
     "thirtyDays": ["<action 1>", "<action 2>"],
-    "cta": "Book your implementation strategy call with Giga at hello@gigamega.ca or at https://cal.com/gigamega/ai-assessment"
+    "cta": "Reply to your SnapReport email or write info@snapaireport.com to schedule an implementation review."
   },
   "financialImpact": {
     "weeklyHoursReclaimed": <number — total hours/week the team reclaims if all 3 quick wins ship>,

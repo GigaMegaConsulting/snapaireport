@@ -39,7 +39,7 @@ export async function sendReportEmail({
         <a href="${viewOnlineUrl}" style="color: #1a4d3a; font-weight: 600;">${viewOnlineLabel}</a>
       </p>
       <p style="margin-top: 24px;">
-        <a href="https://cal.com/gigamega/ai-assessment" style="background: #1a4d3a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+        <a href="mailto:info@snapaireport.com?subject=Re:%20My%20SnapReport%20review" style="background: #1a4d3a; color: #faf8f1; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
           ${t.ctaLabel}
         </a>
       </p>
@@ -52,7 +52,7 @@ export async function sendReportEmail({
     </div>
   `;
 
-  // Sender uses info@snapaireport.com (forwarded to hello@gigamega.ca via Namecheap).
+  // Sender uses info@snapaireport.com (forwarded to the project owner via Namecheap).
   const fromAddress =
     process.env.RESEND_FROM ?? 'SnapReport <info@snapaireport.com>';
 

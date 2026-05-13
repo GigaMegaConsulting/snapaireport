@@ -187,7 +187,7 @@ const fr: typeof en = {
         "Claude lit vos réponses",
         "Le rapport est rédigé et exporté en PDF",
         "Il arrive dans votre boîte — généralement en moins de 5 minutes",
-        "Optionnel : prendre un appel de 30 min avec Giga",
+        "Répondez si vous voulez un suivi en visio",
       ],
     },
     optionalTag: "facultatif",
@@ -709,10 +709,10 @@ const fr: typeof en = {
     tipPrefix: "Commencez par la section Gains rapides",
     tipBody:
       " — ce sont les actions à fort ROI et faible effort que vous pouvez démarrer cette semaine.",
-    ctaLabel: "Prendre un appel de révision →",
+    ctaLabel: "Répondez pour planifier une révision →",
     closing:
-      "Pendant l'appel, on parcourt le rapport ensemble et on identifie par quelle opportunité commencer. La plupart des clients repartent avec une feuille de route IA claire de 90 jours.",
-    signature: "Giga",
+      "Répondez à ce courriel si vous voulez une revue ensemble — on parcourt le rapport et on identifie par quelle opportunité commencer.",
+    signature: "L'équipe SnapReport",
     sigCompany: "SnapReport",
     sigEmail: "info@snapaireport.com",
   },
