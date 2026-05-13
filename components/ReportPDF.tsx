@@ -287,7 +287,7 @@ function Footer() {
       style={styles.footer}
       fixed
       render={({ pageNumber, totalPages }) =>
-        `Confidential — Prepared by Giga Mega Consulting | hello@gigamega.ca   ·   Page ${pageNumber} of ${totalPages}`
+        `Confidential — SnapReport · info@snapaireport.com   ·   Page ${pageNumber} of ${totalPages}`
       }
     />
   );
@@ -308,7 +308,7 @@ export function ReportPDF({ analysis, clientName }: ReportPDFProps) {
   return (
     <Document
       title={`AI Business Assessment — ${clientName}`}
-      author="Giga Mega Consulting"
+      author="SnapReport"
     >
       {/* Cover */}
       <Page size="LETTER" style={styles.page}>
@@ -318,7 +318,7 @@ export function ReportPDF({ analysis, clientName }: ReportPDFProps) {
           <View style={styles.coverDivider} />
           <Text style={styles.coverClient}>Prepared for {clientName}</Text>
           <Text style={styles.coverDate}>{today}</Text>
-          <Text style={styles.coverPreparedBy}>Prepared by Giga Mega Consulting</Text>
+          <Text style={styles.coverPreparedBy}>SnapReport · snapaireport.com</Text>
         </View>
         <Footer />
       </Page>

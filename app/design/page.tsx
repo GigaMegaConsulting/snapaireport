@@ -130,7 +130,7 @@ export default function DesignSystem() {
               <Block label="Domain" value={<span className="mono text-[15px]">snapaireport.com</span>} />
               <Block label="One-line description" value={<span className="text-[15px] leading-relaxed">Your AI Business Assessment in 5 minutes.</span>} />
               <Block label="Long description" value={<span className="text-[15px] leading-relaxed text-ink-2">Free AI readiness report for SMBs. Answer 10 questions via a web form, Claude analyzes them, you get a tailored PDF report by email within minutes.</span>} />
-              <Block label="Parent entity" value={<span className="text-[15px]">Giga Mega Consulting Inc. · Montreal</span>} />
+              <Block label="Based in" value={<span className="text-[15px]">Montréal · Québec</span>} />
             </div>
 
             <div className="md:col-span-5 md:col-start-8">

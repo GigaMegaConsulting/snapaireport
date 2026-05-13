@@ -1,10 +1,22 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { ReportAnalysis } from '@/types/report';
-import type { Locale } from '@/lib/i18n';
+import type { Locale, NicheKey } from '@/lib/i18n';
 
 const LANGUAGE_DIRECTIVES: Record<Locale, string> = {
   en: 'Write all output in English.',
   fr: 'Écris toutes les sorties en français (français du Québec : utilise « courriel » plutôt que « email », évite les anglicismes). Toutes les valeurs textuelles du JSON doivent être en français — titres, descriptions, recommandations, étapes suivantes. Conserve les noms de marques et les chaînes structurelles (« low | medium | high », « QW.01 », etc.) en anglais.',
+};
+
+/**
+ * Niche-aware framing directives. Steer Claude to use the language and
+ * pattern-recognition of the target audience without rewriting the entire
+ * structured-output schema.
+ */
+const NICHE_DIRECTIVES: Record<NicheKey, string> = {
+  lawyers:
+    'The client is a law firm or solo legal practitioner. Use language a lawyer would recognize: matters, intake, conflicts, discovery, billables, retainer, motions, pleadings, trust accounting, Bar compliance. Frame AI opportunities around: discovery review, drafting first-draft pleadings and standard motions, intake/conflict triage, automatic billable-time capture, client status communication, and trust-ledger reconciliation. Avoid generic SMB framing — be lawyer-specific in tool recommendations (e.g., Clio + AI add-ons, Spellbook, Casetext CoCounsel, Harvey).',
+  accountants:
+    'The client is an accounting or bookkeeping practice. Use language a CPA/accountant would recognize: client cleanup, reconciliation, audit fieldwork, tax season, advisory services, T1/T2 (Canadian) or 1040/1120 (US), trial balance, GL accounts, HST/GST returns. Frame AI opportunities around: document intake + OCR, bank/CC reconciliation, tax return first drafts, client document chase, audit analytics, and advisory note prep. Tool recommendations should be accountant-specific (e.g., Dext, Hubdoc, Karbon, TaxDome, QBO/Xero/Sage AI add-ons, Botkeeper).',
 };
 
 const SYSTEM_PROMPT = `You are an expert AI business consultant with deep experience helping small and medium businesses identify AI automation opportunities. You analyze transcripts of business discovery calls and produce structured AI readiness assessments.
@@ -80,6 +92,7 @@ Return ONLY valid JSON — no markdown, no explanation, no preamble. Use this ex
 export async function analyzeTranscript(
   transcript: string,
   locale: Locale = 'en',
+  niche?: NicheKey,
 ): Promise<ReportAnalysis> {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY not configured');
@@ -87,17 +100,23 @@ export async function analyzeTranscript(
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const languageDirective = LANGUAGE_DIRECTIVES[locale];
+  const nicheDirective = niche ? NICHE_DIRECTIVES[niche] : '';
+
+  const composedSystem = [SYSTEM_PROMPT, languageDirective, nicheDirective]
+    .filter(Boolean)
+    .join('\n\n');
+
+  const composedUser =
+    `Here is the discovery call transcript:\n\n${transcript}\n\n` +
+    `${languageDirective}\n\n` +
+    (nicheDirective ? `${nicheDirective}\n\n` : '') +
+    `Generate the AI readiness assessment JSON now.`;
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 4096,
-    system: `${SYSTEM_PROMPT}\n\n${languageDirective}`,
-    messages: [
-      {
-        role: 'user',
-        content: `Here is the discovery call transcript:\n\n${transcript}\n\n${languageDirective}\n\nGenerate the AI readiness assessment JSON now.`,
-      },
-    ],
+    system: composedSystem,
+    messages: [{ role: 'user', content: composedUser }],
   });
 
   const content = message.content[0];

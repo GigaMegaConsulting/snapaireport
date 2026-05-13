@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     "AI for SMB",
     "SnapReport",
   ],
-  authors: [{ name: "Giga Mega Consulting Inc." }],
+  authors: [{ name: "SnapReport" }],
   openGraph: {
     title: "SnapReport — Your AI Business Assessment in 5 Minutes",
     description: "Find $10K+ in hidden AI opportunities in your business. Free for the first 3.",

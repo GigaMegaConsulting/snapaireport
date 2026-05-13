@@ -3,7 +3,7 @@ import { analyzeTranscript } from "@/lib/claude";
 import { createAssessment, updateAssessment } from "@/lib/storage";
 import { generatePDF } from "@/lib/pdf";
 import { sendReportEmail } from "@/lib/email";
-import { isLocale, type Locale } from "@/lib/i18n";
+import { isLocale, isNiche, type Locale, type NicheKey } from "@/lib/i18n";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -25,6 +25,7 @@ interface FormAnswers {
   twelveMonthGoals?: string;
   automationWish?: string;
   locale?: string;
+  niche?: string;
 }
 
 // fullName is intentionally NOT required — we still address the report personally if provided,
@@ -115,6 +116,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   const clientEmail = body.email!.trim();
   const businessType = body.businessName!.trim();
   const locale: Locale = isLocale(body.locale) ? body.locale : "en";
+  const niche: NicheKey | undefined = isNiche(body.niche) ? body.niche : undefined;
 
   const transcript = buildTranscript(body);
 
@@ -141,8 +143,8 @@ export async function POST(request: NextRequest): Promise<Response> {
   }
 
   try {
-    // 2. Generate the analysis with Claude (in the user's language)
-    const analysis = await analyzeTranscript(transcript, locale);
+    // 2. Generate the analysis with Claude (locale + niche-aware)
+    const analysis = await analyzeTranscript(transcript, locale, niche);
     await updateAssessment(assessment.id, { analysis, status: "analyzed" });
 
     // 3. If Resend isn't configured, stop here — the report exists, surface it manually

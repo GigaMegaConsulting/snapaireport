@@ -22,7 +22,7 @@ const en = {
       pricing: "Pricing",
     },
     footer: {
-      tagline: "Giga Mega Consulting Inc.",
+      tagline: "Made in Montréal · 2026",
       contactPrompt: "Contact",
     },
     misc: {
@@ -591,7 +591,7 @@ const en = {
     closing:
       "On the call, we'll walk through the report together and identify which opportunity to tackle first. Most clients leave with a clear 90-day AI roadmap.",
     signature: "Giga",
-    sigCompany: "Giga Mega Consulting",
+    sigCompany: "SnapReport",
     sigEmail: "info@snapaireport.com",
   },
 };

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { Messages, Locale } from "@/lib/i18n";
+import type { Messages, Locale, NicheKey } from "@/lib/i18n";
 
 type AnswerKey =
   | "email"
@@ -46,9 +46,11 @@ type FieldErrors = Partial<Record<AnswerKey, string>>;
 export function AssessmentForm({
   locale,
   t,
+  niche,
 }: {
   locale: Locale;
   t: Messages;
+  niche?: NicheKey;
 }) {
   const STEPS = t.form.steps;
   const [step, setStep] = useState(0);
@@ -108,7 +110,7 @@ export function AssessmentForm({
       const res = await fetch("/api/submit-assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...answers, locale }),
+        body: JSON.stringify({ ...answers, locale, niche }),
       });
       if (!res.ok) {
         const text = await res.text();

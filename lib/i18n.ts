@@ -1,5 +1,11 @@
 import en from "@/messages/en";
 import fr from "@/messages/fr";
+import nichesEn, { type NicheKey, type NicheMessages } from "@/messages/niches.en";
+import nichesFr from "@/messages/niches.fr";
+
+export type { NicheKey };
+
+export const NICHE_KEYS: readonly NicheKey[] = ["lawyers", "accountants"];
 
 export const LOCALES = ["en", "fr"] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -25,4 +31,17 @@ export function otherLocale(locale: Locale): Locale {
 /** Human-readable label for a locale. */
 export function localeLabel(locale: Locale): string {
   return locale === "en" ? "English" : "Français";
+}
+
+const NICHES: Record<Locale, NicheMessages> = {
+  en: nichesEn,
+  fr: nichesFr,
+};
+
+export function getNicheMessages(locale: Locale, niche: NicheKey) {
+  return NICHES[locale][niche];
+}
+
+export function isNiche(value: string | undefined | null): value is NicheKey {
+  return !!value && (NICHE_KEYS as readonly string[]).includes(value);
 }

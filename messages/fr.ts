@@ -24,7 +24,7 @@ const fr: typeof en = {
       pricing: "Tarifs",
     },
     footer: {
-      tagline: "Giga Mega Consulting Inc.",
+      tagline: "Fait à Montréal · 2026",
       contactPrompt: "Contact",
     },
     misc: {
@@ -608,7 +608,7 @@ const fr: typeof en = {
     closing:
       "Pendant l'appel, on parcourt le rapport ensemble et on identifie par quelle opportunité commencer. La plupart des clients repartent avec une feuille de route IA claire de 90 jours.",
     signature: "Giga",
-    sigCompany: "Giga Mega Consulting",
+    sigCompany: "SnapReport",
     sigEmail: "info@snapaireport.com",
   },
 };
