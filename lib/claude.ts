@@ -1,6 +1,21 @@
-import Anthropic from '@anthropic-ai/sdk';
 import type { ReportAnalysis } from '@/types/report';
 import type { Locale, NicheKey } from '@/lib/i18n';
+
+/**
+ * Report-generation pipeline.
+ *
+ * Calls OpenRouter (https://openrouter.ai) so we can swap models via env
+ * without code changes. Defaults to Claude Haiku 4.5 — same family as
+ * Sonnet so French + structured-JSON behavior transfers, but ~3× cheaper.
+ *
+ * To switch models, set LLM_MODEL in Vercel env to any OpenRouter slug:
+ *   - anthropic/claude-haiku-4.5  (default)
+ *   - anthropic/claude-sonnet-4.6 (best quality)
+ *   - openai/gpt-4.1-mini         (cheapest competitive option)
+ *   - google/gemini-2.5-flash     (very fast, lowest cost)
+ */
+const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
+const DEFAULT_MODEL = 'anthropic/claude-haiku-4.5';
 
 const LANGUAGE_DIRECTIVES: Record<Locale, string> = {
   en: 'Write all output in English.',
@@ -111,16 +126,31 @@ Return ONLY valid JSON — no markdown, no explanation, no preamble. Use this ex
   ]
 }`;
 
+/** Strip any ```json fences or surrounding prose so JSON.parse works. */
+function extractJson(raw: string): string {
+  const trimmed = raw.trim();
+  // Strip ```json ... ``` or ``` ... ``` fences
+  const fenceMatch = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/);
+  if (fenceMatch) return fenceMatch[1].trim();
+  // Fall back: find first { and last }
+  const firstBrace = trimmed.indexOf('{');
+  const lastBrace = trimmed.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    return trimmed.slice(firstBrace, lastBrace + 1);
+  }
+  return trimmed;
+}
+
 export async function analyzeTranscript(
   transcript: string,
   locale: Locale = 'en',
   niche?: NicheKey,
 ): Promise<ReportAnalysis> {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error('ANTHROPIC_API_KEY not configured');
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error('OPENROUTER_API_KEY not configured');
   }
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const model = process.env.LLM_MODEL ?? DEFAULT_MODEL;
   const languageDirective = LANGUAGE_DIRECTIVES[locale];
   const nicheDirective = niche ? NICHE_DIRECTIVES[niche] : '';
 
@@ -134,17 +164,46 @@ export async function analyzeTranscript(
     (nicheDirective ? `${nicheDirective}\n\n` : '') +
     `Generate the AI readiness assessment JSON now.`;
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 4096,
-    system: composedSystem,
-    messages: [{ role: 'user', content: composedUser }],
+  const response = await fetch(`${OPENROUTER_BASE}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      'Content-Type': 'application/json',
+      // OpenRouter recommends these for analytics + attribution
+      'HTTP-Referer': 'https://snapaireport.com',
+      'X-Title': 'SnapReport',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 4096,
+      temperature: 0.4,
+      messages: [
+        { role: 'system', content: composedSystem },
+        { role: 'user', content: composedUser },
+      ],
+    }),
   });
 
-  const content = message.content[0];
-  if (content.type !== 'text') {
-    throw new Error('Unexpected response type from Claude');
+  if (!response.ok) {
+    const errBody = await response.text();
+    throw new Error(`OpenRouter ${response.status}: ${errBody.slice(0, 500)}`);
   }
 
-  return JSON.parse(content.text) as ReportAnalysis;
+  const data: {
+    choices?: Array<{ message?: { content?: string } }>;
+  } = await response.json();
+
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) {
+    throw new Error('No content in OpenRouter response');
+  }
+
+  try {
+    return JSON.parse(extractJson(text)) as ReportAnalysis;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'parse error';
+    throw new Error(
+      `Failed to parse LLM JSON output: ${message}. Raw start: ${text.slice(0, 200)}`,
+    );
+  }
 }
