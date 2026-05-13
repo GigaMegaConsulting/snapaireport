@@ -17,13 +17,14 @@ export async function generateMetadata({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ niche?: string }>;
+  searchParams: Promise<{ for?: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const { niche } = await searchParams;
+  const sp = await searchParams;
+  const forParam = sp.for;
   const loc = isLocale(locale) ? locale : "en";
   const t = getMessages(loc);
-  const nicheKey: NicheKey | undefined = isNiche(niche) ? niche : undefined;
+  const nicheKey: NicheKey | undefined = isNiche(forParam) ? forParam : undefined;
   if (nicheKey) {
     const n = getNicheMessages(loc, nicheKey);
     return { title: `${t.sample.badge} — ${n.sample?.profile.business ?? n.badge}` };
@@ -36,13 +37,14 @@ export default async function Sample({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ niche?: string }>;
+  searchParams: Promise<{ for?: string }>;
 }) {
   const { locale } = await params;
-  const { niche } = await searchParams;
+  const sp = await searchParams;
+  const forParam = sp.for;
   const loc: Locale = isLocale(locale) ? locale : "en";
   const t = getMessages(loc);
-  const nicheKey: NicheKey | undefined = isNiche(niche) ? niche : undefined;
+  const nicheKey: NicheKey | undefined = isNiche(forParam) ? forParam : undefined;
   const nicheBadge = nicheKey ? getNicheMessages(loc, nicheKey).badge : undefined;
 
   // Pull niche-specific sample if present, else fall back to the generic Acme one.
@@ -73,7 +75,7 @@ export default async function Sample({
             <div className="flex items-center gap-6">
               <LocaleSwitch current={loc} />
               <Link
-                href={nicheKey ? `/${loc}/assessment?niche=${nicheKey}` : `/${loc}/assessment`}
+                href={nicheKey ? `/${loc}/assessment?for=${nicheKey}` : `/${loc}/assessment`}
                 className="btn-ink text-[13px] !py-2 !px-4"
               >
                 {t.sample.getOwn}
@@ -419,7 +421,7 @@ export default async function Sample({
             </h2>
             <div className="flex items-center justify-center gap-4">
               <Link
-                href={nicheKey ? `/${loc}/assessment?niche=${nicheKey}` : `/${loc}/assessment`}
+                href={nicheKey ? `/${loc}/assessment?for=${nicheKey}` : `/${loc}/assessment`}
                 className="btn-ink text-[15px] !py-4 !px-6"
               >
                 <span>{t.common.cta.getOwnReport}</span>

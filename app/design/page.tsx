@@ -587,8 +587,8 @@ export default function DesignSystem() {
             <div className="bg-paper p-6">
               <div className="eyebrow mb-3">How the niche reaches Claude</div>
               <ol className="space-y-2 text-[13px] leading-relaxed">
-                <li>1. Niche page CTAs link to <span className="mono">/assessment?niche=lawyers</span></li>
-                <li>2. Form forwards <span className="mono">niche</span> in the submission</li>
+                <li>1. Niche page CTAs link to <span className="mono">/assessment?for=lawyers</span></li>
+                <li>2. Form forwards the niche key in the submission</li>
                 <li>3. <span className="mono">lib/claude.ts</span> appends a niche-specific directive to the system prompt</li>
                 <li>4. The generated PDF uses lawyer/accountant-specific tooling and vocabulary</li>
               </ol>

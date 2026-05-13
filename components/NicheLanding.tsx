@@ -10,7 +10,7 @@ import { getNicheMessages } from "@/lib/i18n";
  * Renders the SnapReport landing with:
  *   - hero copy from the niche-specific message bundle
  *   - a niche-specific "bottlenecks" section instead of generic Process
- *   - links to /assessment?niche=<key> so the backend tunes the report
+ *   - links to /assessment?for=<key> so the backend tunes the report
  *
  * The Process, Deliverable, Pricing, and Closing CTA sections fall back
  * to the generic translations — they're already tight and don't need a
@@ -26,7 +26,7 @@ export function NicheLanding({
   t: Messages;
 }) {
   const n = getNicheMessages(locale, niche);
-  const assessmentHref = `/${locale}/assessment?niche=${niche}`;
+  const assessmentHref = `/${locale}/assessment?for=${niche}`;
   const homeHref = `/${locale}`;
 
   return (
@@ -103,7 +103,7 @@ export function NicheLanding({
             </div>
 
             <div className="md:col-span-4 md:border-l md:border-rule md:pl-8">
-              <Link href={`/${locale}/sample?niche=${niche}`} className="block group">
+              <Link href={`/${locale}/sample?for=${niche}`} className="block group">
                 <div className="flex items-center justify-between mb-4 mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
                   <span>{t.landing.hero.specimenLabel}</span>
                   <span className="opacity-0 group-hover:opacity-100 transition">{t.common.cta.viewFull}</span>

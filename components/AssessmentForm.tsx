@@ -53,7 +53,7 @@ export function AssessmentForm({
   t: Messages;
   niche?: NicheKey;
 }) {
-  // Niche is now user-selectable on step 0. URL ?niche= just pre-selects.
+  // Niche is now user-selectable on step 0. URL ?for= just pre-selects.
   // "general" means no niche (default form vocabulary).
   const [selectedNiche, setSelectedNiche] = useState<NicheKey | "general">(
     initialNiche ?? "general"
