@@ -47,17 +47,25 @@ type FieldErrors = Partial<Record<AnswerKey, string>>;
 export function AssessmentForm({
   locale,
   t,
-  niche,
+  niche: initialNiche,
 }: {
   locale: Locale;
   t: Messages;
   niche?: NicheKey;
 }) {
+  // Niche is now user-selectable on step 0. URL ?niche= just pre-selects.
+  // "general" means no niche (default form vocabulary).
+  const [selectedNiche, setSelectedNiche] = useState<NicheKey | "general">(
+    initialNiche ?? "general"
+  );
+  const activeNiche: NicheKey | undefined =
+    selectedNiche === "general" ? undefined : selectedNiche;
+
   // Apply niche-specific text overrides on top of the base form copy.
   // We only override label/placeholder/helper — never field type or key.
   const STEPS: Messages["form"]["steps"] = useMemo(() => {
-    if (!niche) return t.form.steps;
-    const nicheMessages = getNicheMessages(locale, niche);
+    if (!activeNiche) return t.form.steps;
+    const nicheMessages = getNicheMessages(locale, activeNiche);
     const overrides = nicheMessages.formOverrides;
     if (!overrides) return t.form.steps;
     return t.form.steps.map((step) => ({
@@ -65,7 +73,6 @@ export function AssessmentForm({
       fields: step.fields.map((field) => {
         const o = overrides[field.key as keyof typeof overrides];
         if (!o) return field;
-        // Cast preserves the original union-typed shape after the merge.
         return {
           ...field,
           label: o.label ?? field.label,
@@ -74,10 +81,10 @@ export function AssessmentForm({
         } as typeof field;
       }),
     })) as Messages["form"]["steps"];
-  }, [t.form.steps, locale, niche]);
+  }, [t.form.steps, locale, activeNiche]);
 
-  const nicheBadge = niche ? getNicheMessages(locale, niche).badge : undefined;
-  const formIntro = niche ? getNicheMessages(locale, niche).formIntro : undefined;
+  const nicheBadge = activeNiche ? getNicheMessages(locale, activeNiche).badge : undefined;
+  const formIntro = activeNiche ? getNicheMessages(locale, activeNiche).formIntro : undefined;
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(INITIAL_ANSWERS);
@@ -136,7 +143,7 @@ export function AssessmentForm({
       const res = await fetch("/api/submit-assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...answers, locale, niche }),
+        body: JSON.stringify({ ...answers, locale, niche: activeNiche }),
       });
       if (!res.ok) {
         const text = await res.text();
@@ -207,26 +214,34 @@ export function AssessmentForm({
         <FormHeader
           locale={locale}
           t={t}
-          stepLabel={`${String(step + 1).padStart(2, "0")} / ${String(totalSteps).padStart(2, "0")}`}
+          // Hide "Step 01 / 06" on the very first step — total varies by niche
+          // selected here, and we don't want to commit to a number yet.
+          stepLabel={
+            step === 0
+              ? ""
+              : `${String(step + 1).padStart(2, "0")} / ${String(totalSteps).padStart(2, "0")}`
+          }
           nicheBadge={nicheBadge}
         />
 
-        <div className="border-b border-rule">
-          <div className="mx-auto max-w-3xl px-6 py-3 flex items-center gap-3">
-            <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
-              § {currentStep.number}
-            </span>
-            <div className="flex-1 h-px bg-rule relative">
-              <div
-                className="absolute inset-y-0 left-0 bg-ink transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
+        {step > 0 && (
+          <div className="border-b border-rule">
+            <div className="mx-auto max-w-3xl px-6 py-3 flex items-center gap-3">
+              <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
+                § {currentStep.number}
+              </span>
+              <div className="flex-1 h-px bg-rule relative">
+                <div
+                  className="absolute inset-y-0 left-0 bg-ink transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
+                {Math.round(progress)}%
+              </span>
             </div>
-            <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
-              {Math.round(progress)}%
-            </span>
           </div>
-        </div>
+        )}
 
         <main className="mx-auto max-w-2xl px-6 py-16 md:py-24">
           <div className="mb-12">
@@ -243,6 +258,16 @@ export function AssessmentForm({
               </div>
             )}
           </div>
+
+          {/* Industry selector — only on step 0. Sets the niche that
+              everything else flows from (questions, eventual report). */}
+          {step === 0 && (
+            <IndustrySelector
+              t={t}
+              value={selectedNiche}
+              onChange={setSelectedNiche}
+            />
+          )}
 
           <div className="space-y-10">
             {currentStep.fields.map((field, idx) => (
@@ -431,6 +456,64 @@ function FieldRow({
           ⚠ {error}
         </p>
       )}
+    </div>
+  );
+}
+
+/* ─── Industry selector ─────────────────────────────────────────
+ * Renders on step 0 above the email/name fields. Lets the visitor
+ * pick their practice type. Selection drives the niche-specific
+ * vocabulary in the rest of the form and the eventual report.
+ */
+function IndustrySelector({
+  t,
+  value,
+  onChange,
+}: {
+  t: Messages;
+  value: NicheKey | "general";
+  onChange: (v: NicheKey | "general") => void;
+}) {
+  const sel = t.form.industrySelector;
+  return (
+    <div className="mb-12">
+      <div className="flex items-baseline gap-3 mb-3">
+        <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3">Q01</span>
+        <label className="serif text-xl leading-tight text-ink">
+          {sel.label}
+          <span className="text-stamp ml-1">*</span>
+        </label>
+      </div>
+      {sel.helper && (
+        <p className="text-[13px] text-ink-2 mb-4 italic">{sel.helper}</p>
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-rule border border-rule">
+        {sel.options.map((opt) => {
+          const selected = value === opt.value;
+          return (
+            <button
+              type="button"
+              key={opt.value}
+              onClick={() => onChange(opt.value as NicheKey | "general")}
+              className={`text-left p-5 transition relative ${
+                selected
+                  ? "bg-paper-2 border-2 border-ink -m-px"
+                  : "bg-paper hover:bg-paper-2/60"
+              }`}
+              aria-pressed={selected}
+            >
+              <div className="flex items-baseline justify-between mb-2">
+                <span className="serif text-lg leading-tight">{opt.label}</span>
+                <span
+                  className={`w-3 h-3 border ${selected ? "bg-ink border-ink" : "border-rule-strong"}`}
+                  aria-hidden
+                />
+              </div>
+              <p className="text-[12px] text-ink-2 leading-relaxed">{opt.desc}</p>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -166,6 +166,15 @@ const fr: typeof en = {
     optionalTag: "facultatif",
     sliderLow: "1 · réfractaire",
     sliderHigh: "10 · pionnier",
+    industrySelector: {
+      label: "Pour quel type de pratique ?",
+      helper: "Choisir une catégorie adapte les prochaines questions et le rapport. Vous pouvez rester en général si rien ne colle.",
+      options: [
+        { value: "general", label: "Entreprise générale", desc: "PME, services, détail, e-commerce — tout le reste" },
+        { value: "lawyers", label: "Cabinet d'avocats", desc: "Solo, boutique, famille, civil, immobilier — toute pratique juridique" },
+        { value: "accountants", label: "Firme comptable", desc: "CPA, tenue de livres, impôts, vérification, conseil" },
+      ],
+    },
     helperOptionalName:
       "Facultatif — nous vous adresserons le rapport si vous le précisez.",
 

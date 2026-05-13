@@ -157,6 +157,15 @@ const en = {
     optionalTag: "optional",
     sliderLow: "1 · phobic",
     sliderHigh: "10 · early adopter",
+    industrySelector: {
+      label: "What kind of practice is this for?",
+      helper: "Picking one tailors the next questions and the report. You can keep it general if nothing fits.",
+      options: [
+        { value: "general", label: "General business", desc: "SMB, services, retail, e-commerce — anything else" },
+        { value: "lawyers", label: "Law firm", desc: "Solo, boutique, family, civil, real-estate — any legal practice" },
+        { value: "accountants", label: "Accounting firm", desc: "CPA, bookkeeping, tax prep, audit, advisory" },
+      ],
+    },
     helperOptionalName: "Optional — we'll address the report to you if you give one.",
 
     steps: [
