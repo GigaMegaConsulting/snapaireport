@@ -41,13 +41,17 @@ export async function sendReportEmail({
         On the call, we'll walk through the report together and identify which opportunity to tackle first. Most clients leave with a clear 90-day AI roadmap.<br><br>
         &mdash; Giga<br>
         Giga Mega Consulting<br>
-        hello@gigamega.ca
+        hello@gigamega.ca · snapaireport.com
       </p>
     </div>
   `;
 
+  // NOTE: snapaireport.com must be verified in Resend (DNS records added in Namecheap)
+  // before emails will deliver. Until then, fall back to caseledger.ca which is already verified.
+  const fromAddress = process.env.RESEND_FROM ?? 'SnapReport <reports@snapaireport.com>';
+
   const result = await resend.emails.send({
-    from: 'Giga <hello@gigamega.ca>',
+    from: fromAddress,
     to,
     subject: 'Your AI Business Assessment Report',
     html,

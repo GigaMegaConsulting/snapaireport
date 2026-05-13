@@ -5,22 +5,24 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Clarity - AI Business Assessment for SMBs",
+  title: "SnapReport — Your AI Business Assessment in 5 Minutes",
   description:
-    "Find $10K+ in hidden AI opportunities. 20-minute voice call, custom AI readiness report, clear next steps. First 3 assessments are free.",
+    "Find $10K+ in hidden AI opportunities. Answer 10 questions, get a custom AI readiness report by email. First 3 reports are free.",
   keywords: [
     "AI consulting",
-    "AI audit",
     "AI business assessment",
+    "AI readiness report",
     "small business AI",
     "AI automation",
-    "AI readiness",
+    "AI for SMB",
+    "SnapReport",
   ],
   authors: [{ name: "Giga Mega Consulting Inc." }],
   openGraph: {
-    title: "AI Clarity - AI Business Assessment for SMBs",
-    description: "Find $10K+ in hidden AI opportunities in your business.",
+    title: "SnapReport — Your AI Business Assessment in 5 Minutes",
+    description: "Find $10K+ in hidden AI opportunities in your business. Free for the first 3.",
     type: "website",
+    url: "https://snapaireport.com",
   },
 };
 
