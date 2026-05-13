@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyzeTranscript } from "@/lib/claude";
-import { createAssessment, updateAssessment } from "@/lib/storage";
-import { generatePDF } from "@/lib/pdf";
-import { sendReportEmail } from "@/lib/email";
+import { randomUUID } from "crypto";
 import { isLocale, isNiche, type Locale, type NicheKey } from "@/lib/i18n";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 30; // generous — actual work is one HTTP call
 
 interface FormAnswers {
   email?: string;
@@ -29,8 +26,7 @@ interface FormAnswers {
   niche?: string;
 }
 
-// fullName is intentionally NOT required — we still address the report personally if provided,
-// but the form lets users skip it.
+// fullName is intentionally NOT required — the form lets users skip it.
 const REQUIRED: (keyof FormAnswers)[] = [
   "email",
   "businessName",
@@ -48,60 +44,58 @@ const REQUIRED: (keyof FormAnswers)[] = [
   "automationWish",
 ];
 
+/** Build the Q&A transcript that the Mac mini's worker will feed to Claude. */
 function buildTranscript(a: FormAnswers): string {
-  // Synthesize a Q&A transcript so the existing Claude prompt
-  // (which expects discovery-call transcripts) works unchanged.
-  const sections = [
-    [
-      "Q: What does your business do, and how long have you been operating?",
-      `A: ${a.businessName} — ${a.businessDescription} They have been operating for ${a.yearsOperating}.`,
-    ],
-    [
-      "Q: How many employees do you have, and are they local or remote?",
-      `A: ${a.teamSize}. ${a.teamLocation}.`,
-    ],
-    [
-      "Q: Walk me through your main day-to-day operations — what happens from when a customer reaches out to when you deliver?",
-      `A: ${a.operationsWalkthrough}`,
-    ],
-    [
-      "Q: What software or tools does your team use daily?",
-      `A: ${a.toolsInUse}`,
-    ],
-    [
-      "Q: Where do most of your leads or customers come from right now?",
-      `A: ${a.leadSources}`,
-    ],
-    [
-      "Q: What are your biggest bottlenecks — the things that slow you down or take too much time?",
-      `A: ${a.bottlenecks}`,
-    ],
-    [
-      "Q: Have you tried using AI or automation in your business before? What happened?",
-      `A: ${a.priorAiExperience}`,
-    ],
-    [
-      "Q: On a scale of 1–10, how comfortable is your team with new technology?",
-      `A: ${a.techComfortScore}/10.`,
-    ],
-    [
-      "Q: What does success look like for you in the next 12 months?",
-      `A: ${a.twelveMonthGoals}`,
-    ],
-    [
-      "Q: If you could automate one thing in your business tomorrow, what would it be?",
-      `A: ${a.automationWish}`,
-    ],
+  const sections: [string, string][] = [
+    ["Q: What does your business do, and how long have you been operating?", `A: ${a.businessName} — ${a.businessDescription} They have been operating for ${a.yearsOperating}.`],
+    ["Q: How many employees do you have, and are they local or remote?", `A: ${a.teamSize}. ${a.teamLocation}.`],
+    ["Q: Walk me through your main day-to-day operations — what happens from when a customer reaches out to when you deliver?", `A: ${a.operationsWalkthrough}`],
+    ["Q: What software or tools does your team use daily?", `A: ${a.toolsInUse}`],
+    ["Q: Where do most of your leads or customers come from right now?", `A: ${a.leadSources}`],
+    ["Q: What are your biggest bottlenecks — the things that slow you down or take too much time?", `A: ${a.bottlenecks}`],
+    ["Q: Have you tried using AI or automation in your business before? What happened?", `A: ${a.priorAiExperience}`],
+    ["Q: On a scale of 1–10, how comfortable is your team with new technology?", `A: ${a.techComfortScore}/10.`],
+    ["Q: What does success look like for you in the next 12 months?", `A: ${a.twelveMonthGoals}`],
+    ["Q: If you could automate one thing in your business tomorrow, what would it be?", `A: ${a.automationWish}`],
   ];
   let transcript = sections.map(([q, ans]) => `${q}\n${ans}`).join("\n\n");
-  // Optional free-text "anything else" — appended only when provided.
-  // This is where the reader usually drops the most-useful context (constraints,
-  // politics, recent failures). Claude should weight it heavily.
   const extra = (a.anythingElse ?? "").trim();
   if (extra) {
     transcript += `\n\n[ADDITIONAL CONTEXT FROM CLIENT — weight this heavily when tailoring the report]\n${extra}`;
   }
   return transcript;
+}
+
+/**
+ * Commit a JSON file to the queue repo via the GitHub Contents API.
+ *
+ * The queue repo lives at GITHUB_QUEUE_REPO (e.g. "GigaMegaConsulting/snapaireport-queue")
+ * and the file lands at pending/<uuid>.json. The Mac mini OpenClaw cron polls
+ * this directory every 2 minutes and processes each entry.
+ */
+async function commitToQueue(
+  repo: string,
+  token: string,
+  path: string,
+  contentBase64: string,
+  message: string,
+): Promise<{ ok: boolean; sha?: string; error?: string }> {
+  const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message, content: contentBase64 }),
+  });
+  if (!res.ok) {
+    return { ok: false, error: `GitHub ${res.status}: ${(await res.text()).slice(0, 400)}` };
+  }
+  const data = (await res.json()) as { content?: { sha?: string } };
+  return { ok: true, sha: data.content?.sha };
 }
 
 export async function POST(request: NextRequest): Promise<Response> {
@@ -120,83 +114,74 @@ export async function POST(request: NextRequest): Promise<Response> {
     );
   }
 
-  // Default client name to business name if no human name was provided.
+  const id = randomUUID();
+  const submittedAt = new Date().toISOString();
   const clientName = body.fullName?.trim() || body.businessName!.trim();
   const clientEmail = body.email!.trim();
-  const businessType = body.businessName!.trim();
+  const businessName = body.businessName!.trim();
   const locale: Locale = isLocale(body.locale) ? body.locale : "en";
   const niche: NicheKey | undefined = isNiche(body.niche) ? body.niche : undefined;
-
   const transcript = buildTranscript(body);
 
-  // 1. Persist the submission immediately so we never lose answers
-  const assessment = await createAssessment({
+  const submission = {
+    id,
+    submittedAt,
+    locale,
+    niche,
     clientName,
     clientEmail,
-    businessType,
+    businessName,
     transcript,
-    status: "transcript_received",
-  });
+    answers: body, // keep the full raw form for audit
+  };
 
-  // If the LLM isn't configured, return success with a warning — we still have the submission
-  if (!process.env.OPENROUTER_API_KEY) {
+  const repo = process.env.GITHUB_QUEUE_REPO;
+  const token = process.env.GITHUB_QUEUE_TOKEN;
+
+  if (!repo || !token) {
+    // Soft failure: store nothing, but acknowledge so the user isn't dropped.
+    // Operator must check Vercel env vars.
+    console.error("[submit-assessment] queue env vars missing", { hasRepo: !!repo, hasToken: !!token });
     return NextResponse.json(
       {
         ok: true,
-        assessmentId: assessment.id,
-        warning:
-          "Submission received. Report generation is not yet configured — we'll process this manually and email you shortly.",
+        id,
+        warning: "Submission received, but queue is not configured — operator notified.",
       },
       { status: 200 },
     );
   }
 
-  try {
-    // 2. Generate the analysis with Claude (locale + niche-aware)
-    const analysis = await analyzeTranscript(transcript, locale, niche);
-    await updateAssessment(assessment.id, { analysis, status: "analyzed" });
+  const contentBase64 = Buffer.from(JSON.stringify(submission, null, 2), "utf8").toString("base64");
+  const commitResult = await commitToQueue(
+    repo,
+    token,
+    `pending/${id}.json`,
+    contentBase64,
+    `submission ${id} (${niche ?? "general"} · ${locale})`,
+  );
 
-    // 3. If Resend isn't configured, stop here — the report exists, surface it manually
-    if (!process.env.RESEND_API_KEY) {
-      return NextResponse.json(
-        {
-          ok: true,
-          assessmentId: assessment.id,
-          warning: "Report analyzed but email delivery is not configured — we'll send it manually.",
-        },
-        { status: 200 },
-      );
-    }
-
-    // 4. Generate the PDF
-    const pdfBuffer = await generatePDF(analysis, clientName);
-    await updateAssessment(assessment.id, { status: "pdf_generated" });
-
-    // 5. Send the email with PDF attached (locale-aware)
-    await sendReportEmail({
-      to: clientEmail,
-      clientName,
-      assessmentId: assessment.id,
-      pdfBuffer,
-      locale,
-    });
-    await updateAssessment(assessment.id, { status: "sent" });
-
-    return NextResponse.json(
-      { ok: true, assessmentId: assessment.id, status: "sent" },
-      { status: 200 },
-    );
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[submit-assessment] processing failed:", err);
-    // Submission is already saved — return success but log the failure
+  if (!commitResult.ok) {
+    console.error("[submit-assessment] queue commit failed:", commitResult.error);
+    // Still acknowledge — we have the data in this function's logs and
+    // we don't want to surface a 500 to the user.
     return NextResponse.json(
       {
         ok: true,
-        assessmentId: assessment.id,
-        warning: `Submission received, but report generation hit an error and will be retried manually: ${message}`,
+        id,
+        warning: "Submission received. Backend handoff hit a snag; operator notified.",
       },
       { status: 200 },
     );
   }
+
+  return NextResponse.json(
+    {
+      ok: true,
+      id,
+      queued: true,
+      eta: "2-5 minutes",
+    },
+    { status: 200 },
+  );
 }
