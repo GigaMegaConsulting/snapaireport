@@ -109,6 +109,7 @@ export default function DesignSystem() {
                   ["07", "Imagery rules"],
                   ["08", "Don'ts"],
                   ["09", "Languages (EN/FR)"],
+                  ["10", "Niche pages"],
                 ].map(([n, t]) => (
                   <li key={n}>
                     <a href={`#s${n}`} className="flex items-baseline gap-3 text-ink-2 hover:text-ink transition">
@@ -562,6 +563,60 @@ export default function DesignSystem() {
             specimen sample (Acme Plumbing) is translated in both directions —
             use it as a tone reference.
           </p>
+        </Section>
+
+        {/* ── § 10 Niche pages ────────────────────────────────────── */}
+        <Section id="s10" number="10" title="Niche pages — targeted outreach landings">
+          <p className="text-ink-2 leading-relaxed mb-8 max-w-2xl">
+            Each profession we target gets its own landing page with vocabulary
+            and pain points tuned to that audience. Generic
+            <span className="mono mx-1">/en</span> stays the catch-all; the
+            niche landings are what you link to in cold LinkedIn DMs.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-px bg-rule border border-rule mb-10">
+            <div className="bg-paper p-6">
+              <div className="eyebrow mb-3">Live niches</div>
+              <ul className="space-y-2 mono text-[12px] text-ink-2">
+                <li>/en/lawyers · /fr/lawyers</li>
+                <li>/en/accountants · /fr/accountants</li>
+              </ul>
+              <p className="mt-4 text-[12px] text-ink-2 italic leading-relaxed">
+                URL slug stays English in both locales (matches Stripe pattern).
+              </p>
+            </div>
+            <div className="bg-paper p-6">
+              <div className="eyebrow mb-3">How the niche reaches Claude</div>
+              <ol className="space-y-2 text-[13px] leading-relaxed">
+                <li>1. Niche page CTAs link to <span className="mono">/assessment?niche=lawyers</span></li>
+                <li>2. Form forwards <span className="mono">niche</span> in the submission</li>
+                <li>3. <span className="mono">lib/claude.ts</span> appends a niche-specific directive to the system prompt</li>
+                <li>4. The generated PDF uses lawyer/accountant-specific tooling and vocabulary</li>
+              </ol>
+            </div>
+          </div>
+
+          <div className="eyebrow mb-4">When to spin up a new niche</div>
+          <ol className="border border-rule">
+            {[
+              "Sam wants to test a new vertical for LinkedIn DMs (e.g. dentists, contractors, real-estate brokerages).",
+              "There's enough niche-specific vocabulary that the generic site would feel off.",
+              "Bottlenecks are different enough that the report content changes (not just hero copy).",
+            ].map((rule, i, arr) => (
+              <li key={i} className={`flex items-start gap-5 px-6 py-5 ${i < arr.length - 1 ? "border-b border-rule" : ""}`}>
+                <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 pt-1 min-w-[28px]">{String(i + 1).padStart(2, "0")}</span>
+                <span className="text-[15px] leading-relaxed">{rule}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="eyebrow mb-4 mt-10">Adding a niche (developer notes)</div>
+          <ol className="space-y-3 text-[14px] leading-relaxed max-w-2xl">
+            <li className="flex gap-3"><span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 pt-1">01</span><span>Add the new key to <span className="mono">NICHE_KEYS</span> in <span className="mono">lib/i18n.ts</span> and to the <span className="mono">NicheKey</span> union in <span className="mono">messages/niches.en.ts</span>.</span></li>
+            <li className="flex gap-3"><span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 pt-1">02</span><span>Add the niche content blocks in <span className="mono">messages/niches.en.ts</span> and <span className="mono">messages/niches.fr.ts</span>.</span></li>
+            <li className="flex gap-3"><span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 pt-1">03</span><span>Create <span className="mono">app/[locale]/&lt;slug&gt;/page.tsx</span> — copy from <span className="mono">lawyers/page.tsx</span>.</span></li>
+            <li className="flex gap-3"><span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 pt-1">04</span><span>Add a niche directive in <span className="mono">NICHE_DIRECTIVES</span> in <span className="mono">lib/claude.ts</span> — tool names and vocabulary that profession would recognize.</span></li>
+          </ol>
         </Section>
 
         {/* ── Footer ─────────────────────────────────────────────── */}
