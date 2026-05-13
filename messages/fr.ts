@@ -375,6 +375,9 @@ const fr: typeof en = {
       ["D", "Score d'aptitude à l'IA"],
       ["E", "Gains rapides"],
       ["F", "Plays stratégiques"],
+      ["J", "Effort × Impact"],
+      ["K", "Impact financier"],
+      ["L", "Plan 4 jours"],
       ["G", "Drapeaux rouges"],
       ["H", "Pile d'outils"],
       ["I", "Prochaines étapes"],
@@ -389,6 +392,33 @@ const fr: typeof en = {
     sectionG: "Drapeaux rouges + mitigations",
     sectionH: "Pile d'outils recommandée",
     sectionI: "Prochaines étapes",
+    sectionJ: "Effort × Impact",
+    sectionK: "Impact financier",
+    sectionL: "Plan 4 jours · premier gain rapide",
+    matrix: {
+      sweetSpot: "Zone des gains rapides",
+      effortLabel: "Effort →",
+      impactLabel: "↑ Impact",
+      effortLevels: { low: "Faible", medium: "Moyen", high: "Élevé" },
+      impactLevels: { low: "Faible", medium: "Moyen", high: "Élevé" },
+      legendQw: "Gain rapide",
+      legendSp: "Play stratégique",
+    },
+    financialImpact: {
+      eyebrow: "Faisons le calcul",
+      hoursLabel: "Heures/semaine récupérées",
+      rateLabel: "Taux horaire supposé",
+      toolCostLabel: "Coût mensuel des outils",
+      netLabel: "Valeur nette mensuelle",
+      explainer:
+        "(Heures/sem × 4,33 × taux horaire) − coût mensuel des outils. Taux par défaut de 100 $/h sauf indication contraire.",
+    },
+    dayPlan: {
+      eyebrow: "Si vous commencez demain",
+      lead:
+        "Chaque journée = une action précise — pas plus, pas moins. D'ici vendredi, votre premier gain rapide est livré.",
+      dayLabel: "Jour",
+    },
     exploreMore: {
       heading: "Trouvez d'autres outils IA",
       body: "La pile ci-dessus correspond à Acme aujourd'hui. Comme le paysage de l'IA évolue vite, voici où garder un œil sur ce qui se lance :",
@@ -594,6 +624,18 @@ const fr: typeof en = {
           "Relances IA actives sur les tranches 30 à 60 jours.",
         ],
       },
+      financialImpact: {
+        weeklyHoursReclaimed: 14,
+        hourlyRateAssumption: 100,
+        monthlyToolCost: 115,
+        netMonthlySavings: 5947,
+      },
+      quickWinPlan: [
+        { day: 1, action: "Créez un compte Cal.com et intégrez le module de prise de rendez-vous sur plomberieacme.ca. Sylvie révise le jour 2." },
+        { day: 2, action: "Inscrivez-vous à l'essai Retell AI. Configurez un agent de débordement pour les appels que Sylvie ne prend pas en 3 sonneries." },
+        { day: 3, action: "Acheminez 3 appels manqués d'hier vers Retell. Révisez les transcriptions — validez les rendez-vous qu'il a tenté de réserver." },
+        { day: 4, action: "Choisissez le tech le plus à l'aise, installez une app voix-à-soumission sur son téléphone, faites 2 soumissions réelles avec." },
+      ],
     },
   },
 

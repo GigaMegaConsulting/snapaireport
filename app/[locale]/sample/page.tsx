@@ -247,6 +247,25 @@ export default async function Sample({
           </div>
         </SectionBlock>
 
+        {/* § J · Effort × Impact matrix */}
+        <SectionBlock id="sJ" letter="J" title={t.sample.sectionJ}>
+          <EffortImpactMatrix t={t} />
+        </SectionBlock>
+
+        {/* § K · Financial impact */}
+        {report.financialImpact && (
+          <SectionBlock id="sK" letter="K" title={t.sample.sectionK}>
+            <FinancialImpact t={t} impact={report.financialImpact} locale={loc} />
+          </SectionBlock>
+        )}
+
+        {/* § L · 4-day quick-win plan */}
+        {report.quickWinPlan && report.quickWinPlan.length > 0 && (
+          <SectionBlock id="sL" letter="L" title={t.sample.sectionL}>
+            <DayPlan t={t} plan={report.quickWinPlan} />
+          </SectionBlock>
+        )}
+
         <SectionBlock id="sG" letter="G" title={t.sample.sectionG}>
           <div className="border border-rule">
             <div className="grid grid-cols-12 mono text-[10px] uppercase tracking-[0.18em] text-ink-3 border-b border-rule">
@@ -428,6 +447,195 @@ function MetaPair({ label, v }: { label: string; v: string }) {
     <div>
       <div className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3 mb-1">{label}</div>
       <div className="text-[13px] leading-snug">{v}</div>
+    </div>
+  );
+}
+
+/* ─── Effort × Impact matrix ─────────────────────────────────────
+ * 3 × 3 grid. Y-axis (top → bottom): high, medium, low impact.
+ * X-axis (left → right): low, medium, high effort. The top-left
+ * cell is the "quick-win zone" — low effort + high impact.
+ *
+ * Plots the report's quickWins + strategic plays into the cells
+ * by their effort/impact levels. Items in the same cell stack.
+ */
+function EffortImpactMatrix({ t }: { t: Messages }) {
+  type Item = { tag: string; title: string; effort: string; impact: string; kind: "qw" | "sp" };
+  const quickWins: Item[] = t.sample.report.quickWins.map((w) => ({
+    tag: w.tag, title: w.title, effort: w.effort, impact: w.impact, kind: "qw",
+  }));
+  // Strategic plays usually run high-effort + medium/high-impact — plot them in the right two columns.
+  const strategic: Item[] = t.sample.report.strategic.map((s) => ({
+    tag: s.tag, title: s.title, effort: "High", impact: "High", kind: "sp",
+  }));
+  const all = [...quickWins, ...strategic];
+
+  function norm(level: string): "Low" | "Medium" | "High" {
+    const v = level.trim().toLowerCase();
+    if (["low", "faible", "bas"].includes(v)) return "Low";
+    if (["high", "élevé", "eleve", "haut"].includes(v)) return "High";
+    return "Medium";
+  }
+  const effortOrder = ["Low", "Medium", "High"] as const;
+  const impactOrder = ["High", "Medium", "Low"] as const;
+
+  function itemsAt(eff: typeof effortOrder[number], imp: typeof impactOrder[number]) {
+    return all.filter((i) => norm(i.effort) === eff && norm(i.impact) === imp);
+  }
+
+  return (
+    <div>
+      {/* Y-axis label + matrix + X-axis label */}
+      <div className="flex gap-3">
+        <div className="flex items-center">
+          <div className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 -rotate-90 whitespace-nowrap">
+            {t.sample.matrix.impactLabel}
+          </div>
+        </div>
+        <div className="flex-1">
+          {/* Matrix grid */}
+          <div className="grid grid-cols-3 gap-px bg-rule border border-rule">
+            {impactOrder.map((imp) =>
+              effortOrder.map((eff) => {
+                const isSweet = imp === "High" && eff === "Low";
+                const items = itemsAt(eff, imp);
+                return (
+                  <div
+                    key={`${imp}-${eff}`}
+                    className={`bg-paper p-3 min-h-[120px] relative ${isSweet ? "bg-paper-2/70" : ""}`}
+                  >
+                    {isSweet && (
+                      <div className="absolute top-1 right-1 mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                        ★ {t.sample.matrix.sweetSpot}
+                      </div>
+                    )}
+                    <div className="space-y-1.5 mt-3">
+                      {items.map((item) => (
+                        <div key={item.tag} className="flex items-baseline gap-2 text-[11px]">
+                          <span
+                            className={`mono text-[9px] uppercase tracking-[0.1em] ${item.kind === "qw" ? "text-ink" : "text-ink-3"}`}
+                          >
+                            {item.tag}
+                          </span>
+                          <span className="text-ink-2 leading-tight">{item.title}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+          {/* Y-axis labels (right side) */}
+          <div className="grid grid-cols-3 mt-2 mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
+            <div className="text-center">{t.sample.matrix.effortLevels.low}</div>
+            <div className="text-center">{t.sample.matrix.effortLevels.medium}</div>
+            <div className="text-center">{t.sample.matrix.effortLevels.high}</div>
+          </div>
+          <div className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 text-center mt-1">
+            {t.sample.matrix.effortLabel}
+          </div>
+        </div>
+        {/* Right side impact labels */}
+        <div className="flex flex-col justify-around mono text-[10px] uppercase tracking-[0.12em] text-ink-3 -mr-2">
+          <span>{t.sample.matrix.impactLevels.high}</span>
+          <span>{t.sample.matrix.impactLevels.medium}</span>
+          <span>{t.sample.matrix.impactLevels.low}</span>
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div className="mt-6 flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em] text-ink-2">
+        <span className="flex items-center gap-2"><span className="w-2 h-2 bg-ink" />{t.sample.matrix.legendQw}</span>
+        <span className="flex items-center gap-2"><span className="w-2 h-2 bg-ink-3" />{t.sample.matrix.legendSp}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Financial impact card ─────────────────────────────────────── */
+function FinancialImpact({
+  t,
+  impact,
+  locale,
+}: {
+  t: Messages;
+  impact: { weeklyHoursReclaimed: number; hourlyRateAssumption: number; monthlyToolCost: number; netMonthlySavings: number };
+  locale: Locale;
+}) {
+  const fmt = (n: number) => {
+    const isFr = locale === "fr";
+    return isFr
+      ? `${n.toLocaleString("fr-CA")} $`
+      : `$${n.toLocaleString("en-US")}`;
+  };
+
+  return (
+    <div>
+      <div className="grid md:grid-cols-12 gap-6">
+        <div className="md:col-span-5 border border-ink tick-frame p-8 bg-paper">
+          <div className="eyebrow mb-3">{t.sample.financialImpact.eyebrow}</div>
+          <div className="serif text-[64px] leading-none">
+            {fmt(impact.netMonthlySavings)}
+          </div>
+          <div className="mono text-[11px] uppercase tracking-[0.12em] text-ink-2 mt-2">
+            {t.sample.financialImpact.netLabel} / mo
+          </div>
+        </div>
+        <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-px bg-rule border border-rule self-center">
+          <div className="bg-paper p-5">
+            <div className="eyebrow mb-2">{t.sample.financialImpact.hoursLabel}</div>
+            <div className="serif text-2xl">{impact.weeklyHoursReclaimed}</div>
+            <div className="mono text-[10px] uppercase tracking-[0.12em] text-ink-3 mt-1">h/sem</div>
+          </div>
+          <div className="bg-paper p-5">
+            <div className="eyebrow mb-2">{t.sample.financialImpact.rateLabel}</div>
+            <div className="serif text-2xl">{fmt(impact.hourlyRateAssumption)}</div>
+            <div className="mono text-[10px] uppercase tracking-[0.12em] text-ink-3 mt-1">/h</div>
+          </div>
+          <div className="bg-paper p-5">
+            <div className="eyebrow mb-2">{t.sample.financialImpact.toolCostLabel}</div>
+            <div className="serif text-2xl">{fmt(impact.monthlyToolCost)}</div>
+            <div className="mono text-[10px] uppercase tracking-[0.12em] text-ink-3 mt-1">/mo</div>
+          </div>
+        </div>
+      </div>
+      <p className="mt-6 text-[13px] text-ink-2 italic leading-relaxed max-w-2xl">
+        {t.sample.financialImpact.explainer}
+      </p>
+    </div>
+  );
+}
+
+/* ─── 4-day quick-win plan ──────────────────────────────────────── */
+function DayPlan({
+  t,
+  plan,
+}: {
+  t: Messages;
+  plan: Array<{ day: number; action: string }>;
+}) {
+  return (
+    <div>
+      <p className="mb-8 max-w-2xl text-[15px] text-ink-2 leading-relaxed">
+        {t.sample.dayPlan.lead}
+      </p>
+      <div className="grid md:grid-cols-4 gap-px bg-rule border border-rule">
+        {plan.map((d) => (
+          <div key={d.day} className="bg-paper p-6 flex flex-col">
+            <div className="flex items-baseline justify-between mb-4">
+              <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
+                {t.sample.dayPlan.dayLabel}
+              </span>
+              <span className="serif text-5xl text-ink leading-none">
+                {String(d.day).padStart(2, "0")}
+              </span>
+            </div>
+            <div className="annotation w-full mb-3" />
+            <p className="text-[14px] leading-relaxed text-ink-2 flex-1">{d.action}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

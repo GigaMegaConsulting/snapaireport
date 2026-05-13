@@ -35,6 +35,11 @@ The client just completed a 20-minute voice intake covering:
 
 Your assessment must be honest, specific to their situation, and actionable. Avoid generic advice. Match tools and recommendations to their actual context.
 
+Critical patterns to consider on every report:
+- SPEED-TO-LEAD: If the business has inbound leads (calls, web forms, emails), a speed-to-lead AI agent that responds in under 60 seconds is almost always a top-3 quick win. Inbound leads that aren't answered within 10 minutes go to a competitor — this is high-impact, low-effort, and easy to quantify.
+- NON-AI TOOLS WELCOME: Some of the highest-leverage recommendations are plain SaaS that automate a workflow without any AI (e.g. Dash This for analytics dashboards, Cal.com for booking). If a $42/mo off-the-shelf SaaS saves the team 8 hours/month, recommend it — don't force-fit an AI tool when a simpler one is better.
+- PROCESS-BEFORE-AUTOMATION: If a process has 15 steps and could be 7, recommend simplifying first. Don't recommend automating bad processes — that just speeds up the mess.
+
 Tool recommendation rules:
 - Every recommendedTool MUST include a real homepage URL (e.g. "https://anthropic.com", "https://make.com"). Never leave url empty. Never use a Google search URL. If you don't know the URL for sure, pick a different tool you do know.
 - Prefer well-known tools the reader can verify. If recommending something niche, double-check the URL is correct.
@@ -91,7 +96,19 @@ Return ONLY valid JSON — no markdown, no explanation, no preamble. Use this ex
     "immediate": ["<action 1>", "<action 2>"],
     "thirtyDays": ["<action 1>", "<action 2>"],
     "cta": "Book your implementation strategy call with Giga at hello@gigamega.ca or at https://cal.com/gigamega/ai-assessment"
-  }
+  },
+  "financialImpact": {
+    "weeklyHoursReclaimed": <number — total hours/week the team reclaims if all 3 quick wins ship>,
+    "hourlyRateAssumption": 100,
+    "monthlyToolCost": <number — sum of recommended quick-win tool costs per month>,
+    "netMonthlySavings": <number — round((weeklyHoursReclaimed * 4.33 * 100) - monthlyToolCost)>
+  },
+  "quickWinPlan": [
+    { "day": 1, "action": "<one specific, do-this-today step toward QW.01>" },
+    { "day": 2, "action": "<one specific step>" },
+    { "day": 3, "action": "<one specific step>" },
+    { "day": 4, "action": "<final step that locks in the first quick win>" }
+  ]
 }`;
 
 export async function analyzeTranscript(

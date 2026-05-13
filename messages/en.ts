@@ -358,6 +358,9 @@ const en = {
       ["D", "AI Readiness score"],
       ["E", "Quick wins"],
       ["F", "Strategic plays"],
+      ["J", "Effort × Impact"],
+      ["K", "Financial impact"],
+      ["L", "4-day plan"],
       ["G", "Risk flags"],
       ["H", "Tool stack"],
       ["I", "Next steps"],
@@ -372,6 +375,33 @@ const en = {
     sectionG: "Risk flags + mitigations",
     sectionH: "Recommended tool stack",
     sectionI: "Next steps",
+    sectionJ: "Effort × Impact",
+    sectionK: "Financial impact",
+    sectionL: "4-day quick-win plan",
+    matrix: {
+      sweetSpot: "Quick-win zone",
+      effortLabel: "Effort →",
+      impactLabel: "↑ Impact",
+      effortLevels: { low: "Low", medium: "Medium", high: "High" },
+      impactLevels: { low: "Low", medium: "Medium", high: "High" },
+      legendQw: "Quick Win",
+      legendSp: "Strategic Play",
+    },
+    financialImpact: {
+      eyebrow: "Run the math",
+      hoursLabel: "Hours/week reclaimed",
+      rateLabel: "Hourly rate assumed",
+      toolCostLabel: "Monthly tool cost",
+      netLabel: "Net monthly value",
+      explainer:
+        "(Weekly hours × 4.33 × hourly rate) − monthly tool cost. We use a blended $100/hr unless you tell us otherwise.",
+    },
+    dayPlan: {
+      eyebrow: "If you start tomorrow",
+      lead:
+        "Each day is one specific action — no more, no less. By Friday you've shipped your first quick win.",
+      dayLabel: "Day",
+    },
     exploreMore: {
       heading: "Find more AI tools",
       body: "The stack above is what fits Acme today. As the AI landscape moves fast, here's where to keep an eye on what's launching:",
@@ -577,6 +607,18 @@ const en = {
           "AI invoice follow-ups running on 30–60 day buckets.",
         ],
       },
+      financialImpact: {
+        weeklyHoursReclaimed: 14,
+        hourlyRateAssumption: 100,
+        monthlyToolCost: 115,
+        netMonthlySavings: 5947,
+      },
+      quickWinPlan: [
+        { day: 1, action: "Create a Cal.com account and embed a basic booking widget on acmeplumbing.ca. Sylvie reviews on day 2." },
+        { day: 2, action: "Sign up for Retell AI trial. Set up an overflow agent to receive calls Sylvie can't answer in 3 rings." },
+        { day: 3, action: "Forward 3 missed calls from yesterday into Retell. Review the transcripts — sanity-check the bookings it tried to make." },
+        { day: 4, action: "Pick the most tech-comfortable tech, install a voice-quote app on his phone, do 2 real-world quotes with it." },
+      ],
     },
   },
 

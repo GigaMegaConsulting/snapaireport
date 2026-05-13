@@ -54,4 +54,17 @@ export interface ReportAnalysis {
     thirtyDays: string[];
     cta: string;
   };
+  /** Concrete time + dollar value of implementing the report's quick wins. */
+  financialImpact?: {
+    /** Hours per week the team would reclaim if all quick wins shipped. */
+    weeklyHoursReclaimed: number;
+    /** Blended hourly rate the calculation assumes (defaults to $100). */
+    hourlyRateAssumption: number;
+    /** Monthly cost of the recommended tools (sum of quickWins + tools). */
+    monthlyToolCost: number;
+    /** Net monthly value: (weeklyHours × 4.33 × rate) − toolCost. */
+    netMonthlySavings: number;
+  };
+  /** Tactical 4-day plan: one specific action per day, just-do-this simple. */
+  quickWinPlan?: Array<{ day: number; action: string }>;
 }

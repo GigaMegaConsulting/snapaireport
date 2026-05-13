@@ -476,10 +476,46 @@ export function ReportPDF({ analysis, clientName }: ReportPDFProps) {
         <Footer />
       </Page>
 
-      {/* Next Steps */}
+      {/* Financial Impact + 4-day plan + Next Steps */}
       <Page size="LETTER" style={styles.page}>
+        {/* Financial Impact */}
+        {analysis.financialImpact && (
+          <View style={styles.sectionWrap}>
+            <Text style={styles.sectionHeader}>7. Financial Impact</Text>
+            <View style={styles.sectionAccent} />
+            <View style={{ borderColor: COLORS.accent, borderWidth: 1, padding: 14, marginBottom: 8 }}>
+              <Text style={{ color: COLORS.muted, fontSize: 8, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 4 }}>
+                Net monthly value
+              </Text>
+              <Text style={{ color: COLORS.text, fontSize: 36, marginBottom: 6 }}>
+                ${analysis.financialImpact.netMonthlySavings.toLocaleString('en-US')}
+              </Text>
+              <Text style={{ color: COLORS.muted, fontSize: 9, lineHeight: 1.5 }}>
+                ({analysis.financialImpact.weeklyHoursReclaimed} h/week reclaimed × 4.33 × ${analysis.financialImpact.hourlyRateAssumption}/hr)
+                − ${analysis.financialImpact.monthlyToolCost}/mo tool cost
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* 4-day quick-win plan */}
+        {analysis.quickWinPlan && analysis.quickWinPlan.length > 0 && (
+          <View style={styles.sectionWrap}>
+            <Text style={styles.sectionHeader}>8. 4-Day Quick-Win Plan</Text>
+            <View style={styles.sectionAccent} />
+            {analysis.quickWinPlan.map((d) => (
+              <View key={d.day} style={{ flexDirection: 'row', marginBottom: 8 }}>
+                <Text style={{ width: 60, fontSize: 11, color: COLORS.accent, fontWeight: 700 }}>
+                  Day {d.day}
+                </Text>
+                <Text style={{ flex: 1, fontSize: 10, color: COLORS.text, lineHeight: 1.5 }}>{d.action}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
         <View style={styles.sectionWrap}>
-          <Text style={styles.sectionHeader}>7. Next Steps</Text>
+          <Text style={styles.sectionHeader}>9. Next Steps</Text>
           <View style={styles.sectionAccent} />
 
           <View style={styles.nextStepsBlock}>
