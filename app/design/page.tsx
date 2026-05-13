@@ -108,6 +108,7 @@ export default function DesignSystem() {
                   ["06", "Voice & tone"],
                   ["07", "Imagery rules"],
                   ["08", "Don'ts"],
+                  ["09", "Languages (EN/FR)"],
                 ].map(([n, t]) => (
                   <li key={n}>
                     <a href={`#s${n}`} className="flex items-baseline gap-3 text-ink-2 hover:text-ink transition">
@@ -498,6 +499,69 @@ export default function DesignSystem() {
               </div>
             ))}
           </div>
+        </Section>
+
+        {/* ── § 09 Languages ──────────────────────────────────────── */}
+        <Section id="s09" number="09" title="Languages — English & French">
+          <p className="text-ink-2 leading-relaxed mb-8 max-w-2xl">
+            The visitor-facing site ships in two languages. Default is English at
+            <span className="mono mx-1">/en</span> and French at
+            <span className="mono mx-1">/fr</span>. Middleware auto-redirects
+            visitors based on their browser&apos;s Accept-Language header. The
+            EN/FR toggle in the header and footer preserves the current path.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-px bg-rule border border-rule mb-10">
+            <div className="bg-paper p-6">
+              <div className="eyebrow mb-3">Source of truth</div>
+              <p className="text-[14px] leading-relaxed mb-3">
+                All copy lives in two parallel files. Both must stay in sync —
+                if you add a key to one, add it to the other.
+              </p>
+              <div className="mono text-[12px] text-ink-2 leading-loose">
+                <div>messages/en.ts</div>
+                <div>messages/fr.ts</div>
+              </div>
+            </div>
+            <div className="bg-paper p-6">
+              <div className="eyebrow mb-3">Routes</div>
+              <ul className="mono text-[12px] text-ink-2 space-y-1.5">
+                <li>/en, /en/assessment, /en/sample</li>
+                <li>/fr, /fr/assessment, /fr/sample</li>
+                <li>/design — internal, English-only (noindex)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="eyebrow mb-4">French tone rules</div>
+          <div className="border border-rule">
+            {[
+              { do_: '« courriel » for email', dont: '« e-mail » or « courriel électronique »' },
+              { do_: 'Sentence-case headings, same as English', dont: 'Title Case Like English' },
+              { do_: 'Quebec usage where natural ("PME", "infolettre")', dont: 'France-specific phrasing if a QC alternative exists' },
+              { do_: 'Keep brand and product names in English ("SnapReport", "Quick Wins" → can become "Gains rapides")', dont: 'Translate brand names ("RapportRapide")' },
+              { do_: 'Em-dash spacing French-style: word — word', dont: 'No spaces: word—word' },
+              { do_: 'Numbers with non-breaking spaces: 1 500 $, 10 000 $', dont: '$1,500 (US-formatted)' },
+            ].map((v, i, arr) => (
+              <div key={i} className={`grid grid-cols-2 ${i < arr.length - 1 ? "border-b border-rule" : ""}`}>
+                <div className="p-4 border-r border-rule text-[14px] leading-relaxed">
+                  <span className="serif italic text-ink-3 mr-2">✓</span>
+                  {v.do_}
+                </div>
+                <div className="p-4 text-[14px] leading-relaxed text-ink-2">
+                  <span className="serif italic text-stamp mr-2">×</span>
+                  {v.dont}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-8 text-[13px] text-ink-2 italic leading-relaxed max-w-2xl">
+            For ads and social posts, produce both EN and FR variants. Don&apos;t
+            mix languages in the same composition (one or the other). The
+            specimen sample (Acme Plumbing) is translated in both directions —
+            use it as a tone reference.
+          </p>
         </Section>
 
         {/* ── Footer ─────────────────────────────────────────────── */}
