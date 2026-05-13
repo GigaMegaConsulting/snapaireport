@@ -52,6 +52,7 @@ interface StepField {
 }
 
 interface Step {
+  number: string;
   title: string;
   subtitle?: string;
   fields: StepField[];
@@ -59,14 +60,16 @@ interface Step {
 
 const STEPS: Step[] = [
   {
+    number: "00",
     title: "Where should we send your report?",
-    subtitle: "We'll email your custom SnapReport once it's ready. Takes about 5 minutes — no calls, no follow-up sales.",
+    subtitle: "We'll email your custom AI Report once it's ready. Takes about 5 minutes — no calls, no follow-up sales.",
     fields: [
       { key: "email", label: "Your email", type: "email", placeholder: "you@yourbusiness.com", required: true },
       { key: "fullName", label: "Your name", type: "text", placeholder: "Jane Smith", required: true },
     ],
   },
   {
+    number: "01",
     title: "Tell us about your business",
     fields: [
       { key: "businessName", label: "Business name", type: "text", placeholder: "Acme Plumbing", required: true },
@@ -82,6 +85,7 @@ const STEPS: Step[] = [
     ],
   },
   {
+    number: "02",
     title: "Your team",
     fields: [
       { key: "teamSize", label: "How many people work in the business?", type: "text", placeholder: "12 (including 2 owners)", required: true },
@@ -95,13 +99,14 @@ const STEPS: Step[] = [
     ],
   },
   {
+    number: "03",
     title: "How the work flows",
     subtitle: "Walk us through a typical customer journey.",
     fields: [
       {
         key: "operationsWalkthrough",
         label: "From the moment a customer reaches out to when you deliver — what happens?",
-        helper: "Just stream-of-consciousness is fine. The more detail, the better the report.",
+        helper: "Stream-of-consciousness is fine. More detail → better report.",
         type: "textarea",
         placeholder: "Customer calls or fills out our website form → we schedule a quote visit → quote → job booked → tech dispatched → invoice sent → follow-up...",
         required: true,
@@ -117,6 +122,7 @@ const STEPS: Step[] = [
     ],
   },
   {
+    number: "04",
     title: "Customers and bottlenecks",
     fields: [
       {
@@ -129,14 +135,15 @@ const STEPS: Step[] = [
       {
         key: "bottlenecks",
         label: "What slows you down? Where do you lose the most time?",
-        helper: "Be specific — the bottlenecks are where AI usually pays off the most.",
+        helper: "Be specific — bottlenecks are where AI usually pays off the most.",
         type: "textarea",
-        placeholder: "Following up on quotes takes hours, billing reconciliation, answering the same customer questions...",
+        placeholder: "Following up on quotes, billing reconciliation, answering the same customer questions...",
         required: true,
       },
     ],
   },
   {
+    number: "05",
     title: "AI experience and goals",
     fields: [
       {
@@ -150,7 +157,7 @@ const STEPS: Step[] = [
       {
         key: "techComfortScore",
         label: "How comfortable is your team with new technology?",
-        helper: "1 = phobic, 10 = early adopters",
+        helper: "1 = phobic · 10 = early adopters",
         type: "slider",
         min: 1,
         max: 10,
@@ -212,7 +219,6 @@ export default function AssessmentPage() {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    // Submit
     setSubmitting(true);
     try {
       const res = await fetch("/api/submit-assessment", {
@@ -239,72 +245,96 @@ export default function AssessmentPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-6 py-20">
-        <div className="max-w-xl w-full bg-slate-800/50 border border-slate-700 rounded-2xl p-10 text-center">
-          <div className="text-6xl mb-6">✅</div>
-          <h1 className="text-3xl font-bold text-white mb-4">You&apos;re all set, {answers.fullName.split(" ")[0] || "there"}.</h1>
-          <p className="text-lg text-slate-300 mb-2">
-            Your SnapReport is being generated right now.
-          </p>
-          <p className="text-slate-400 mb-8">
-            Check <span className="text-blue-300 font-medium">{answers.email}</span> in the next few minutes — the report
-            will land in your inbox with your AI Readiness Score, top quick wins, and tool recommendations specific to{" "}
-            {answers.businessName || "your business"}.
-          </p>
-          <div className="bg-slate-900/60 border border-slate-700 rounded-lg p-4 text-left text-sm text-slate-400 mb-8">
-            <p className="font-semibold text-slate-200 mb-2">What happens next:</p>
-            <ul className="space-y-1.5">
-              <li>1. We analyze your answers with Claude AI</li>
-              <li>2. We generate your personalized SnapReport (PDF)</li>
-              <li>3. It lands in your inbox — usually within 5 minutes</li>
-              <li>4. Optional: book a 30-min review call to plan implementation</li>
-            </ul>
-          </div>
-          <Link
-            href="/"
-            className="text-blue-400 hover:text-blue-300 transition text-sm"
-          >
-            ← Back to home
-          </Link>
+      <div className="min-h-screen bg-paper text-ink relative">
+        <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
+        <div className="relative z-10">
+          <Header step="DONE" />
+          <main className="mx-auto max-w-2xl px-6 py-24">
+            <div className="eyebrow mb-6 flex items-center gap-3">
+              <span>§ END · CONFIRMED</span>
+              <span className="annotation flex-1" />
+            </div>
+            <h1 className="serif text-6xl md:text-7xl leading-[1] tracking-tight mb-8">
+              You&apos;re all set,{" "}
+              <em>{answers.fullName.split(" ")[0] || "friend"}.</em>
+            </h1>
+            <p className="text-lg text-ink-2 leading-relaxed mb-6">
+              Your AI Report is being generated. Check{" "}
+              <span className="mono text-ink border-b border-ink">{answers.email}</span> in the next few minutes — it will land with your AI Readiness Score, top quick wins, and tool recommendations specific to{" "}
+              <em className="serif">{answers.businessName || "your business"}</em>.
+            </p>
+
+            <div className="mt-12 border border-rule bg-paper-2/60 p-8 tick-frame">
+              <div className="eyebrow mb-4">What happens next</div>
+              <ol className="space-y-3 text-[14px]">
+                {[
+                  ["01", "Claude reads your answers"],
+                  ["02", "Report is drafted and rendered as PDF"],
+                  ["03", "Lands in your inbox — usually under 5 minutes"],
+                  ["04", "Optional: book a 30-min review with Giga"],
+                ].map(([n, t]) => (
+                  <li key={n} className="flex items-start gap-4">
+                    <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 mt-1">
+                      {n}
+                    </span>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <Link href="/" className="mt-12 inline-flex items-center gap-2 mono text-[12px] uppercase tracking-[0.12em] text-ink-2 hover:text-ink transition">
+              ← Back to home
+            </Link>
+          </main>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Header */}
-      <header className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-3xl px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-white">
-            SnapReport
-          </Link>
-          <div className="text-sm text-slate-400">
-            Step {step + 1} of {totalSteps}
+    <div className="min-h-screen bg-paper text-ink relative">
+      <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
+      <div className="relative z-10">
+        <Header step={`${String(step + 1).padStart(2, "0")} / ${String(totalSteps).padStart(2, "0")}`} />
+
+        {/* Progress rail */}
+        <div className="border-b border-rule">
+          <div className="mx-auto max-w-3xl px-6 py-3 flex items-center gap-3">
+            <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
+              § {currentStep.number}
+            </span>
+            <div className="flex-1 h-px bg-rule relative">
+              <div
+                className="absolute inset-y-0 left-0 bg-ink transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
+              {Math.round(progress)}%
+            </span>
           </div>
         </div>
-      </header>
 
-      {/* Progress bar */}
-      <div className="h-1 bg-slate-800">
-        <div
-          className="h-full bg-blue-500 transition-all duration-300"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+        {/* Form body */}
+        <main className="mx-auto max-w-2xl px-6 py-16 md:py-24">
+          <div className="mb-12">
+            <div className="eyebrow mb-4">Section · {currentStep.number}</div>
+            <h1 className="serif text-4xl md:text-5xl leading-[1.05] tracking-tight mb-4">
+              {currentStep.title}
+            </h1>
+            {currentStep.subtitle && (
+              <p className="text-ink-2 leading-relaxed max-w-xl">
+                {currentStep.subtitle}
+              </p>
+            )}
+          </div>
 
-      {/* Form */}
-      <main className="mx-auto max-w-2xl px-6 py-12">
-        <div className="bg-slate-800/40 border border-slate-700 rounded-2xl p-8 md:p-10">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">{currentStep.title}</h1>
-          {currentStep.subtitle && (
-            <p className="text-slate-400 mb-8">{currentStep.subtitle}</p>
-          )}
-
-          <div className="space-y-6 mt-6">
-            {currentStep.fields.map((field) => (
+          <div className="space-y-10">
+            {currentStep.fields.map((field, idx) => (
               <FieldRow
                 key={field.key}
+                index={idx + 1}
                 field={field}
                 value={answers[field.key]}
                 onChange={(v) => updateAnswer(field.key, v)}
@@ -313,17 +343,17 @@ export default function AssessmentPage() {
           </div>
 
           {error && (
-            <div className="mt-6 bg-red-500/10 border border-red-500/30 text-red-300 rounded-lg px-4 py-3 text-sm">
+            <div className="mt-10 border border-stamp bg-paper p-4 text-[13px] text-stamp mono">
               {error}
             </div>
           )}
 
-          <div className="mt-10 flex items-center justify-between gap-4">
+          <div className="mt-16 pt-8 border-t border-rule flex items-center justify-between gap-4">
             <button
               type="button"
               onClick={handleBack}
               disabled={step === 0 || submitting}
-              className="text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition text-sm"
+              className="mono text-[12px] uppercase tracking-[0.12em] text-ink-2 hover:text-ink transition disabled:opacity-30 disabled:cursor-not-allowed"
             >
               ← Back
             </button>
@@ -331,26 +361,59 @@ export default function AssessmentPage() {
               type="button"
               onClick={handleNext}
               disabled={submitting}
-              className="rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed px-6 py-3 text-white font-semibold transition shadow-lg shadow-blue-600/20"
+              className="btn-ink"
             >
-              {submitting ? "Generating your report…" : isLast ? "Generate my SnapReport →" : "Continue →"}
+              {submitting ? (
+                <>
+                  <span>Generating report</span>
+                  <span className="mono text-[11px]">…</span>
+                </>
+              ) : isLast ? (
+                <>
+                  <span>Generate my report</span>
+                  <Arrow />
+                </>
+              ) : (
+                <>
+                  <span>Continue</span>
+                  <Arrow />
+                </>
+              )}
             </button>
           </div>
-        </div>
 
-        <p className="text-center text-xs text-slate-500 mt-6">
-          🔒 Your answers are private. We use them only to generate your report.
-        </p>
-      </main>
+          <p className="mt-8 text-center mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
+            🔒 Private · used only to generate your report
+          </p>
+        </main>
+      </div>
     </div>
   );
 }
 
+function Header({ step }: { step: string }) {
+  return (
+    <header className="border-b border-rule">
+      <div className="mx-auto max-w-3xl px-6 h-14 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3">
+          <Mark />
+          <span className="serif text-xl">SnapReport</span>
+        </Link>
+        <span className="mono text-[10px] tracking-[0.18em] text-ink-2 uppercase">
+          Step {step}
+        </span>
+      </div>
+    </header>
+  );
+}
+
 function FieldRow({
+  index,
   field,
   value,
   onChange,
 }: {
+  index: number;
   field: StepField;
   value: string;
   onChange: (v: string) => void;
@@ -359,11 +422,18 @@ function FieldRow({
 
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-200 mb-2">
-        {field.label}
-        {field.required && <span className="text-red-400 ml-1">*</span>}
-      </label>
-      {field.helper && <p className="text-xs text-slate-500 mb-2">{field.helper}</p>}
+      <div className="flex items-baseline gap-3 mb-3">
+        <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
+          Q{String(index).padStart(2, "0")}
+        </span>
+        <label htmlFor={id} className="serif text-xl leading-tight text-ink">
+          {field.label}
+          {field.required && <span className="text-stamp ml-1">*</span>}
+        </label>
+      </div>
+      {field.helper && (
+        <p className="text-[13px] text-ink-2 mb-3 italic">{field.helper}</p>
+      )}
       {field.type === "textarea" ? (
         <textarea
           id={id}
@@ -371,11 +441,11 @@ function FieldRow({
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
           rows={4}
-          className="w-full bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none rounded-lg px-4 py-3 text-white placeholder:text-slate-600 transition"
+          className="field"
         />
       ) : field.type === "slider" ? (
         <div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <input
               id={id}
               type="range"
@@ -384,13 +454,16 @@ function FieldRow({
               step={1}
               value={value || String(field.min ?? 1)}
               onChange={(e) => onChange(e.target.value)}
-              className="flex-1 accent-blue-500"
+              className="flex-1 accent-ink"
+              style={{ accentColor: "var(--ink)" }}
             />
-            <div className="w-12 text-center text-2xl font-bold text-blue-400">{value || field.min}</div>
+            <span className="serif text-4xl text-ink w-12 text-right">
+              {value || field.min}
+            </span>
           </div>
-          <div className="flex justify-between text-xs text-slate-500 mt-2">
-            <span>1 — phobic</span>
-            <span>10 — early adopters</span>
+          <div className="flex justify-between text-[10px] mono uppercase tracking-[0.12em] text-ink-3 mt-3">
+            <span>1 · phobic</span>
+            <span>10 · early adopter</span>
           </div>
         </div>
       ) : (
@@ -400,9 +473,27 @@ function FieldRow({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
-          className="w-full bg-slate-900/60 border border-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none rounded-lg px-4 py-3 text-white placeholder:text-slate-600 transition"
+          className="field"
         />
       )}
     </div>
+  );
+}
+
+function Mark({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 18 18" fill="none">
+      <rect x="0.5" y="0.5" width="17" height="17" stroke="currentColor" />
+      <path d="M4 13 L9 4 L14 13" stroke="currentColor" strokeWidth="1.5" fill="none" />
+      <circle cx="9" cy="13" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+      <path d="M1 5 H12 M8 1 L12 5 L8 9" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    </svg>
   );
 }

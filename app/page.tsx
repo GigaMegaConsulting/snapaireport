@@ -2,211 +2,361 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Header */}
-      <header className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-          <div className="text-xl font-bold text-white">SnapReport</div>
-          <nav className="flex items-center gap-6">
-            <Link href="#how-it-works" className="text-sm text-slate-300 hover:text-white transition">
-              How It Works
-            </Link>
-            <Link href="#what-you-get" className="text-sm text-slate-300 hover:text-white transition">
-              What You Get
-            </Link>
-            <Link
-              href="/assessment"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 transition"
-            >
-              Start Free Assessment
-            </Link>
-          </nav>
-        </div>
-      </header>
+    <div className="min-h-screen bg-paper text-ink relative">
+      {/* Blueprint grid background, fixed */}
+      <div className="bp-grid pointer-events-none fixed inset-0 opacity-100 z-0" aria-hidden />
 
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 py-20 text-center">
-        <div className="inline-block rounded-full bg-blue-600/10 border border-blue-500/20 px-4 py-1.5 text-sm text-blue-400 mb-6">
-          🚀 First 3 reports are free
-        </div>
-        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-          Find $10K+ in Hidden AI Opportunities in Your Business
-        </h1>
-        <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8 leading-relaxed">
-          Answer 10 questions about your business. Get a tailored AI readiness report by email. Clear, actionable steps to cut costs and save time — without the sales pitch.
-        </p>
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <Link
-            href="/assessment"
-            className="rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/20"
-          >
-            Start Your Free Assessment
-          </Link>
-          <Link
-            href="#how-it-works"
-            className="rounded-lg border border-slate-600 px-8 py-4 text-lg font-semibold text-slate-200 hover:bg-slate-800 transition"
-          >
-            See How It Works
-          </Link>
-        </div>
-        <p className="text-sm text-slate-500 mt-6">⏱ Takes about 5 minutes · 📨 Report emailed within minutes · 🔒 Your answers stay private</p>
-      </section>
+      <div className="relative z-10">
+        {/* ─── Header ──────────────────────────────────────────────── */}
+        <header className="border-b border-rule">
+          <div className="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3">
+              <Mark />
+              <span className="serif text-xl">SnapReport</span>
+              <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
+                v0.1
+              </span>
+            </Link>
+            <nav className="flex items-center gap-7">
+              <a href="#process" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
+                Process
+              </a>
+              <a href="#deliverable" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
+                Deliverable
+              </a>
+              <a href="#pricing" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
+                Pricing
+              </a>
+              <Link href="/assessment" className="btn-ink text-[13px] !py-2 !px-4">
+                Start →
+              </Link>
+            </nav>
+          </div>
+        </header>
 
-      {/* Social Proof */}
-      <section className="mx-auto max-w-6xl px-6 py-12 text-center border-y border-slate-700/50">
-        <p className="text-sm uppercase tracking-wider text-slate-400 mb-6">Built for</p>
-        <div className="flex items-center justify-center gap-12 flex-wrap">
-          {["Service Businesses", "Quebec SMBs", "Tech Consultants", "Marketing Agencies"].map((name) => (
-            <div key={name} className="text-slate-500 font-medium">
-              {name}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="mx-auto max-w-6xl px-6 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">How It Works</h2>
-          <p className="text-lg text-slate-400">Three steps. Zero hassle. Massive clarity.</p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            {
-              step: "1",
-              title: "Answer 10 Questions",
-              desc: "A short web form. About your business, your team, your tools, and where you lose the most time. Takes about 5 minutes.",
-              icon: "✍️",
-            },
-            {
-              step: "2",
-              title: "AI Analyzes Your Answers",
-              desc: "Claude analyzes your responses and identifies AI opportunities, automation wins, and tool recommendations tailored to you.",
-              icon: "🧠",
-            },
-            {
-              step: "3",
-              title: "Report in Your Inbox",
-              desc: "PDF report emailed to you with your AI Readiness Score, top 3 quick wins, strategic opportunities, and next steps.",
-              icon: "📊",
-            },
-          ].map((item) => (
-            <div
-              key={item.step}
-              className="relative bg-slate-800/50 border border-slate-700 rounded-xl p-8 hover:border-blue-500/50 transition"
-            >
-              <div className="absolute -top-4 left-8 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
-                {item.step}
+        {/* ─── Hero ────────────────────────────────────────────────── */}
+        <section className="border-b border-rule">
+          <div className="mx-auto max-w-6xl px-6 py-24 md:py-32 grid md:grid-cols-12 gap-8">
+            <div className="md:col-span-8">
+              <div className="mb-8 flex items-center gap-3">
+                <span className="eyebrow">§ 00 · INTAKE</span>
+                <span className="annotation flex-1" />
+                <span className="mono text-[10px] text-ink-3 uppercase tracking-[0.12em]">
+                  est. 5 min
+                </span>
               </div>
-              <div className="text-4xl mb-4">{item.icon}</div>
-              <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-              <p className="text-slate-400 leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
-      {/* What You Get */}
-      <section id="what-you-get" className="mx-auto max-w-6xl px-6 py-20 bg-slate-800/30 rounded-2xl">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">What You Get</h2>
-          <p className="text-lg text-slate-400">A complete AI roadmap tailored to your business</p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-6">
-          {[
-            { icon: "✅", title: "AI Readiness Score", desc: "1–100 score with breakdown across digital foundation, process maturity, team readiness, data quality, and leadership buy-in" },
-            { icon: "🎯", title: "Top 3 Quick Wins", desc: "Low-cost, high-impact automations you can implement in 30 days" },
-            { icon: "🚀", title: "Top 3 Strategic Opportunities", desc: "Bigger plays for 3–6 month horizon (e.g., AI sales agent, content pipeline)" },
-            { icon: "⚠️", title: "Risk Flags", desc: "Blockers that could prevent AI adoption (tech debt, process gaps, team resistance)" },
-            { icon: "🛠️", title: "Recommended Tools", desc: "Specific AI products with pricing, matched to your actual situation" },
-            { icon: "📋", title: "Next Steps", desc: "Clear 30-day action plan with priorities and timelines" },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-4 bg-slate-800/50 border border-slate-700 rounded-lg p-6">
-              <div className="text-3xl flex-shrink-0">{item.icon}</div>
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+              <h1 className="serif text-[64px] md:text-[88px] leading-[0.95] tracking-tight text-ink">
+                Map the AI<br />
+                <em>opportunities</em><br />
+                hiding in your<br />
+                business.
+              </h1>
+
+              <p className="mt-10 max-w-xl text-[17px] leading-[1.55] text-ink-2">
+                Answer 10 questions about how you operate. Claude reads them, finds the highest-leverage AI plays for your specific situation, and emails you a tailored report. No call. No pitch. Just clarity.
+              </p>
+
+              <div className="mt-12 flex flex-wrap items-center gap-4">
+                <Link href="/assessment" className="btn-ink">
+                  <span>Begin assessment</span>
+                  <Arrow />
+                </Link>
+                <a href="#process" className="btn-ghost">See the process</a>
+              </div>
+
+              <div className="mt-10 flex items-center gap-6 mono text-[11px] text-ink-2 uppercase tracking-[0.12em]">
+                <span className="flex items-center gap-2">
+                  <Dot /> 10 questions
+                </span>
+                <span className="flex items-center gap-2">
+                  <Dot /> PDF in inbox
+                </span>
+                <span className="flex items-center gap-2">
+                  <Dot /> Free for first 3
+                </span>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-6xl px-6 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-white mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-lg text-slate-400">No setup fees. No hidden costs. Just clarity.</p>
-        </div>
-        <div className="max-w-md mx-auto">
-          <div className="bg-gradient-to-br from-blue-600 to-blue-700 border-2 border-blue-500 rounded-2xl p-8 text-center relative overflow-hidden">
-            <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
-              LIMITED TIME
+            <div className="md:col-span-4 md:border-l md:border-rule md:pl-8">
+              <div className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 mb-4">
+                Specimen
+              </div>
+              <ReportPreview />
+              <div className="mt-4 flex items-center justify-between mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
+                <span>Fig. 01</span>
+                <span>Output sample</span>
+              </div>
             </div>
-            <h3 className="text-3xl font-bold text-white mb-2">AI Business Report</h3>
-            <div className="text-5xl font-bold text-white mb-6">
-              FREE
-              <span className="text-lg line-through text-blue-200 ml-3">$1,000</span>
+          </div>
+        </section>
+
+        {/* ─── Process ─────────────────────────────────────────────── */}
+        <section id="process" className="border-b border-rule">
+          <div className="mx-auto max-w-6xl px-6 py-24">
+            <div className="grid md:grid-cols-12 gap-8 mb-16">
+              <div className="md:col-span-4">
+                <div className="eyebrow mb-6">§ 01 · METHOD</div>
+                <h2 className="serif text-5xl md:text-6xl leading-[1] tracking-tight">
+                  Three steps,<br />
+                  zero friction.
+                </h2>
+              </div>
+              <div className="md:col-span-7 md:col-start-6 self-end">
+                <p className="text-ink-2 leading-relaxed">
+                  Designed to be done in one sitting on your phone or laptop. No software to install. No prep. No follow-up call required to get value out of it.
+                </p>
+              </div>
             </div>
-            <ul className="text-left text-white space-y-3 mb-8">
+
+            <div className="grid md:grid-cols-3 gap-px bg-rule border border-rule">
               {[
-                "5-minute web form",
-                "Custom AI readiness report (PDF)",
-                "Top 3 quick wins + strategic plays",
-                "Tool recommendations with pricing",
-                "Next steps action plan",
-              ].map((item, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="text-blue-200 flex-shrink-0">✓</span>
-                  <span>{item}</span>
-                </li>
+                {
+                  n: "01",
+                  title: "Answer 10 questions",
+                  desc: "A short web form covers your operations, team, tools, leads, bottlenecks, AI experience, and 12-month goals.",
+                  meta: "≈ 5 minutes",
+                },
+                {
+                  n: "02",
+                  title: "Claude reads them",
+                  desc: "Your answers are analyzed by Claude (Anthropic's frontier model) — pattern-matched against thousands of SMB profiles.",
+                  meta: "≈ 30 seconds",
+                },
+                {
+                  n: "03",
+                  title: "Report in your inbox",
+                  desc: "PDF arrives at the email you provided. Readiness score, three quick wins, three strategic plays, tool stack, next steps.",
+                  meta: "≈ 2 minutes",
+                },
+              ].map((s) => (
+                <div key={s.n} className="bg-paper p-8 relative">
+                  <div className="flex items-baseline justify-between mb-6">
+                    <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
+                      Step
+                    </span>
+                    <span className="serif text-5xl text-ink leading-none">{s.n}</span>
+                  </div>
+                  <h3 className="serif text-2xl mb-3 leading-tight">{s.title}</h3>
+                  <p className="text-[14px] text-ink-2 leading-relaxed mb-6">{s.desc}</p>
+                  <div className="annotation w-full mb-3" />
+                  <span className="mono text-[10px] uppercase tracking-[0.12em] text-ink-2">
+                    {s.meta}
+                  </span>
+                </div>
               ))}
-            </ul>
-            <Link
-              href="/assessment"
-              className="block w-full bg-white text-blue-700 font-bold py-4 rounded-lg hover:bg-blue-50 transition"
-            >
-              Get Your Free Report
-            </Link>
-            <p className="text-blue-100 text-sm mt-4">Only 3 free reports available this month</p>
+            </div>
           </div>
-          <div className="text-center mt-8 text-slate-400 text-sm">
-            After your report, you can optionally hire us to implement the recommendations ($3,000–$5,000).
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Final CTA */}
-      <section className="mx-auto max-w-4xl px-6 py-20">
-        <div className="bg-slate-800 border border-slate-700 rounded-2xl p-10 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Find Your AI Opportunities?</h2>
-          <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
-            10 questions. 5 minutes. A tailored report in your inbox.
-          </p>
-          <Link
-            href="/assessment"
-            className="inline-block rounded-lg bg-blue-600 px-10 py-4 text-lg font-semibold text-white hover:bg-blue-500 transition shadow-lg shadow-blue-600/20"
-          >
-            Start My Free Assessment →
-          </Link>
-          <p className="text-sm text-slate-500 mt-6">Questions? Email us at hello@gigamega.ca</p>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-700/50 bg-slate-900">
-        <div className="mx-auto max-w-6xl px-6 py-8 flex items-center justify-between text-sm text-slate-500">
-          <div>© 2026 SnapReport · Giga Mega Consulting Inc.</div>
-          <div className="flex items-center gap-6">
-            <Link href="mailto:hello@gigamega.ca" className="hover:text-white transition">
-              Contact
-            </Link>
-            <Link href="/privacy" className="hover:text-white transition">
-              Privacy
-            </Link>
+        {/* ─── Deliverable ─────────────────────────────────────────── */}
+        <section id="deliverable" className="border-b border-rule">
+          <div className="mx-auto max-w-6xl px-6 py-24">
+            <div className="grid md:grid-cols-12 gap-8 mb-16">
+              <div className="md:col-span-5">
+                <div className="eyebrow mb-6">§ 02 · DELIVERABLE</div>
+                <h2 className="serif text-5xl md:text-6xl leading-[1] tracking-tight">
+                  What you get,<br /><em>section by section.</em>
+                </h2>
+                <p className="mt-6 text-ink-2 leading-relaxed">
+                  A 6–8 page PDF. Plain language. Specific to your business. Designed to be readable in 10 minutes and acted on in 30 days.
+                </p>
+              </div>
+              <div className="md:col-span-6 md:col-start-7 grid grid-cols-1 sm:grid-cols-2 gap-px bg-rule border border-rule">
+                {[
+                  { tag: "01", title: "AI Readiness Score", desc: "0–100 with breakdown across 5 dimensions." },
+                  { tag: "02", title: "Executive Summary", desc: "Three plain-language bullets — what you'd tell a co-founder." },
+                  { tag: "03", title: "Quick Wins", desc: "Three high-leverage moves you can ship in 30 days." },
+                  { tag: "04", title: "Strategic Plays", desc: "Three bigger bets for the 3–6 month horizon." },
+                  { tag: "05", title: "Risk Flags", desc: "What's likely to block adoption and how to defuse it." },
+                  { tag: "06", title: "Tool Stack", desc: "Specific products with pricing, matched to your situation." },
+                ].map((d) => (
+                  <div key={d.tag} className="bg-paper p-5">
+                    <div className="flex items-baseline gap-2 mb-2">
+                      <span className="mono text-[10px] text-ink-3 tracking-[0.18em]">{d.tag}</span>
+                      <h3 className="serif text-lg leading-tight">{d.title}</h3>
+                    </div>
+                    <p className="text-[13px] text-ink-2 leading-relaxed">{d.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
+        </section>
+
+        {/* ─── Pricing ─────────────────────────────────────────────── */}
+        <section id="pricing" className="border-b border-rule">
+          <div className="mx-auto max-w-6xl px-6 py-24">
+            <div className="grid md:grid-cols-12 gap-8">
+              <div className="md:col-span-4">
+                <div className="eyebrow mb-6">§ 03 · TERMS</div>
+                <h2 className="serif text-5xl md:text-6xl leading-[1] tracking-tight">
+                  Free, for now.
+                </h2>
+                <p className="mt-6 text-ink-2 leading-relaxed">
+                  We're running the first cohort at no cost to build case studies. Reports normally retail at $1,000.
+                </p>
+              </div>
+
+              <div className="md:col-span-7 md:col-start-6 tick-frame border border-ink p-10 relative bg-paper">
+                <div className="absolute -top-4 right-8">
+                  <span className="stamp">First Cohort · Limited</span>
+                </div>
+
+                <div className="flex items-baseline gap-4 mb-2">
+                  <span className="serif text-[80px] leading-none">$0</span>
+                  <span className="serif text-[24px] text-ink-3 italic line-through">$1,000</span>
+                </div>
+                <div className="mono text-[11px] uppercase tracking-[0.12em] text-ink-2 mb-8">
+                  One-time · No subscription · No card required
+                </div>
+
+                <ul className="space-y-3 mb-10">
+                  {[
+                    "Custom AI readiness report (PDF)",
+                    "Top 3 quick wins + 3 strategic plays",
+                    "Tool recommendations with pricing",
+                    "Risk flags and 30-day action plan",
+                    "Delivered to your inbox within minutes",
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-[15px]">
+                      <Check />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link href="/assessment" className="btn-ink w-full justify-center">
+                  <span>Claim your report</span>
+                  <Arrow />
+                </Link>
+                <p className="mt-4 mono text-[10px] uppercase tracking-[0.12em] text-ink-3 text-center">
+                  Implementation services available separately ($3–5K)
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Closing CTA ─────────────────────────────────────────── */}
+        <section className="border-b border-rule">
+          <div className="mx-auto max-w-6xl px-6 py-32 text-center">
+            <div className="eyebrow mb-6 justify-center flex">// END OF PROSPECTUS</div>
+            <h2 className="serif text-5xl md:text-7xl leading-[1] tracking-tight max-w-3xl mx-auto">
+              Ten questions stand between you and a tailored AI roadmap.
+            </h2>
+            <div className="mt-12 flex items-center justify-center gap-4">
+              <Link href="/assessment" className="btn-ink text-[15px] !py-4 !px-6">
+                <span>Begin assessment</span>
+                <Arrow />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Footer ──────────────────────────────────────────────── */}
+        <footer>
+          <div className="mx-auto max-w-6xl px-6 py-8 flex items-center justify-between text-[12px] text-ink-2">
+            <div className="flex items-center gap-3">
+              <Mark size={14} />
+              <span className="mono">SnapReport</span>
+              <span className="mono text-ink-3">·</span>
+              <span className="mono text-ink-3">Giga Mega Consulting Inc.</span>
+            </div>
+            <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em]">
+              <a href="mailto:hello@gigamega.ca" className="hover:text-ink transition">
+                hello@gigamega.ca
+              </a>
+              <span className="text-ink-3">v0.1 · 2026</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Inline icons / marks ──────────────────────────────────────── */
+
+function Mark({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 18 18" fill="none">
+      <rect x="0.5" y="0.5" width="17" height="17" stroke="currentColor" />
+      <path d="M4 13 L9 4 L14 13" stroke="currentColor" strokeWidth="1.5" fill="none" />
+      <circle cx="9" cy="13" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function Arrow() {
+  return (
+    <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+      <path d="M1 5 H12 M8 1 L12 5 L8 9" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    </svg>
+  );
+}
+
+function Dot() {
+  return (
+    <svg width="6" height="6" viewBox="0 0 6 6">
+      <circle cx="3" cy="3" r="3" fill="currentColor" />
+    </svg>
+  );
+}
+
+function Check() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-0.5 flex-shrink-0">
+      <path d="M3 8 L7 12 L13 4" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    </svg>
+  );
+}
+
+/* ─── Sample report preview (for the hero specimen) ──────────────── */
+
+function ReportPreview() {
+  return (
+    <div className="border border-rule-strong bg-paper-2 p-5 shadow-sm">
+      <div className="flex items-baseline justify-between mb-3 pb-2 border-b border-rule">
+        <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+          SnapReport · 2026.05
+        </span>
+        <span className="mono text-[9px] text-ink-3">PG 01 / 07</span>
+      </div>
+      <div className="serif text-[15px] leading-tight mb-2">
+        AI Readiness Report
+      </div>
+      <div className="mono text-[10px] text-ink-2 uppercase tracking-[0.12em] mb-4">
+        Acme Plumbing · Montreal QC
+      </div>
+
+      <div className="mb-4">
+        <div className="flex items-baseline justify-between mb-1">
+          <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">Score</span>
+          <span className="serif text-2xl leading-none">68<span className="text-ink-3 text-base">/100</span></span>
         </div>
-      </footer>
+        <div className="h-1 bg-rule">
+          <div className="h-full bg-ink" style={{ width: "68%" }} />
+        </div>
+      </div>
+
+      <div className="space-y-2.5">
+        {[
+          { tag: "QW.01", label: "AI receptionist for after-hours calls" },
+          { tag: "QW.02", label: "Auto-generate quote PDFs from intake" },
+          { tag: "SP.01", label: "Predictive scheduling from past jobs" },
+        ].map((r) => (
+          <div key={r.tag} className="flex items-baseline gap-2 text-[11px]">
+            <span className="mono text-ink-3 text-[9px] uppercase tracking-[0.1em]">{r.tag}</span>
+            <span className="text-ink leading-tight">{r.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 pt-3 border-t border-rule mono text-[9px] uppercase tracking-[0.18em] text-ink-3 flex items-center justify-between">
+        <span>↳ continued · pg 02</span>
+        <span>SR/v0.1</span>
+      </div>
     </div>
   );
 }

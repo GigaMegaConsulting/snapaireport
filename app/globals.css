@@ -1,26 +1,200 @@
 @import "tailwindcss";
 
+/* ─── Theme tokens ──────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #faf8f1;
+  --paper-2: #f3f0e6;
+  --ink: #0a0a0a;
+  --ink-2: #525252;
+  --ink-3: #a3a3a3;
+  --rule: rgba(10, 10, 10, 0.12);
+  --rule-strong: rgba(10, 10, 10, 0.28);
+  --blueprint: #0040ff;
+  --stamp: #bf2127;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-blueprint: var(--blueprint);
+  --color-stamp: var(--stamp);
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-serif), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ──────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Dot-grid blueprint background, fixed so it doesn't scroll */
+.bp-grid {
+  background-image: radial-gradient(circle, rgba(10, 10, 10, 0.09) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0;
+}
+
+.bp-grid-fine {
+  background-image: radial-gradient(circle, rgba(10, 10, 10, 0.06) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+/* Hairline rule */
+.rule {
+  border-color: var(--rule);
+}
+.rule-strong {
+  border-color: var(--rule-strong);
+}
+
+/* Dashed annotation line */
+.annotation {
+  background-image: linear-gradient(to right, var(--rule-strong) 50%, transparent 50%);
+  background-size: 6px 1px;
+  background-repeat: repeat-x;
+  background-position: 0 50%;
+  height: 1px;
+}
+
+/* Typography helpers */
+.serif {
+  font-family: var(--font-serif);
+  font-feature-settings: "ss01";
+  letter-spacing: -0.02em;
+}
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "ss02", "zero";
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* Form inputs */
+.field {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule-strong);
+  padding: 14px 0 10px;
+  width: 100%;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.field::placeholder {
+  color: var(--ink-3);
+  font-style: italic;
+}
+.field:focus {
+  border-color: var(--blueprint);
+}
+
+textarea.field {
+  resize: vertical;
+  min-height: 96px;
+  font-size: 18px;
+  font-family: var(--font-sans);
+  line-height: 1.55;
+}
+
+/* Button styles */
+.btn-ink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 22px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid var(--ink);
+  transition: all 0.15s ease;
+}
+.btn-ink:hover {
+  background: var(--blueprint);
+  border-color: var(--blueprint);
+}
+.btn-ink:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid var(--rule-strong);
+  transition: all 0.15s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--ink);
+}
+
+/* Corner ticks (the small "L" marks at corners) */
+.tick-frame {
+  position: relative;
+}
+.tick-frame::before,
+.tick-frame::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--ink);
+}
+.tick-frame::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.tick-frame::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* Stamp */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border: 1.5px solid var(--stamp);
+  color: var(--stamp);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
 }
