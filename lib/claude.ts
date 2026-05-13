@@ -1,5 +1,11 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { ReportAnalysis } from '@/types/report';
+import type { Locale } from '@/lib/i18n';
+
+const LANGUAGE_DIRECTIVES: Record<Locale, string> = {
+  en: 'Write all output in English.',
+  fr: 'Écris toutes les sorties en français (français du Québec : utilise « courriel » plutôt que « email », évite les anglicismes). Toutes les valeurs textuelles du JSON doivent être en français — titres, descriptions, recommandations, étapes suivantes. Conserve les noms de marques et les chaînes structurelles (« low | medium | high », « QW.01 », etc.) en anglais.',
+};
 
 const SYSTEM_PROMPT = `You are an expert AI business consultant with deep experience helping small and medium businesses identify AI automation opportunities. You analyze transcripts of business discovery calls and produce structured AI readiness assessments.
 
@@ -71,21 +77,25 @@ Return ONLY valid JSON — no markdown, no explanation, no preamble. Use this ex
   }
 }`;
 
-export async function analyzeTranscript(transcript: string): Promise<ReportAnalysis> {
+export async function analyzeTranscript(
+  transcript: string,
+  locale: Locale = 'en',
+): Promise<ReportAnalysis> {
   if (!process.env.ANTHROPIC_API_KEY) {
     throw new Error('ANTHROPIC_API_KEY not configured');
   }
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const languageDirective = LANGUAGE_DIRECTIVES[locale];
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 4096,
-    system: SYSTEM_PROMPT,
+    system: `${SYSTEM_PROMPT}\n\n${languageDirective}`,
     messages: [
       {
         role: 'user',
-        content: `Here is the discovery call transcript:\n\n${transcript}\n\nGenerate the AI readiness assessment JSON now.`,
+        content: `Here is the discovery call transcript:\n\n${transcript}\n\n${languageDirective}\n\nGenerate the AI readiness assessment JSON now.`,
       },
     ],
   });

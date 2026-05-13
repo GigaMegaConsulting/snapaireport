@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import type { Messages, Locale } from "@/lib/i18n";
 
 type AnswerKey =
   | "email"
@@ -40,150 +41,16 @@ const INITIAL_ANSWERS: Answers = {
   automationWish: "",
 };
 
-interface StepField {
-  key: AnswerKey;
-  label: string;
-  helper?: string;
-  type: "email" | "text" | "textarea" | "slider";
-  placeholder?: string;
-  required?: boolean;
-  min?: number;
-  max?: number;
-}
-
-interface Step {
-  number: string;
-  title: string;
-  subtitle?: string;
-  fields: StepField[];
-}
-
-const STEPS: Step[] = [
-  {
-    number: "00",
-    title: "Where should we send your report?",
-    subtitle: "We'll email your custom AI Report once it's ready. Takes about 5 minutes — no calls, no follow-up sales.",
-    fields: [
-      { key: "email", label: "Your email", type: "email", placeholder: "you@yourbusiness.com", required: true },
-      { key: "fullName", label: "Your name", helper: "Optional — we'll address the report to you if you give one.", type: "text", placeholder: "Jane Smith", required: false },
-    ],
-  },
-  {
-    number: "01",
-    title: "Tell us about your business",
-    fields: [
-      { key: "businessName", label: "Business name", type: "text", placeholder: "Acme Plumbing", required: true },
-      {
-        key: "businessDescription",
-        label: "What does your business do?",
-        helper: "One or two sentences. Plain language.",
-        type: "textarea",
-        placeholder: "We're a residential plumbing company serving the Greater Montreal area...",
-        required: true,
-      },
-      { key: "yearsOperating", label: "How long have you been operating?", type: "text", placeholder: "8 years", required: true },
-    ],
-  },
-  {
-    number: "02",
-    title: "Your team",
-    fields: [
-      { key: "teamSize", label: "How many people work in the business?", type: "text", placeholder: "12 (including 2 owners)", required: true },
-      {
-        key: "teamLocation",
-        label: "Are they local, remote, or both?",
-        type: "text",
-        placeholder: "Mostly local — office staff on site, field techs in the field",
-        required: true,
-      },
-    ],
-  },
-  {
-    number: "03",
-    title: "How the work flows",
-    subtitle: "Walk us through a typical customer journey.",
-    fields: [
-      {
-        key: "operationsWalkthrough",
-        label: "From the moment a customer reaches out to when you deliver — what happens?",
-        helper: "Stream-of-consciousness is fine. More detail → better report.",
-        type: "textarea",
-        placeholder: "Customer calls or fills out our website form → we schedule a quote visit → quote → job booked → tech dispatched → invoice sent → follow-up...",
-        required: true,
-      },
-      {
-        key: "toolsInUse",
-        label: "What software does your team use day-to-day?",
-        helper: "CRM, scheduling, email, billing, anything else.",
-        type: "textarea",
-        placeholder: "QuickBooks for billing, Google Workspace for email, Jobber for scheduling, Excel for tracking...",
-        required: true,
-      },
-    ],
-  },
-  {
-    number: "04",
-    title: "Customers and bottlenecks",
-    fields: [
-      {
-        key: "leadSources",
-        label: "Where do most of your customers come from right now?",
-        type: "textarea",
-        placeholder: "About 60% word of mouth, 30% Google search, 10% Facebook ads...",
-        required: true,
-      },
-      {
-        key: "bottlenecks",
-        label: "What slows you down? Where do you lose the most time?",
-        helper: "Be specific — bottlenecks are where AI usually pays off the most.",
-        type: "textarea",
-        placeholder: "Following up on quotes, billing reconciliation, answering the same customer questions...",
-        required: true,
-      },
-    ],
-  },
-  {
-    number: "05",
-    title: "AI experience and goals",
-    fields: [
-      {
-        key: "priorAiExperience",
-        label: "Have you tried AI or automation before? What happened?",
-        helper: "If not, just say 'none' — that's useful info too.",
-        type: "textarea",
-        placeholder: "We tried ChatGPT for marketing copy, it was okay but inconsistent. Never tried real automation.",
-        required: true,
-      },
-      {
-        key: "techComfortScore",
-        label: "How comfortable is your team with new technology?",
-        helper: "1 = phobic · 10 = early adopters",
-        type: "slider",
-        min: 1,
-        max: 10,
-        required: true,
-      },
-      {
-        key: "twelveMonthGoals",
-        label: "What does success look like for you in the next 12 months?",
-        type: "textarea",
-        placeholder: "Hit $1.5M in revenue, hire 2 more techs, less time chasing paperwork...",
-        required: true,
-      },
-      {
-        key: "automationWish",
-        label: "If you could automate one thing tomorrow, what would it be?",
-        type: "textarea",
-        placeholder: "All the back-and-forth scheduling emails with customers.",
-        required: true,
-      },
-    ],
-  },
-];
-
 type FieldErrors = Partial<Record<AnswerKey, string>>;
 
-export default function AssessmentPage() {
+export function AssessmentForm({
+  locale,
+  t,
+}: {
+  locale: Locale;
+  t: Messages;
+}) {
+  const STEPS = t.form.steps;
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(INITIAL_ANSWERS);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -198,7 +65,6 @@ export default function AssessmentPage() {
 
   function updateAnswer(key: AnswerKey, value: string) {
     setAnswers((prev) => ({ ...prev, [key]: value }));
-    // Clear the error on this field as soon as the user touches it
     setFieldErrors((prev) => {
       if (!prev[key]) return prev;
       const next = { ...prev };
@@ -211,13 +77,13 @@ export default function AssessmentPage() {
     const errs: FieldErrors = {};
     for (const field of currentStep.fields) {
       if (!field.required) continue;
-      const v = answers[field.key]?.trim() ?? "";
+      const v = answers[field.key as AnswerKey]?.trim() ?? "";
       if (field.type === "email") {
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
-          errs[field.key] = v.length === 0 ? "Required" : "Enter a valid email address";
+          errs[field.key as AnswerKey] = v.length === 0 ? t.form.errors.required : t.form.errors.invalidEmail;
         }
       } else if (v.length === 0) {
-        errs[field.key] = "Required";
+        errs[field.key as AnswerKey] = t.form.errors.required;
       }
     }
     return errs;
@@ -228,7 +94,7 @@ export default function AssessmentPage() {
     const errs = validateStep();
     if (Object.keys(errs).length > 0) {
       setFieldErrors(errs);
-      setError("Please fill in the highlighted fields before continuing.");
+      setError(t.form.errors.stepInvalid);
       return;
     }
     setFieldErrors({});
@@ -242,7 +108,7 @@ export default function AssessmentPage() {
       const res = await fetch("/api/submit-assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(answers),
+        body: JSON.stringify({ ...answers, locale }),
       });
       if (!res.ok) {
         const text = await res.text();
@@ -250,7 +116,7 @@ export default function AssessmentPage() {
       }
       setSubmitted(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : t.form.errors.submitFailed);
     } finally {
       setSubmitting(false);
     }
@@ -263,47 +129,44 @@ export default function AssessmentPage() {
   }
 
   if (submitted) {
+    const firstName = answers.fullName.split(" ")[0] || t.form.success.fallbackName;
     return (
       <div className="min-h-screen bg-paper text-ink relative">
         <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
         <div className="relative z-10">
-          <Header step="DONE" />
+          <FormHeader locale={locale} t={t} stepLabel="DONE" />
           <main className="mx-auto max-w-2xl px-6 py-24">
             <div className="eyebrow mb-6 flex items-center gap-3">
-              <span>§ END · CONFIRMED</span>
+              <span>{t.form.success.eyebrow}</span>
               <span className="annotation flex-1" />
             </div>
             <h1 className="serif text-6xl md:text-7xl leading-[1] tracking-tight mb-8">
-              You&apos;re all set,{" "}
-              <em>{answers.fullName.split(" ")[0] || "friend"}.</em>
+              {t.form.success.headlinePrefix}{" "}
+              <em>{firstName}.</em>
             </h1>
             <p className="text-lg text-ink-2 leading-relaxed mb-6">
-              Your AI Report is being generated. Check{" "}
-              <span className="mono text-ink border-b border-ink">{answers.email}</span> in the next few minutes — it will land with your AI Readiness Score, top quick wins, and tool recommendations specific to{" "}
-              <em className="serif">{answers.businessName || "your business"}</em>.
+              {t.form.success.bodyPrefix}{" "}
+              <span className="mono text-ink border-b border-ink">{answers.email}</span>{" "}
+              {t.form.success.bodySuffix}{" "}
+              <em className="serif">{answers.businessName || t.form.success.fallbackBusiness}</em>.
             </p>
 
             <div className="mt-12 border border-rule bg-paper-2/60 p-8 tick-frame">
-              <div className="eyebrow mb-4">What happens next</div>
+              <div className="eyebrow mb-4">{t.form.success.nextHeader}</div>
               <ol className="space-y-3 text-[14px]">
-                {[
-                  ["01", "Claude reads your answers"],
-                  ["02", "Report is drafted and rendered as PDF"],
-                  ["03", "Lands in your inbox — usually under 5 minutes"],
-                  ["04", "Optional: book a 30-min review with Giga"],
-                ].map(([n, t]) => (
-                  <li key={n} className="flex items-start gap-4">
+                {t.form.success.nextSteps.map((step, i) => (
+                  <li key={i} className="flex items-start gap-4">
                     <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 mt-1">
-                      {n}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span>{t}</span>
+                    <span>{step}</span>
                   </li>
                 ))}
               </ol>
             </div>
 
-            <Link href="/" className="mt-12 inline-flex items-center gap-2 mono text-[12px] uppercase tracking-[0.12em] text-ink-2 hover:text-ink transition">
-              ← Back to home
+            <Link href={`/${locale}`} className="mt-12 inline-flex items-center gap-2 mono text-[12px] uppercase tracking-[0.12em] text-ink-2 hover:text-ink transition">
+              ← {t.common.cta.backToHome}
             </Link>
           </main>
         </div>
@@ -315,9 +178,12 @@ export default function AssessmentPage() {
     <div className="min-h-screen bg-paper text-ink relative">
       <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
       <div className="relative z-10">
-        <Header step={`${String(step + 1).padStart(2, "0")} / ${String(totalSteps).padStart(2, "0")}`} />
+        <FormHeader
+          locale={locale}
+          t={t}
+          stepLabel={`${String(step + 1).padStart(2, "0")} / ${String(totalSteps).padStart(2, "0")}`}
+        />
 
-        {/* Progress rail */}
         <div className="border-b border-rule">
           <div className="mx-auto max-w-3xl px-6 py-3 flex items-center gap-3">
             <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
@@ -335,17 +201,14 @@ export default function AssessmentPage() {
           </div>
         </div>
 
-        {/* Form body */}
         <main className="mx-auto max-w-2xl px-6 py-16 md:py-24">
           <div className="mb-12">
-            <div className="eyebrow mb-4">Section · {currentStep.number}</div>
+            <div className="eyebrow mb-4">{t.form.sectionPrefix} · {currentStep.number}</div>
             <h1 className="serif text-4xl md:text-5xl leading-[1.05] tracking-tight mb-4">
               {currentStep.title}
             </h1>
             {currentStep.subtitle && (
-              <p className="text-ink-2 leading-relaxed max-w-xl">
-                {currentStep.subtitle}
-              </p>
+              <p className="text-ink-2 leading-relaxed max-w-xl">{currentStep.subtitle}</p>
             )}
           </div>
 
@@ -355,9 +218,10 @@ export default function AssessmentPage() {
                 key={field.key}
                 index={idx + 1}
                 field={field}
-                value={answers[field.key]}
-                error={fieldErrors[field.key]}
-                onChange={(v) => updateAnswer(field.key, v)}
+                value={answers[field.key as AnswerKey]}
+                error={fieldErrors[field.key as AnswerKey]}
+                onChange={(v) => updateAnswer(field.key as AnswerKey, v)}
+                t={t}
               />
             ))}
           </div>
@@ -375,7 +239,7 @@ export default function AssessmentPage() {
               disabled={step === 0 || submitting}
               className="mono text-[12px] uppercase tracking-[0.12em] text-ink-2 hover:text-ink transition disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              ← Back
+              {t.form.actions.back}
             </button>
             <button
               type="button"
@@ -385,17 +249,17 @@ export default function AssessmentPage() {
             >
               {submitting ? (
                 <>
-                  <span>Generating report</span>
+                  <span>{t.form.actions.generating}</span>
                   <span className="mono text-[11px]">…</span>
                 </>
               ) : isLast ? (
                 <>
-                  <span>Generate my report</span>
+                  <span>{t.form.actions.generate}</span>
                   <Arrow />
                 </>
               ) : (
                 <>
-                  <span>Continue</span>
+                  <span>{t.form.actions.continue}</span>
                   <Arrow />
                 </>
               )}
@@ -403,7 +267,7 @@ export default function AssessmentPage() {
           </div>
 
           <p className="mt-8 text-center mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
-            🔒 Private · used only to generate your report
+            {t.common.misc.privateNote}
           </p>
         </main>
       </div>
@@ -411,16 +275,24 @@ export default function AssessmentPage() {
   );
 }
 
-function Header({ step }: { step: string }) {
+function FormHeader({
+  locale,
+  t,
+  stepLabel,
+}: {
+  locale: Locale;
+  t: Messages;
+  stepLabel: string;
+}) {
   return (
     <header className="border-b border-rule">
       <div className="mx-auto max-w-3xl px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href={`/${locale}`} className="flex items-center gap-3">
           <Mark />
-          <span className="serif text-xl">SnapReport</span>
+          <span className="serif text-xl">{t.common.brand}</span>
         </Link>
         <span className="mono text-[10px] tracking-[0.18em] text-ink-2 uppercase">
-          Step {step}
+          {t.common.misc.step} {stepLabel}
         </span>
       </div>
     </header>
@@ -433,12 +305,14 @@ function FieldRow({
   value,
   error,
   onChange,
+  t,
 }: {
   index: number;
-  field: StepField;
+  field: Messages["form"]["steps"][number]["fields"][number];
   value: string;
   error?: string;
   onChange: (v: string) => void;
+  t: Messages;
 }) {
   const id = `field-${field.key}`;
   const fieldClass = error ? "field field-error" : "field";
@@ -455,7 +329,7 @@ function FieldRow({
           {field.required && <span className="text-stamp ml-1">*</span>}
           {!field.required && (
             <span className="ml-2 mono text-[10px] uppercase tracking-[0.12em] text-ink-3 align-middle">
-              optional
+              {t.form.optionalTag}
             </span>
           )}
         </label>
@@ -480,21 +354,21 @@ function FieldRow({
             <input
               id={id}
               type="range"
-              min={field.min ?? 1}
-              max={field.max ?? 10}
+              min={1}
+              max={10}
               step={1}
-              value={value || String(field.min ?? 1)}
+              value={value || "1"}
               onChange={(e) => onChange(e.target.value)}
               className="flex-1"
               style={{ accentColor: "var(--ink)" }}
             />
             <span className="serif text-4xl text-ink w-12 text-right">
-              {value || field.min}
+              {value || 1}
             </span>
           </div>
           <div className="flex justify-between text-[10px] mono uppercase tracking-[0.12em] text-ink-3 mt-3">
-            <span>1 · phobic</span>
-            <span>10 · early adopter</span>
+            <span>{t.form.sliderLow}</span>
+            <span>{t.form.sliderHigh}</span>
           </div>
         </div>
       ) : (

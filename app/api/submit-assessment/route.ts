@@ -3,6 +3,7 @@ import { analyzeTranscript } from "@/lib/claude";
 import { createAssessment, updateAssessment } from "@/lib/storage";
 import { generatePDF } from "@/lib/pdf";
 import { sendReportEmail } from "@/lib/email";
+import { isLocale, type Locale } from "@/lib/i18n";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -23,6 +24,7 @@ interface FormAnswers {
   techComfortScore?: string;
   twelveMonthGoals?: string;
   automationWish?: string;
+  locale?: string;
 }
 
 // fullName is intentionally NOT required — we still address the report personally if provided,
@@ -112,6 +114,7 @@ export async function POST(request: NextRequest): Promise<Response> {
   const clientName = body.fullName?.trim() || body.businessName!.trim();
   const clientEmail = body.email!.trim();
   const businessType = body.businessName!.trim();
+  const locale: Locale = isLocale(body.locale) ? body.locale : "en";
 
   const transcript = buildTranscript(body);
 
@@ -138,8 +141,8 @@ export async function POST(request: NextRequest): Promise<Response> {
   }
 
   try {
-    // 2. Generate the analysis with Claude
-    const analysis = await analyzeTranscript(transcript);
+    // 2. Generate the analysis with Claude (in the user's language)
+    const analysis = await analyzeTranscript(transcript, locale);
     await updateAssessment(assessment.id, { analysis, status: "analyzed" });
 
     // 3. If Resend isn't configured, stop here — the report exists, surface it manually
@@ -158,12 +161,13 @@ export async function POST(request: NextRequest): Promise<Response> {
     const pdfBuffer = await generatePDF(analysis, clientName);
     await updateAssessment(assessment.id, { status: "pdf_generated" });
 
-    // 5. Send the email with PDF attached
+    // 5. Send the email with PDF attached (locale-aware)
     await sendReportEmail({
       to: clientEmail,
       clientName,
       assessmentId: assessment.id,
       pdfBuffer,
+      locale,
     });
     await updateAssessment(assessment.id, { status: "sent" });
 
