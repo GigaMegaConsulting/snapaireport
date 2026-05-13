@@ -347,18 +347,18 @@ function FormHeader({
 }) {
   return (
     <header className="sticky top-0 z-20 border-b border-rule bg-paper/85 backdrop-blur-md">
-      <div className="mx-auto max-w-3xl px-6 h-14 flex items-center justify-between">
-        <Link href={`/${locale}`} className="flex items-center gap-3">
+      <div className="mx-auto max-w-3xl px-6 h-14 flex items-center justify-between gap-3">
+        <Link href={`/${locale}`} className="flex items-center gap-3 min-w-0">
           <Mark />
           <span className="serif text-xl">{t.common.brand}</span>
           {nicheBadge && (
-            <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
+            <span className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5 truncate">
               {nicheBadge}
             </span>
           )}
         </Link>
-        <span className="mono text-[10px] tracking-[0.18em] text-ink-2 uppercase">
-          {t.common.misc.step} {stepLabel}
+        <span className="mono text-[10px] tracking-[0.18em] text-ink-2 uppercase whitespace-nowrap">
+          {stepLabel && (t.common.misc.step + " " + stepLabel)}
         </span>
       </div>
     </header>

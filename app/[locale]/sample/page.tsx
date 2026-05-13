@@ -60,23 +60,23 @@ export default async function Sample({
         {/* Header */}
         <header className="sticky top-0 z-20 border-b border-rule bg-paper/85 backdrop-blur-md">
           <div className="mx-auto max-w-5xl px-6 h-14 flex items-center justify-between">
-            <Link href={`/${loc}`} className="flex items-center gap-3">
+            <Link href={`/${loc}`} className="flex items-center gap-3 min-w-0">
               <Mark />
               <span className="serif text-xl">{t.common.brand}</span>
-              <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
+              <span className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
                 {t.sample.badge}
               </span>
               {nicheBadge && (
-                <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
+                <span className="hidden md:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
                   {nicheBadge}
                 </span>
               )}
             </Link>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <LocaleSwitch current={loc} />
               <Link
                 href={nicheKey ? `/${loc}/assessment?for=${nicheKey}` : `/${loc}/assessment`}
-                className="btn-ink text-[13px] !py-2 !px-4"
+                className="btn-ink text-[13px] !py-2 !px-3 sm:!px-4"
               >
                 {t.sample.getOwn}
               </Link>

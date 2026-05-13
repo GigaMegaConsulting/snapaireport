@@ -36,11 +36,12 @@ export default async function Home({
             <Link href={`/${loc}`} className="flex items-center gap-3">
               <Mark />
               <span className="serif text-xl">{t.common.brand}</span>
-              <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5" title={VERSION_LABEL}>
+              <span className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5" title={VERSION_LABEL}>
                 v{VERSION}
               </span>
             </Link>
-            <nav className="flex items-center gap-7">
+            {/* Desktop nav — anchors hidden on mobile (visitors scroll on small screens). */}
+            <nav className="hidden lg:flex items-center gap-7">
               <a href="#process" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
                 {t.common.nav.process}
               </a>
@@ -53,11 +54,14 @@ export default async function Home({
               <a href="#pricing" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
                 {t.common.nav.pricing}
               </a>
+            </nav>
+            {/* Always-visible: locale + CTA */}
+            <div className="flex items-center gap-4">
               <LocaleSwitch current={loc} />
-              <Link href={`/${loc}/assessment`} className="btn-ink text-[13px] !py-2 !px-4">
+              <Link href={`/${loc}/assessment`} className="btn-ink text-[13px] !py-2 !px-3 sm:!px-4">
                 {t.common.cta.start}
               </Link>
-            </nav>
+            </div>
           </div>
         </header>
 

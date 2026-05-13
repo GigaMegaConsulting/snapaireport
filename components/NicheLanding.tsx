@@ -35,14 +35,14 @@ export function NicheLanding({
         {/* Header */}
         <header className="sticky top-0 z-20 border-b border-rule bg-paper/85 backdrop-blur-md">
           <div className="mx-auto max-w-6xl px-6 h-14 flex items-center justify-between">
-            <Link href={homeHref} className="flex items-center gap-3">
+            <Link href={homeHref} className="flex items-center gap-3 min-w-0">
               <Mark />
               <span className="serif text-xl">{t.common.brand}</span>
-              <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
+              <span className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5 truncate">
                 {n.badge}
               </span>
             </Link>
-            <nav className="flex items-center gap-7">
+            <nav className="hidden lg:flex items-center gap-7">
               <a href="#bottlenecks" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
                 {t.common.nav.process}
               </a>
@@ -52,11 +52,13 @@ export function NicheLanding({
               <a href="#pricing" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
                 {t.common.nav.pricing}
               </a>
+            </nav>
+            <div className="flex items-center gap-4">
               <LocaleSwitch current={locale} />
-              <Link href={assessmentHref} className="btn-ink text-[13px] !py-2 !px-4">
+              <Link href={assessmentHref} className="btn-ink text-[13px] !py-2 !px-3 sm:!px-4">
                 {t.common.cta.start}
               </Link>
-            </nav>
+            </div>
           </div>
         </header>
 
