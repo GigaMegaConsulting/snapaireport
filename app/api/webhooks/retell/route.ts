@@ -114,7 +114,7 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   try {
     const analysis = await analyzeTranscript(transcript);
-    const updated = await updateAssessment(assessment.id, {
+    await updateAssessment(assessment.id, {
       analysis,
       status: 'analyzed',
     });
@@ -124,16 +124,16 @@ export async function POST(request: NextRequest): Promise<Response> {
     const topWin = analysis.quickWins[0]?.title ?? '(no quick wins)';
     const slackMsg = [
       `:bell: New AI assessment ready for review`,
-      `*Client:* ${updated.clientName} (${updated.clientEmail || 'no email'})`,
+      `*Client:* ${assessment.clientName} (${assessment.clientEmail || 'no email'})`,
       `*Business snapshot:* ${summary}`,
       `*AI readiness score:* ${score}/100`,
       `*Top quick win:* ${topWin}`,
-      `*Assessment ID:* \`${updated.id}\``,
-      `Reply \`approve ${updated.id}\` to generate and send the PDF report to ${updated.clientEmail || '<missing email>'}.`,
+      `*Assessment ID:* \`${assessment.id}\``,
+      `Reply \`approve ${assessment.id}\` to generate and send the PDF report to ${assessment.clientEmail || '<missing email>'}.`,
     ].join('\n');
     postSlack(slackMsg);
 
-    return Response.json({ ok: true, assessmentId: updated.id, status: updated.status }, { status: 200 });
+    return Response.json({ ok: true, assessmentId: assessment.id, status: 'analyzed' }, { status: 200 });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('[retell webhook] analysis failed:', err);

@@ -84,10 +84,10 @@ export async function POST(request: NextRequest): Promise<Response> {
     pdfBuffer,
   });
 
-  const updated = await updateAssessment(assessment.id, { status: 'sent' });
+  await updateAssessment(assessment.id, { status: 'sent' });
 
   return Response.json(
-    { success: true, assessmentId: updated.id, status: updated.status },
+    { success: true, assessmentId: assessment.id, status: 'sent' },
     { status: 200 },
   );
 }

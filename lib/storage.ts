@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import os from 'os';
 import { randomUUID } from 'crypto';
 import type { Assessment } from '../types/report';
 
@@ -17,33 +16,32 @@ import type { Assessment } from '../types/report';
  * deliverable; persistence is best-effort until we move to Vercel Blob
  * or a proper database.
  */
-const PROJECT_DIR = path.join(process.cwd(), 'data', 'assessments');
-const TMP_DIR = path.join(os.tmpdir(), 'snapaireport-assessments');
+// Resolved lazily at first use so static tracing doesn't follow
+// `os.tmpdir()` and `process.cwd()` into the build manifest.
+let DATA_DIR: string | null = null;
 
-// Try project dir first; on EROFS or EACCES fall back to /tmp.
-let DATA_DIR = PROJECT_DIR;
-let DATA_DIR_RESOLVED = false;
-
-async function ensureDir(): Promise<void> {
-  if (!DATA_DIR_RESOLVED) {
+async function ensureDir(): Promise<string | null> {
+  if (DATA_DIR) return DATA_DIR;
+  const candidates = [
+    path.join(process.cwd(), 'data', 'assessments'),
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    path.join((require('os') as typeof import('os')).tmpdir(), 'snapaireport-assessments'),
+  ];
+  for (const dir of candidates) {
     try {
-      await fs.mkdir(PROJECT_DIR, { recursive: true });
-      DATA_DIR = PROJECT_DIR;
+      await fs.mkdir(dir, { recursive: true });
+      DATA_DIR = dir;
+      return DATA_DIR;
     } catch {
-      try {
-        await fs.mkdir(TMP_DIR, { recursive: true });
-        DATA_DIR = TMP_DIR;
-      } catch (err) {
-        // Both failed. Storage is a no-op for this process.
-        console.warn('[storage] no writable directory for submissions:', err);
-      }
+      // Try next candidate
     }
-    DATA_DIR_RESOLVED = true;
   }
+  console.warn('[storage] no writable directory for submissions');
+  return null;
 }
 
-function filePath(id: string): string {
-  return path.join(DATA_DIR, `${id}.json`);
+function filePath(dir: string, id: string): string {
+  return path.join(dir, `${id}.json`);
 }
 
 /**
@@ -64,8 +62,10 @@ export async function createAssessment(
     ...input,
   };
   try {
-    await ensureDir();
-    await fs.writeFile(filePath(assessment.id), JSON.stringify(assessment, null, 2), 'utf8');
+    const dir = await ensureDir();
+    if (dir) {
+      await fs.writeFile(filePath(dir, assessment.id), JSON.stringify(assessment, null, 2), 'utf8');
+    }
   } catch (err) {
     console.warn(`[storage] createAssessment write failed for ${assessment.id}:`, err);
   }
@@ -74,8 +74,9 @@ export async function createAssessment(
 
 export async function getAssessment(id: string): Promise<Assessment | null> {
   try {
-    await ensureDir();
-    const raw = await fs.readFile(filePath(id), 'utf8');
+    const dir = await ensureDir();
+    if (!dir) return null;
+    const raw = await fs.readFile(filePath(dir, id), 'utf8');
     return JSON.parse(raw) as Assessment;
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
@@ -103,7 +104,10 @@ export async function updateAssessment(
       createdAt: existing.createdAt,
       updatedAt: new Date().toISOString(),
     };
-    await fs.writeFile(filePath(id), JSON.stringify(updated, null, 2), 'utf8');
+    const dir = await ensureDir();
+    if (dir) {
+      await fs.writeFile(filePath(dir, id), JSON.stringify(updated, null, 2), 'utf8');
+    }
     return updated;
   } catch (err) {
     console.warn(`[storage] updateAssessment failed for ${id}:`, err);
@@ -113,12 +117,13 @@ export async function updateAssessment(
 
 export async function listAssessments(): Promise<Assessment[]> {
   try {
-    await ensureDir();
-    const files = await fs.readdir(DATA_DIR);
+    const dir = await ensureDir();
+    if (!dir) return [];
+    const files = await fs.readdir(dir);
     const jsonFiles = files.filter((f) => f.endsWith('.json'));
     const items = await Promise.all(
       jsonFiles.map(async (f) => {
-        const raw = await fs.readFile(path.join(DATA_DIR, f), 'utf8');
+        const raw = await fs.readFile(path.join(dir, f), 'utf8');
         return JSON.parse(raw) as Assessment;
       }),
     );
@@ -131,7 +136,8 @@ export async function listAssessments(): Promise<Assessment[]> {
 
 export async function deleteAssessment(id: string): Promise<void> {
   try {
-    await fs.unlink(filePath(id));
+    const dir = await ensureDir();
+    if (dir) await fs.unlink(filePath(dir, id));
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
       console.warn(`[storage] deleteAssessment failed for ${id}:`, err);

@@ -36,11 +36,11 @@ export async function POST(request: NextRequest): Promise<Response> {
       return Response.json({ error: 'No transcript on assessment' }, { status: 400 });
     }
     const analysis = await analyzeTranscript(transcript);
-    const updated = await updateAssessment(existing.id, {
+    await updateAssessment(existing.id, {
       analysis,
       status: 'analyzed',
     });
-    return Response.json({ assessmentId: updated.id, analysis }, { status: 200 });
+    return Response.json({ assessmentId: existing.id, analysis }, { status: 200 });
   }
 
   if (body.transcript) {
