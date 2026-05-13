@@ -20,7 +20,8 @@ type AnswerKey =
   | "priorAiExperience"
   | "techComfortScore"
   | "twelveMonthGoals"
-  | "automationWish";
+  | "automationWish"
+  | "anythingElse";
 
 type Answers = Record<AnswerKey, string>;
 
@@ -40,6 +41,7 @@ const INITIAL_ANSWERS: Answers = {
   techComfortScore: "7",
   twelveMonthGoals: "",
   automationWish: "",
+  anythingElse: "",
 };
 
 type FieldErrors = Partial<Record<AnswerKey, string>>;

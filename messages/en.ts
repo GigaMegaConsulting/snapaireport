@@ -371,6 +371,24 @@ const en = {
           },
         ],
       },
+      {
+        number: "06",
+        title: "Anything else?",
+        subtitle:
+          "Optional, but the answer here usually colors the recommendations more than you'd expect. Internal politics, recent failures, ambitions that don't fit a question — dump it all.",
+        fields: [
+          {
+            key: "anythingElse",
+            label: "Anything we missed?",
+            helper:
+              "Constraints, weird quirks, a partner who'll resist, a tool you secretly hate, an experiment that didn't work — whatever might tilt the report toward what's actually useful.",
+            placeholder:
+              "We're not actually as profitable as the revenue suggests — margins are tight. Also, my brother (co-owner) is reluctant about any kind of AI; whatever you recommend has to be sellable to him too.",
+            type: "textarea" as const,
+            required: false,
+          },
+        ],
+      },
     ],
   },
 

@@ -24,6 +24,7 @@ interface FormAnswers {
   techComfortScore?: string;
   twelveMonthGoals?: string;
   automationWish?: string;
+  anythingElse?: string;
   locale?: string;
   niche?: string;
 }
@@ -92,7 +93,15 @@ function buildTranscript(a: FormAnswers): string {
       `A: ${a.automationWish}`,
     ],
   ];
-  return sections.map(([q, ans]) => `${q}\n${ans}`).join("\n\n");
+  let transcript = sections.map(([q, ans]) => `${q}\n${ans}`).join("\n\n");
+  // Optional free-text "anything else" — appended only when provided.
+  // This is where the reader usually drops the most-useful context (constraints,
+  // politics, recent failures). Claude should weight it heavily.
+  const extra = (a.anythingElse ?? "").trim();
+  if (extra) {
+    transcript += `\n\n[ADDITIONAL CONTEXT FROM CLIENT — weight this heavily when tailoring the report]\n${extra}`;
+  }
+  return transcript;
 }
 
 export async function POST(request: NextRequest): Promise<Response> {

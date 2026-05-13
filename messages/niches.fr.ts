@@ -112,6 +112,12 @@ const fr: NicheMessages = {
         label: "Si vous pouviez automatiser une seule chose au cabinet demain matin, ce serait quoi ?",
         placeholder: "Mises à jour aux clients après chaque dépôt et audience — ça gruge 30 min/jour à travers les associés.",
       },
+      anythingElse: {
+        helper:
+          "Contraintes liées au secret professionnel, directives du Barreau à anticiper, un associé qui résistera à tout changement, une migration de système qui a marqué l'équipe — tout ce qui colore le réaliste.",
+        placeholder:
+          "On est en pleine migration vers Clio depuis un système legacy ; les associés sont épuisés par ça. Le Barreau du Québec resserre ses directives sur l'IA en droit — on veut des recommandations qui vieilliront bien.",
+      },
     },
     sample: {
       profile: {
@@ -362,6 +368,12 @@ const fr: NicheMessages = {
       automationWish: {
         label: "Si vous pouviez automatiser une seule chose à la firme demain matin, ce serait quoi ?",
         placeholder: "Relancer les clients qui n'ont pas envoyé leurs docs fiscaux — on dirait un emploi à temps partiel en mars.",
+      },
+      anythingElse: {
+        helper:
+          "Préoccupations de confidentialité, un associé allergique au changement, une migration d'outil qui a laissé des cicatrices, un segment client à développer — tout ce qui façonne le faisable.",
+        placeholder:
+          "On parle depuis 2 ans de se débarrasser de nos 20 pires clients mais on ne le fait jamais. L'autre associée est allergique à tout outil de plus de 100 $/mois — recommandations économiques ou ROI évident s'il vous plaît.",
       },
     },
     sample: {

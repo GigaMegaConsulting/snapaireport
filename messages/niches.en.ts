@@ -22,7 +22,8 @@ export type FormFieldKey =
   | "bottlenecks"
   | "priorAiExperience"
   | "twelveMonthGoals"
-  | "automationWish";
+  | "automationWish"
+  | "anythingElse";
 
 export type FieldOverride = {
   label?: string;
@@ -220,6 +221,12 @@ const en: NicheMessages = {
       automationWish: {
         label: "If you could automate one thing in the firm tomorrow, what would it be?",
         placeholder: "Status updates to clients after every filing and hearing — eats 30 min/day across the partners.",
+      },
+      anythingElse: {
+        helper:
+          "Privilege constraints, Bar guidance you're trying to stay ahead of, an associate who'll resist anything new, a case management migration that scarred everyone — whatever colors what's realistic.",
+        placeholder:
+          "We're in the middle of a Clio migration from a legacy system; partners are burnt out from that. Also, Quebec Bar is tightening guidance on AI in legal work — we want recommendations that age well.",
       },
     },
     sample: {
@@ -467,6 +474,12 @@ const en: NicheMessages = {
       automationWish: {
         label: "If you could automate one thing in the firm tomorrow, what would it be?",
         placeholder: "Following up with clients who haven't sent their tax docs — feels like a part-time job in March.",
+      },
+      anythingElse: {
+        helper:
+          "Client confidentiality concerns, a partner who's allergic to change, a workflow tool migration that left scars, a client segment you want to grow into — anything that shapes what's actually doable.",
+        placeholder:
+          "We've been talking about dropping our 20 worst clients for 2 years but never do it. Also, the other partner is allergic to anything that costs more than $100/mo per tool — keep recommendations cheap or with clear ROI.",
       },
     },
     sample: {

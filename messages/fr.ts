@@ -388,6 +388,24 @@ const fr: typeof en = {
           },
         ],
       },
+      {
+        number: "06",
+        title: "Autre chose ?",
+        subtitle:
+          "Facultatif, mais souvent ce qu'on écrit ici teinte le rapport plus qu'on ne pense. Politique interne, échecs récents, ambitions qui n'ont pas trouvé leur case — videz tout ça ici.",
+        fields: [
+          {
+            key: "anythingElse",
+            label: "On a oublié quelque chose ?",
+            helper:
+              "Contraintes, particularités, un associé qui va résister, un outil qu'on déteste secrètement, une expérience qui n'a pas marché — tout ce qui peut orienter le rapport vers du vraiment utile.",
+            placeholder:
+              "On n'est pas aussi rentables que le chiffre d'affaires le suggère — les marges sont serrées. Aussi, mon frère (co-propriétaire) est réticent envers l'IA en général ; vos recommandations doivent aussi pouvoir être vendues à lui.",
+            type: "textarea" as const,
+            required: false,
+          },
+        ],
+      },
     ],
   },
 
