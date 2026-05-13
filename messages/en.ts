@@ -693,6 +693,7 @@ const en = {
     tipBody:
       " — those are the high-ROI, low-effort moves you can begin this week.",
     ctaLabel: "Reply to schedule a review →",
+    ctaBookLabel: "Book your review call →",
     closing:
       "Reply to this email if you'd like a walkthrough — we'll go through the report together and identify which opportunity to tackle first.",
     signature: "The SnapReport team",

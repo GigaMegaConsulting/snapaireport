@@ -28,6 +28,16 @@ export async function sendReportEmail({
   const viewOnlineUrl = `https://snapaireport.com/r/${assessmentId}`;
   const viewOnlineLabel = locale === "fr" ? "Voir le rapport en ligne →" : "View the report online →";
 
+  // CTA button: if a Cal.com (or other scheduling) URL is configured via the
+  // SNAPAIREPORT_CAL_URL env var, the button becomes a Book-a-call CTA pointing
+  // at it. Otherwise we fall back to a "Reply to this email" mailto so there's
+  // always an action — useful while the Cal.com handle is still being set up.
+  const calUrl = process.env.SNAPAIREPORT_CAL_URL?.trim();
+  const ctaHref = calUrl
+    ? calUrl
+    : 'mailto:info@snapaireport.com?subject=Re:%20My%20SnapReport%20review';
+  const ctaLabel = calUrl ? t.ctaBookLabel : t.ctaLabel;
+
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h1 style="color: #0f172a;">${t.heading}</h1>
@@ -39,8 +49,8 @@ export async function sendReportEmail({
         <a href="${viewOnlineUrl}" style="color: #1a4d3a; font-weight: 600;">${viewOnlineLabel}</a>
       </p>
       <p style="margin-top: 24px;">
-        <a href="mailto:info@snapaireport.com?subject=Re:%20My%20SnapReport%20review" style="background: #1a4d3a; color: #faf8f1; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-          ${t.ctaLabel}
+        <a href="${ctaHref}" style="background: #1a4d3a; color: #faf8f1; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+          ${ctaLabel}
         </a>
       </p>
       <p style="margin-top: 24px; color: #64748b; font-size: 14px;">

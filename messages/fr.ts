@@ -710,6 +710,7 @@ const fr: typeof en = {
     tipBody:
       " — ce sont les actions à fort ROI et faible effort que vous pouvez démarrer cette semaine.",
     ctaLabel: "Répondez pour planifier une révision →",
+    ctaBookLabel: "Réservez votre appel de revue →",
     closing:
       "Répondez à ce courriel si vous voulez une revue ensemble — on parcourt le rapport et on identifie par quelle opportunité commencer.",
     signature: "L'équipe SnapReport",
