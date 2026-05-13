@@ -1,30 +1,56 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { VERSION, VERSION_LABEL } from "@/lib/version";
-import { getMessages, isLocale, type Locale, type Messages } from "@/lib/i18n";
+import {
+  getMessages,
+  isLocale,
+  isNiche,
+  getNicheMessages,
+  type Locale,
+  type Messages,
+  type NicheKey,
+} from "@/lib/i18n";
 import { LocaleSwitch } from "@/components/LocaleSwitch";
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ niche?: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const { niche } = await searchParams;
   const loc = isLocale(locale) ? locale : "en";
   const t = getMessages(loc);
+  const nicheKey: NicheKey | undefined = isNiche(niche) ? niche : undefined;
+  if (nicheKey) {
+    const n = getNicheMessages(loc, nicheKey);
+    return { title: `${t.sample.badge} — ${n.sample?.profile.business ?? n.badge}` };
+  }
   return { title: t.sample.metaTitle };
 }
 
 export default async function Sample({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ niche?: string }>;
 }) {
   const { locale } = await params;
+  const { niche } = await searchParams;
   const loc: Locale = isLocale(locale) ? locale : "en";
   const t = getMessages(loc);
-  const { profile, answers, report } = t.sample;
-  const labels = profile.labels;
+  const nicheKey: NicheKey | undefined = isNiche(niche) ? niche : undefined;
+  const nicheBadge = nicheKey ? getNicheMessages(loc, nicheKey).badge : undefined;
+
+  // Pull niche-specific sample if present, else fall back to the generic Acme one.
+  const nicheSample = nicheKey ? getNicheMessages(loc, nicheKey).sample : undefined;
+  const profile = nicheSample?.profile ?? t.sample.profile;
+  const answers = nicheSample?.answers ?? t.sample.answers;
+  const report = nicheSample?.report ?? t.sample.report;
+  const labels = t.sample.profile.labels;
 
   return (
     <div className="min-h-screen bg-paper text-ink bp-grid">
@@ -38,10 +64,18 @@ export default async function Sample({
               <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
                 {t.sample.badge}
               </span>
+              {nicheBadge && (
+                <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
+                  {nicheBadge}
+                </span>
+              )}
             </Link>
             <div className="flex items-center gap-6">
               <LocaleSwitch current={loc} />
-              <Link href={`/${loc}/assessment`} className="btn-ink text-[13px] !py-2 !px-4">
+              <Link
+                href={nicheKey ? `/${loc}/assessment?niche=${nicheKey}` : `/${loc}/assessment`}
+                className="btn-ink text-[13px] !py-2 !px-4"
+              >
                 {t.sample.getOwn}
               </Link>
             </div>
@@ -384,7 +418,10 @@ export default async function Sample({
               ))}
             </h2>
             <div className="flex items-center justify-center gap-4">
-              <Link href={`/${loc}/assessment`} className="btn-ink text-[15px] !py-4 !px-6">
+              <Link
+                href={nicheKey ? `/${loc}/assessment?niche=${nicheKey}` : `/${loc}/assessment`}
+                className="btn-ink text-[15px] !py-4 !px-6"
+              >
                 <span>{t.common.cta.getOwnReport}</span>
                 <Arrow />
               </Link>

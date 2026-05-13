@@ -495,7 +495,7 @@ function IndustrySelector({
               type="button"
               key={opt.value}
               onClick={() => onChange(opt.value as NicheKey | "general")}
-              className={`text-left p-5 transition relative ${
+              className={`text-left p-5 transition relative cursor-pointer ${
                 selected
                   ? "bg-paper-2 border-2 border-ink -m-px"
                   : "bg-paper hover:bg-paper-2/60"

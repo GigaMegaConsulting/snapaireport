@@ -128,6 +128,33 @@ const fr: typeof en = {
       headline:
         "Dix questions séparent votre entreprise d'une feuille de route IA sur mesure.",
     },
+    tailored: {
+      sectionNumber: "§ 01b · SUR MESURE",
+      title: ["Versions adaptées,", "par profession."],
+      titleItalicIndex: 1,
+      lead:
+        "Les questions, le vocabulaire du rapport et les outils recommandés changent selon votre métier. Choisissez le plus proche — ou restez sur l'évaluation générale.",
+      versions: [
+        {
+          key: "lawyers",
+          label: "Pour les cabinets d'avocats",
+          desc: "Admission et conflits, rédaction, examen de la communication préalable, saisie des heures facturables, comptabilité en fiducie.",
+          href: "/lawyers",
+        },
+        {
+          key: "accountants",
+          label: "Pour les firmes comptables",
+          desc: "Relance de documents, conciliation, premiers brouillons d'impôts, analyse de vérification.",
+          href: "/accountants",
+        },
+        {
+          key: "general",
+          label: "Tout le reste",
+          desc: "PME, services, détail, e-commerce, agences — l'évaluation générale convient à la plupart des entreprises.",
+          href: "/assessment",
+        },
+      ],
+    },
   },
 
   form: {

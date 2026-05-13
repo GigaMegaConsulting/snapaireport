@@ -103,7 +103,7 @@ export function NicheLanding({
             </div>
 
             <div className="md:col-span-4 md:border-l md:border-rule md:pl-8">
-              <Link href={`/${locale}/sample`} className="block group">
+              <Link href={`/${locale}/sample?niche=${niche}`} className="block group">
                 <div className="flex items-center justify-between mb-4 mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
                   <span>{t.landing.hero.specimenLabel}</span>
                   <span className="opacity-0 group-hover:opacity-100 transition">{t.common.cta.viewFull}</span>

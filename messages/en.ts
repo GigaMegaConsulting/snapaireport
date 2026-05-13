@@ -120,6 +120,33 @@ const en = {
       eyebrow: "// END OF PROSPECTUS",
       headline: "Ten questions stand between you and a tailored AI roadmap.",
     },
+    tailored: {
+      sectionNumber: "§ 01b · TAILORED",
+      title: ["Tailored versions,", "by profession."],
+      titleItalicIndex: 1,
+      lead:
+        "The questions, the report vocabulary, and the recommended tools all change depending on what you do. Pick the closest fit — or stick with the general assessment.",
+      versions: [
+        {
+          key: "lawyers",
+          label: "For law firms",
+          desc: "Intake & conflicts, drafting, discovery review, billable capture, trust accounting.",
+          href: "/lawyers",
+        },
+        {
+          key: "accountants",
+          label: "For accounting practices",
+          desc: "Document chase, reconciliation, tax-prep first drafts, audit analytics.",
+          href: "/accountants",
+        },
+        {
+          key: "general",
+          label: "Anything else",
+          desc: "SMB, services, retail, e-commerce, agencies — the general assessment fits most businesses.",
+          href: "/assessment",
+        },
+      ],
+    },
   },
 
   form: {

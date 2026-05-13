@@ -44,6 +44,9 @@ export default async function Home({
               <a href="#process" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
                 {t.common.nav.process}
               </a>
+              <a href="#tailored" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
+                {locale === "fr" ? "Sur mesure" : "Tailored"}
+              </a>
               <a href="#deliverable" className="mono text-[12px] tracking-wide text-ink-2 hover:text-ink transition">
                 {t.common.nav.deliverable}
               </a>
@@ -156,6 +159,51 @@ export default async function Home({
                     {s.meta}
                   </span>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Tailored versions ───────────────────────────────────── */}
+        <section id="tailored" className="border-b border-rule">
+          <div className="mx-auto max-w-6xl px-6 py-24">
+            <div className="grid md:grid-cols-12 gap-8 mb-16">
+              <div className="md:col-span-5">
+                <div className="eyebrow mb-6">{t.landing.tailored.sectionNumber}</div>
+                <h2 className="serif text-5xl md:text-6xl leading-[1] tracking-tight">
+                  {t.landing.tailored.title.map((line, i) => (
+                    <span key={i}>
+                      {i === t.landing.tailored.titleItalicIndex ? <em>{line}</em> : line}
+                      {i < t.landing.tailored.title.length - 1 && <br />}
+                    </span>
+                  ))}
+                </h2>
+              </div>
+              <div className="md:col-span-7 md:col-start-6 self-end">
+                <p className="text-ink-2 leading-relaxed">{t.landing.tailored.lead}</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-px bg-rule border border-rule">
+              {t.landing.tailored.versions.map((v) => (
+                <Link
+                  key={v.key}
+                  href={`/${loc}${v.href}`}
+                  className="bg-paper p-8 flex flex-col hover:bg-paper-2/60 transition group"
+                >
+                  <div className="flex items-baseline justify-between mb-4">
+                    <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
+                      {v.key === "general" ? "Default" : v.key === "lawyers" ? "Niche · 01" : "Niche · 02"}
+                    </span>
+                    <Arrow />
+                  </div>
+                  <h3 className="serif text-2xl mb-3 leading-tight">{v.label}</h3>
+                  <p className="text-[14px] text-ink-2 leading-relaxed flex-1">{v.desc}</p>
+                  <div className="annotation w-full mt-6 mb-3" />
+                  <span className="mono text-[10px] uppercase tracking-[0.12em] text-ink-2 group-hover:text-ink transition">
+                    {v.href === "/assessment" ? "snapaireport.com/assessment" : `snapaireport.com${v.href}`}
+                  </span>
+                </Link>
               ))}
             </div>
           </div>

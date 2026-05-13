@@ -57,6 +57,55 @@ interface NicheContent {
   formIntro?: string;
   /** Per-field text overrides for the assessment form. Only fields that need rephrasing per niche. */
   formOverrides?: Partial<Record<FormFieldKey, FieldOverride>>;
+  /** Niche-specific specimen — overrides profile + answers + report on /sample?niche=<key>. */
+  sample?: NicheSample;
+}
+
+/**
+ * Shape mirrors the data subset of t.sample (profile + answers + report).
+ * UI labels (sectionA, badges, etc.) come from the generic messages.
+ */
+export interface NicheSample {
+  profile: {
+    business: string;
+    city: string;
+    years: string;
+    team: string;
+    industry: string;
+    revenue: string;
+  };
+  answers: Array<{ q: string; a: string }>;
+  report: {
+    score: number;
+    breakdown: Array<{ label: string; v: number }>;
+    summary: string[];
+    quickWins: Array<{
+      tag: string;
+      title: string;
+      desc: string;
+      impact: string;
+      effort: string;
+      cost: string;
+      eta: string;
+    }>;
+    strategic: Array<{
+      tag: string;
+      title: string;
+      desc: string;
+      roi: string;
+      eta: string;
+    }>;
+    risks: Array<{ flag: string; mitigation: string; severity: string }>;
+    tools: Array<{ name: string; purpose: string; cost: string; url: string }>;
+    next: { immediate: string[]; thirtyDays: string[] };
+    financialImpact: {
+      weeklyHoursReclaimed: number;
+      hourlyRateAssumption: number;
+      monthlyToolCost: number;
+      netMonthlySavings: number;
+    };
+    quickWinPlan: Array<{ day: number; action: string }>;
+  };
 }
 
 export interface NicheMessages {
@@ -173,6 +222,143 @@ const en: NicheMessages = {
         placeholder: "Status updates to clients after every filing and hearing — eats 30 min/day across the partners.",
       },
     },
+    sample: {
+      profile: {
+        business: "Tremblay Legal",
+        city: "Montréal · QC",
+        years: "6 years operating",
+        team: "3 attorneys + 1 paralegal + 1 office manager",
+        industry: "Family law boutique (divorce, custody, separation)",
+        revenue: "≈ $1.6M annual",
+      },
+      answers: [
+        { q: "What does your firm do, and how long has it operated?", a: "Family-law boutique in Montréal. Mostly divorces and custody cases for Quebec residents. Six years in, founded by Maud Tremblay in 2020 after 12 years at a large firm. We try amicable settlement first, litigate when needed." },
+        { q: "How many attorneys + support staff, and where do they work?", a: "Three attorneys — Maud (senior partner), Léo (senior associate), Émilie (junior). Plus one paralegal and one office manager. Mostly office-based; associates work from home Fridays." },
+        { q: "Walk us through a typical matter — intake call to file closing.", a: "Lead calls our line or fills the website intake form → paralegal runs the conflict check → 30-min discovery consult (free) → if good fit, retainer signed via DocuSign → matter opened in Clio → ongoing work logged to matter file → court filings via SOQUIJ (manual), hearings, settlement negotiations → invoicing every 2 weeks through Clio → matter closed when judgment final or settlement signed." },
+        { q: "What's your practice-management + tech stack?", a: "Clio Manage for practice mgmt, billing, time capture, and document mgmt. Microsoft 365 for email and Word. DocuSign for retainers and settlement docs. SOQUIJ for court e-filing (still manual). LexisAdvance for research. No AI in production yet." },
+        { q: "Where do new clients come from?", a: "70% referrals from past clients and other lawyers — we're well-known in family law. 20% Google (we rank well for 'avocat famille Montréal' and 'divorce Montréal'). 10% directory listings (Lawyers.com, Juristes du Québec)." },
+        { q: "Where do you and your attorneys lose the most billable hours to admin?", a: "Drafting standard motions — applications for interim measures, separation orders, joint-custody applications. Each one is 80% template + 20% specific facts. Each attorney bleeds 4-6 hours/week on this. Time capture is the other big one — partners forget to log 15-min calls and quick email reviews. Realization rate sits at 85% when it should be 92%." },
+        { q: "Have you tried AI in the firm? What happened?", a: "Tried ChatGPT for first-draft emails to opposing counsel — worked but felt risky on privilege. Looked at Spellbook but never deployed; Léo would use it, the others wouldn't. Cautious about cloud AI on client data — the Quebec Bar has rules." },
+        { q: "On a scale of 1–10, how comfortable is your team with new tech?", a: "Paralegal: 8. Léo (associate): 8. Émilie (junior): 7. Maud (partner): 6. Office manager: 7. Firm avg: about 7." },
+        { q: "What does success look like in the next 12 months?", a: "Add 1 senior associate without scaling support staff. Move realization rate from 85% to 92%. Stop working Sundays — partners average 55h/week, want to be at 45h." },
+        { q: "If you could automate one thing tomorrow, what would it be?", a: "Client status updates after every filing or hearing. Right now Sarah (office manager) drafts them and the lead attorney reviews. Eats 30 min/day across the partners. Clients constantly ask 'what's happening with my case' because we're not proactive." },
+      ],
+      report: {
+        score: 71,
+        breakdown: [
+          { label: "Digital foundation", v: 78 },
+          { label: "Process maturity", v: 75 },
+          { label: "Team readiness", v: 72 },
+          { label: "Data quality", v: 60 },
+          { label: "Leadership buy-in", v: 70 },
+        ],
+        summary: [
+          "Tremblay Legal is well-positioned for AI: solid process discipline (Clio + DocuSign), partner-led culture open to experimentation but appropriately cautious about privilege — the right starting profile.",
+          "Drafting standard motions is the single biggest leak — 4-6 hours per attorney per week on 80%-template work. Spellbook + a firm-specific motion library reclaims 12-16 hours/week firm-wide.",
+          "Time capture is the hidden leak. Auto-Time tools (Clio's built-in or a vendor) lift realization from 85% to ~92% with no extra effort. That's ~$10K/month in billable hours that already exist.",
+        ],
+        quickWins: [
+          {
+            tag: "QW.01",
+            title: "Spellbook for first-draft pleadings + retainers",
+            desc: "Spellbook integrates with Word. The associate or paralegal opens a motion template, feeds Spellbook the matter facts from Clio, and gets a draft in 2 minutes vs 90. Maud reviews. Reclaims 12-16 hours/week firm-wide on standard motions.",
+            impact: "High",
+            effort: "Low",
+            cost: "≈ $89/lawyer/mo",
+            eta: "2 weeks",
+          },
+          {
+            tag: "QW.02",
+            title: "Clio Auto-Time firm-wide",
+            desc: "Clio's Auto-Time captures time from calendar events, emails, and document edits — no manual entry. Partners stop forgetting 15-min calls. Realization rate climbs from 85% to ~92%. Already built into your existing Clio subscription tier.",
+            impact: "High",
+            effort: "Low",
+            cost: "Included in Clio Suite",
+            eta: "1 week",
+          },
+          {
+            tag: "QW.03",
+            title: "AI intake screening",
+            desc: "Claude API screens website form submissions before they reach the paralegal. Filters cold-callers, flags potential conflicts against the Clio matter database, suggests fit/no-fit. Paralegal only sees pre-qualified leads. Saves ~3 hours/week.",
+            impact: "Medium",
+            effort: "Low",
+            cost: "≈ $30/mo (API usage)",
+            eta: "2 weeks",
+          },
+        ],
+        strategic: [
+          {
+            tag: "SP.01",
+            title: "Discovery review AI for opposing-party productions",
+            desc: "Bulk-process opposing party's document productions. Auto-tag privileged docs, summarize key emails by topic, flag inconsistencies vs the client's testimony. A week of associate time becomes an afternoon. Particularly valuable on contested custody cases.",
+            roi: "≈ $20K/yr in recovered associate hours",
+            eta: "2–3 months",
+          },
+          {
+            tag: "SP.02",
+            title: "Trust accounting AI + Bar-compliance flagging",
+            desc: "Reconciles trust ledgers against operating accounts, flags suspicious entries, prepares Bar-compliant reports automatically. Catches errors before audit season. Quebec Bar has strict trust rules; an AI guardrail reduces compliance risk.",
+            roi: "Reduces compliance risk + 4h/mo on bookkeeping",
+            eta: "2 months",
+          },
+          {
+            tag: "SP.03",
+            title: "French-language SEO content engine for service-area pages",
+            desc: "Agent writes ~4 pages/month: 'avocat divorce Laval', 'garde partagée Brossard', 'séparation Westmount'. Pairs with existing Google ranking. Long-tail organic traffic should 2× in 6 months.",
+            roi: "Organic leads +50–100% over 6 months",
+            eta: "Month 2+",
+          },
+        ],
+        risks: [
+          {
+            flag: "Privilege concerns on cloud AI tools.",
+            mitigation: "Use SOC 2-certified vendors with Canada or EU data residency. Spellbook is SOC 2; Clio's AI is hosted appropriately. Add an AI disclosure clause to engagement letters. Don't paste client confidential content into ChatGPT.",
+            severity: "Medium",
+          },
+          {
+            flag: "Junior associate adoption — Léo will use new tools, Émilie + Maud may resist.",
+            mitigation: "Roll out Spellbook to Léo first as a 2-week pilot. He demos to the others with a real recent motion. Position as '80% draft + lawyer judgment', not 'AI replaces lawyer'.",
+            severity: "Low",
+          },
+          {
+            flag: "Quebec Bar guidance on generative AI is evolving.",
+            mitigation: "Read the Quebec Bar's Sept 2024 guidance on AI in practice. Document an internal AI policy (what data can be entered into which tools). Revisit quarterly.",
+            severity: "Medium",
+          },
+        ],
+        tools: [
+          { name: "Spellbook", purpose: "First-draft pleadings + contracts inside Word", cost: "$89/lawyer/mo", url: "https://spellbook.legal" },
+          { name: "Clio Manage", purpose: "Already using — enable Auto-Time + AI features", cost: "Included", url: "https://clio.com" },
+          { name: "Anthropic Claude", purpose: "Intake screening, status updates, custom prompts", cost: "≈ $30/mo API", url: "https://anthropic.com" },
+          { name: "Casetext CoCounsel", purpose: "Case-law research + legal drafting", cost: "$110/mo", url: "https://casetext.com" },
+          { name: "DocuSign", purpose: "Already using — add AI clause-suggestion module", cost: "+$15/user/mo", url: "https://docusign.com" },
+        ],
+        next: {
+          immediate: [
+            "Sign up for Spellbook 14-day trial. Léo runs 3 standard motions through it side-by-side with the current process.",
+            "Enable Clio Auto-Time for Maud + Léo. Compare auto-captured hours to their week-end manual entries.",
+            "Read the Quebec Bar's Sept 2024 AI guidance and draft a 1-page internal AI policy.",
+          ],
+          thirtyDays: [
+            "Spellbook deployed firm-wide for first-draft motions and retainers.",
+            "Clio Auto-Time active for all lawyers. Realization rate measured.",
+            "AI status-update generator live on 50% of active matters.",
+          ],
+        },
+        financialImpact: {
+          weeklyHoursReclaimed: 14,
+          hourlyRateAssumption: 200,
+          monthlyToolCost: 445,
+          netMonthlySavings: 11679,
+        },
+        quickWinPlan: [
+          { day: 1, action: "Sign up for Spellbook 14-day trial. Léo runs 3 standard motions (separation order, joint custody application, interim measures) through it. Compare side-by-side with current drafts." },
+          { day: 2, action: "Enable Clio Auto-Time for Maud + Léo (Settings → Time tracking → Auto-Time). Let it run all day. Compare captured time to what they would have logged manually." },
+          { day: 3, action: "Draft AI intake screening prompts in Claude. Wire to the website form via Zapier — Claude reads the submission and flags fit/conflicts before the paralegal sees it." },
+          { day: 4, action: "Pilot the status-update generator on 2 active matters. Sarah reviews each draft before sending. Aim: draft generation under 30 seconds." },
+        ],
+      },
+    },
   },
 
   accountants: {
@@ -281,6 +467,143 @@ const en: NicheMessages = {
       automationWish: {
         label: "If you could automate one thing in the firm tomorrow, what would it be?",
         placeholder: "Following up with clients who haven't sent their tax docs — feels like a part-time job in March.",
+      },
+    },
+    sample: {
+      profile: {
+        business: "Tremblay CPA",
+        city: "Montréal · QC",
+        years: "11 years operating",
+        team: "2 partners + 2 staff accountants + 1 bookkeeper + 1 admin",
+        industry: "Boutique CPA firm — 55% tax, 30% bookkeeping, 15% advisory",
+        revenue: "≈ $1.4M annual",
+      },
+      answers: [
+        { q: "What's your practice mix, and how long has the firm operated?", a: "Boutique CPA firm in Montréal. About 80 corporate accounts and 200 personal returns. 55% tax prep (T1/T2), 30% monthly bookkeeping, 15% advisory work. Founded by Marie Tremblay in 2015 after a decade at a Big Four firm." },
+        { q: "How many staff total — partners, accountants, bookkeepers, admin?", a: "2 CPA partners, 2 staff accountants, 1 bookkeeper, 1 admin. 6 total." },
+        { q: "Office-based, remote, or hybrid?", a: "Mostly remote since 2020. Partners come in 2 days/week, admin is full-time at the office, accountants and bookkeeper are home-based." },
+        { q: "Walk us through a typical client engagement — onboarding to delivery.", a: "New client signs engagement letter via DocuSign → we set them up in QBO if they need it → monthly bookkeeping for retainer clients → quarterly review with the partner → year-end: collect tax docs, build trial balance, prep T1/T2 in ProFile → partner review → e-file → bill in 3 installments. Tax season Feb-April is brutal — staff regularly work 25-30 OT hours/week." },
+        { q: "What's your accounting + practice-management stack?", a: "QBO Accountant for client books, ProFile for T1/T2 tax prep, Karbon for workflow + client portal, Dext for receipt OCR (works great), DocuSign for engagement letters, Excel for advisory work, Microsoft 365 for everything else." },
+        { q: "Where do new clients come from?", a: "70% referrals — other professionals (lawyers, financial advisors) and existing clients. 20% Google search for 'comptable Montréal' and 'CPA Québec'. 10% other (LinkedIn, networking events)." },
+        { q: "Where does staff time get eaten up?", a: "Chasing tax documents from clients in March is a part-time job — admin spends 6h/day for 6 weeks on follow-ups. Bank reconciliation on messy QBO files for the 10 worst clients eats 4-6h each per month. Manual data entry for clients who still email PDF receipts. Year-end advisory letter prep eats ~3 days per advisory client." },
+        { q: "Have you tried AI in the firm? What happened?", a: "Dext for OCR — works, we keep it. Tried ChatGPT for client emails, feels generic. Karbon has some AI features (template suggestions) but we haven't really turned them on. Worried about confidentiality on cloud AI for actual client financials." },
+        { q: "On a scale of 1–10, how comfortable is your team with new tech?", a: "Staff accountants: 7. Marie (partner): 7. Other partner: 5. Bookkeeper: 5. Admin: 7. Firm avg: about 6." },
+        { q: "What does success look like in the next 12 months?", a: "Grow advisory revenue from 15% to 30% of total. Cut tax-season overtime by half (currently 25-30 OT hours/staff in March/April). Hire 1 more staff accountant without crushing margins." },
+      ],
+      report: {
+        score: 64,
+        breakdown: [
+          { label: "Digital foundation", v: 70 },
+          { label: "Process maturity", v: 55 },
+          { label: "Team readiness", v: 62 },
+          { label: "Data quality", v: 65 },
+          { label: "Leadership buy-in", v: 65 },
+        ],
+        summary: [
+          "Tremblay CPA has solid tooling (QBO, ProFile, Karbon, Dext) but bleeds 6 hours/day every March–April on document chase — that's 240 hours per tax season recoverable with the right workflow tool.",
+          "Reconciliation is the second leak. AI-assisted reconciliation handles 70% of routine entries, freeing staff for the messy 30% that needs judgment.",
+          "Advisory note prep is the third — auto-drafting from QBO data + firm template cuts prep from 3 days to 4 hours per client. Unlocks the advisory growth target.",
+        ],
+        quickWins: [
+          {
+            tag: "QW.01",
+            title: "TaxDome automated document request + chase",
+            desc: "TaxDome handles the entire tax-season document workflow: automated request emails, reminders, client portal upload, status tracking. Replaces admin's manual follow-up calls and emails. Cuts the March doc-chase from 6h/day to 30min/day for the admin.",
+            impact: "High",
+            effort: "Medium",
+            cost: "$50/user/mo",
+            eta: "3 weeks (avoid Feb–April)",
+          },
+          {
+            tag: "QW.02",
+            title: "Botkeeper or AI-assisted reconciliation in QBO Accountant",
+            desc: "Plug AI-assisted reconciliation into your messiest 10 QBO files. AI matches transactions to invoices, flags unmatched entries, drafts journal entries for staff review. Cuts month-end close on those files from 4-6h to 1h each.",
+            impact: "High",
+            effort: "Low",
+            cost: "$99–249/mo",
+            eta: "2 weeks",
+          },
+          {
+            tag: "QW.03",
+            title: "AI-drafted advisory notes (Claude + firm template)",
+            desc: "Pull QBO data via API, feed it to Claude with your firm template, get a draft advisory letter in 30 seconds. Partner adds the strategic insight on top. Cuts prep from 3 days to 4 hours per client — unlocks advisory growth.",
+            impact: "Medium",
+            effort: "Low",
+            cost: "≈ $20/mo (API usage)",
+            eta: "1 week",
+          },
+        ],
+        strategic: [
+          {
+            tag: "SP.01",
+            title: "Tax return first drafts from prior-year + current-year docs",
+            desc: "AI builds preliminary T1/T2 drafts from client documents and prior-year returns. Staff review and refine. Doubles tax-season throughput without doubling staff. Highest-ROI play of the year if executed correctly.",
+            roi: "≈ $80K/yr in unlocked tax-season capacity",
+            eta: "2–3 months (deploy May–Jan, not during tax season)",
+          },
+          {
+            tag: "SP.02",
+            title: "Audit fieldwork analytics — variance + outlier detection",
+            desc: "Run analytics on client ledgers: variance vs prior year, ratio benchmarks vs industry, unusual entries. Highlights risk areas before fieldwork starts. Sharper, faster audit testing.",
+            roi: "≈ 30% reduction in audit fieldwork hours",
+            eta: "3 months",
+          },
+          {
+            tag: "SP.03",
+            title: "French-language SEO content engine",
+            desc: "Agent writes 4 service-area pages/month: 'comptable Saint-Henri', 'TPS-TVQ Laval', 'fiscalité PME Plateau'. Long-tail organic growth to add ~20% to inbound leads over 6 months.",
+            roi: "Organic leads +20–40% over 6 months",
+            eta: "2 months",
+          },
+        ],
+        risks: [
+          {
+            flag: "Client data on cloud AI tools.",
+            mitigation: "Use SOC 2-certified vendors only (TaxDome, Botkeeper, Anthropic all qualify). Add an AI/data clause to engagement letters with explicit consent. Encrypt at rest. Don't paste client SINs or banking into ChatGPT.",
+            severity: "Medium",
+          },
+          {
+            flag: "Bookkeeper at 5/10 tech comfort — adoption risk.",
+            mitigation: "Roll out one tool at a time. Demo first to the most tech-comfortable staff accountant. Have them sit with the bookkeeper for the first reconciliation. Don't push during tax season.",
+            severity: "Medium",
+          },
+          {
+            flag: "Tax-season transition timing.",
+            mitigation: "Never roll out major changes Feb–April. Pilot in May–Jan and lock workflow before Feb 1. Schedule QW.01 (TaxDome) for completion by Jan 15 at the latest.",
+            severity: "High",
+          },
+        ],
+        tools: [
+          { name: "TaxDome", purpose: "Workflow + client portal + automated doc chase", cost: "$50/user/mo", url: "https://taxdome.com" },
+          { name: "Botkeeper", purpose: "AI-assisted bookkeeping and reconciliation", cost: "$99–249/mo", url: "https://botkeeper.com" },
+          { name: "Dext", purpose: "Already using — expand to all retainer clients", cost: "$25/client/mo", url: "https://dext.com" },
+          { name: "Anthropic Claude", purpose: "Advisory note drafts, client emails, T1/T2 first drafts", cost: "≈ $50/mo API", url: "https://anthropic.com" },
+          { name: "Karbon", purpose: "Already using — enable AI features in Settings", cost: "Included", url: "https://karbonhq.com" },
+        ],
+        next: {
+          immediate: [
+            "Sign up for TaxDome 14-day trial. Pilot 5 corporate clients to test the workflow fit before committing.",
+            "Connect Botkeeper to your 2 messiest QBO files. Run a reconciliation pass — measure time savings.",
+            "Draft one client's next advisory letter in Claude using your firm template. Marie reviews and refines.",
+          ],
+          thirtyDays: [
+            "TaxDome live for all retainer clients — automated doc-chase pre-loaded for next tax season.",
+            "Botkeeper assisting reconciliation across the 10 messiest client files.",
+            "AI-drafted advisory notes running on 20% of advisory clients.",
+          ],
+        },
+        financialImpact: {
+          weeklyHoursReclaimed: 16,
+          hourlyRateAssumption: 90,
+          monthlyToolCost: 370,
+          netMonthlySavings: 5865,
+        },
+        quickWinPlan: [
+          { day: 1, action: "Sign up for TaxDome 14-day trial. Migrate 1 retainer client's workflow from Karbon to test the fit and feel." },
+          { day: 2, action: "Connect Botkeeper to your 2 messiest QBO files (the ones eating 4-6h/month each). Run a reconciliation pass and measure." },
+          { day: 3, action: "Pick your top advisory client. Pull their QBO data, feed to Claude with your firm template, generate a draft monthly letter. Marie reviews." },
+          { day: 4, action: "Set up the TaxDome doc-chase flow for 5 corporate clients. Send the welcome flow + first document request." },
+        ],
       },
     },
   },
