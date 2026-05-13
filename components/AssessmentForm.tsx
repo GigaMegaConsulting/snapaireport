@@ -133,9 +133,8 @@ export function AssessmentForm({
   if (submitted) {
     const firstName = answers.fullName.split(" ")[0] || t.form.success.fallbackName;
     return (
-      <div className="min-h-screen bg-paper text-ink relative">
-        <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
-        <div className="relative z-10">
+      <div className="min-h-screen bg-paper text-ink bp-grid">
+        <div>
           <FormHeader locale={locale} t={t} stepLabel="DONE" />
           <main className="mx-auto max-w-2xl px-6 py-24">
             <div className="eyebrow mb-6 flex items-center gap-3">
@@ -177,9 +176,8 @@ export function AssessmentForm({
   }
 
   return (
-    <div className="min-h-screen bg-paper text-ink relative">
-      <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
-      <div className="relative z-10">
+    <div className="min-h-screen bg-paper text-ink bp-grid">
+      <div>
         <FormHeader
           locale={locale}
           t={t}
@@ -287,7 +285,7 @@ function FormHeader({
   stepLabel: string;
 }) {
   return (
-    <header className="border-b border-rule">
+    <header className="sticky top-0 z-20 border-b border-rule bg-paper/85 backdrop-blur-md">
       <div className="mx-auto max-w-3xl px-6 h-14 flex items-center justify-between">
         <Link href={`/${locale}`} className="flex items-center gap-3">
           <Mark />

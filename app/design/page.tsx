@@ -56,11 +56,10 @@ const IMAGE_RULES = [
 
 export default function DesignSystem() {
   return (
-    <div className="min-h-screen bg-paper text-ink relative">
-      <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
-      <div className="relative z-10">
+    <div className="min-h-screen bg-paper text-ink bp-grid">
+      <div>
         {/* ── Header ─────────────────────────────────────────────── */}
-        <header className="border-b border-rule">
+        <header className="sticky top-0 z-20 border-b border-rule bg-paper/85 backdrop-blur-md">
           <div className="mx-auto max-w-5xl px-6 h-14 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
               <Mark />
@@ -630,7 +629,7 @@ export default function DesignSystem() {
             </div>
             <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em] text-ink-3">
               <Link href="/" className="hover:text-ink transition">← Home</Link>
-              <span title={VERSION_LABEL}>{VERSION_LABEL}</span>
+              <span title={VERSION_LABEL}>v{VERSION}</span>
             </div>
           </div>
         </footer>

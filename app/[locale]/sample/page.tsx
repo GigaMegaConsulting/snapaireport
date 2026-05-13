@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { VERSION_LABEL } from "@/lib/version";
+import { VERSION, VERSION_LABEL } from "@/lib/version";
 import { getMessages, isLocale, type Locale, type Messages } from "@/lib/i18n";
 import { LocaleSwitch } from "@/components/LocaleSwitch";
 
@@ -27,11 +27,10 @@ export default async function Sample({
   const labels = profile.labels;
 
   return (
-    <div className="min-h-screen bg-paper text-ink relative">
-      <div className="bp-grid pointer-events-none fixed inset-0 z-0" aria-hidden />
-      <div className="relative z-10">
+    <div className="min-h-screen bg-paper text-ink bp-grid">
+      <div>
         {/* Header */}
-        <header className="border-b border-rule">
+        <header className="sticky top-0 z-20 border-b border-rule bg-paper/85 backdrop-blur-md">
           <div className="mx-auto max-w-5xl px-6 h-14 flex items-center justify-between">
             <Link href={`/${loc}`} className="flex items-center gap-3">
               <Mark />
@@ -274,13 +273,51 @@ export default async function Sample({
               <div className="col-span-6 p-4 border-r border-rule">{t.sample.toolsHeader.purpose}</div>
               <div className="col-span-3 p-4">{t.sample.toolsHeader.cost}</div>
             </div>
-            {report.tools.map((tool, i) => (
-              <div key={tool.name} className={`grid grid-cols-12 ${i < report.tools.length - 1 ? "border-b border-rule" : ""}`}>
-                <div className="col-span-3 p-4 border-r border-rule serif text-[18px]">{tool.name}</div>
-                <div className="col-span-6 p-4 border-r border-rule text-[14px] leading-relaxed text-ink-2">{tool.purpose}</div>
-                <div className="col-span-3 p-4 mono text-[13px]">{tool.cost}</div>
+            {report.tools.map((tool, i) => {
+              const toolWithUrl = tool as { name: string; purpose: string; cost: string; url?: string };
+              return (
+                <div key={tool.name} className={`grid grid-cols-12 ${i < report.tools.length - 1 ? "border-b border-rule" : ""}`}>
+                  <div className="col-span-3 p-4 border-r border-rule serif text-[18px]">
+                    {toolWithUrl.url ? (
+                      <a href={toolWithUrl.url} target="_blank" rel="noopener noreferrer" className="hover:text-ink underline decoration-rule-strong underline-offset-4 hover:decoration-ink transition">
+                        {tool.name} ↗
+                      </a>
+                    ) : tool.name}
+                  </div>
+                  <div className="col-span-6 p-4 border-r border-rule text-[14px] leading-relaxed text-ink-2">{tool.purpose}</div>
+                  <div className="col-span-3 p-4 mono text-[13px]">{tool.cost}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Explore-more: AI tool directories */}
+          <div className="mt-10 border border-rule p-8 bg-paper-2/40">
+            <div className="grid md:grid-cols-12 gap-6">
+              <div className="md:col-span-4">
+                <div className="eyebrow mb-3">Beyond this stack</div>
+                <h3 className="serif text-2xl leading-tight mb-2">{t.sample.exploreMore.heading}</h3>
+                <p className="text-[13px] text-ink-2 leading-relaxed">{t.sample.exploreMore.body}</p>
               </div>
-            ))}
+              <div className="md:col-span-8 grid gap-px bg-rule border border-rule">
+                {t.sample.exploreMore.directories.map((d) => (
+                  <a
+                    key={d.url}
+                    href={d.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-paper p-4 flex items-start gap-4 hover:bg-paper-2/60 transition group"
+                  >
+                    <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 pt-1 min-w-[14px]">↗</span>
+                    <div className="flex-1">
+                      <div className="serif text-[17px] leading-tight mb-1 group-hover:text-ink transition">{d.name}</div>
+                      <div className="mono text-[10px] uppercase tracking-[0.12em] text-ink-3 mb-1.5">{new URL(d.url).hostname}</div>
+                      <div className="text-[12px] text-ink-2 leading-relaxed">{d.desc}</div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </SectionBlock>
 
@@ -349,7 +386,7 @@ export default async function Sample({
             <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em] text-ink-3">
               <LocaleSwitch current={loc} />
               <a href="mailto:info@snapaireport.com" className="hover:text-ink transition">info@snapaireport.com</a>
-              <span title={VERSION_LABEL}>{VERSION_LABEL}</span>
+              <span title={VERSION_LABEL}>v{VERSION}</span>
             </div>
           </div>
         </footer>

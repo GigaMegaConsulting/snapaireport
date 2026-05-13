@@ -389,6 +389,15 @@ const fr: typeof en = {
     sectionG: "Drapeaux rouges + mitigations",
     sectionH: "Pile d'outils recommandée",
     sectionI: "Prochaines étapes",
+    exploreMore: {
+      heading: "Trouvez d'autres outils IA",
+      body: "La pile ci-dessus correspond à Acme aujourd'hui. Comme le paysage de l'IA évolue vite, voici où garder un œil sur ce qui se lance :",
+      directories: [
+        { name: "There's An AI For That", url: "https://theresanaiforthat.com", desc: "Le plus grand index d'outils IA — tapez un usage, obtenez une liste triée." },
+        { name: "Futurepedia", url: "https://www.futurepedia.io", desc: "Outils IA sélectionnés avec catégories, tarifs et mises à jour hebdomadaires." },
+        { name: "FutureTools", url: "https://www.futuretools.io", desc: "Outils choisis à la main par Matt Wolfe. Bons filtres pour les versions gratuites." },
+      ],
+    },
     pause: "↓ Ci-dessous : ce que Claude a généré et envoyé par courriel",
     issued: "Émis · 2026.05.13",
     reportHeader: "SnapReport · Aptitude à l'IA",
@@ -567,11 +576,11 @@ const fr: typeof en = {
         },
       ],
       tools: [
-        { name: "Retell AI", purpose: "Réceptionniste IA + agent vocal de prise de rendez-vous", cost: "0,08 $/min" },
-        { name: "Anthropic Claude", purpose: "Génération de soumissions vocales + brouillons de courriel", cost: "≈ 0,50 $/soumission" },
-        { name: "Cal.com", purpose: "Prise de rendez-vous en ligne, intégrable au site", cost: "Gratuit–15 $/mois" },
-        { name: "Make.com", purpose: "Couche de liaison : Jobber ↔ QuickBooks ↔ outils IA", cost: "9–29 $/mois" },
-        { name: "Lindy / Magical AI", purpose: "Brouillons de relance, le propriétaire approuve puis envoie", cost: "30–50 $/mois" },
+        { name: "Retell AI", purpose: "Réceptionniste IA + agent vocal de prise de rendez-vous", cost: "0,08 $/min", url: "https://retellai.com" },
+        { name: "Anthropic Claude", purpose: "Génération de soumissions vocales + brouillons de courriel", cost: "≈ 0,50 $/soumission", url: "https://anthropic.com" },
+        { name: "Cal.com", purpose: "Prise de rendez-vous en ligne, intégrable au site", cost: "Gratuit–15 $/mois", url: "https://cal.com" },
+        { name: "Make.com", purpose: "Couche de liaison : Jobber ↔ QuickBooks ↔ outils IA", cost: "9–29 $/mois", url: "https://make.com" },
+        { name: "Lindy", purpose: "Brouillons de relance, le propriétaire approuve puis envoie", cost: "30–50 $/mois", url: "https://lindy.ai" },
       ],
       next: {
         immediate: [

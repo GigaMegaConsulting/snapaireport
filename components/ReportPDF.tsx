@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
 import type { ReportAnalysis } from '@/types/report';
 
 const COLORS = {
@@ -435,9 +435,39 @@ export function ReportPDF({ analysis, clientName }: ReportPDFProps) {
           <View style={styles.table}>
             {analysis.recommendedTools.map((tool, i) => (
               <View key={i} style={styles.toolRow} wrap={false}>
-                <Text style={styles.toolName}>{tool.name}</Text>
+                <Text style={styles.toolName}>
+                  {tool.url ? (
+                    <Link src={tool.url} style={{ color: COLORS.accent, textDecoration: 'none' }}>
+                      {tool.name} ↗
+                    </Link>
+                  ) : (
+                    tool.name
+                  )}
+                </Text>
                 <Text style={styles.toolPurpose}>{tool.purpose}</Text>
                 <Text style={styles.toolCost}>{tool.cost}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Explore more — AI tool directories */}
+          <View style={{ marginTop: 18, padding: 12, borderColor: COLORS.muted, borderWidth: 0.5, borderRadius: 4 }}>
+            <Text style={{ color: COLORS.muted, fontSize: 8, letterSpacing: 1.5, marginBottom: 6, textTransform: 'uppercase' }}>
+              Find more AI tools
+            </Text>
+            <Text style={{ color: COLORS.text, fontSize: 10, marginBottom: 8, lineHeight: 1.5 }}>
+              The AI landscape moves fast. These directories index thousands of tools so you can keep an eye on what&apos;s launching:
+            </Text>
+            {[
+              { name: "There's An AI For That", url: 'https://theresanaiforthat.com', desc: 'Largest searchable AI tool index — type a use case, get a sorted list.' },
+              { name: 'Futurepedia', url: 'https://www.futurepedia.io', desc: 'Curated AI tools, categorized, with pricing tiers.' },
+              { name: 'FutureTools', url: 'https://www.futuretools.io', desc: 'Hand-picked AI tools. Good filters for free-tier finds.' },
+            ].map((d) => (
+              <View key={d.url} style={{ flexDirection: 'row', marginBottom: 4 }}>
+                <Text style={{ width: 110, fontSize: 9, color: COLORS.accent }}>
+                  <Link src={d.url} style={{ color: COLORS.accent, textDecoration: 'none' }}>{d.name} ↗</Link>
+                </Text>
+                <Text style={{ flex: 1, fontSize: 9, color: COLORS.muted, lineHeight: 1.4 }}>{d.desc}</Text>
               </View>
             ))}
           </View>

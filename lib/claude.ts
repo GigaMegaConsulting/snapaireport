@@ -35,6 +35,11 @@ The client just completed a 20-minute voice intake covering:
 
 Your assessment must be honest, specific to their situation, and actionable. Avoid generic advice. Match tools and recommendations to their actual context.
 
+Tool recommendation rules:
+- Every recommendedTool MUST include a real homepage URL (e.g. "https://anthropic.com", "https://make.com"). Never leave url empty. Never use a Google search URL. If you don't know the URL for sure, pick a different tool you do know.
+- Prefer well-known tools the reader can verify. If recommending something niche, double-check the URL is correct.
+- For tool discovery beyond what you explicitly recommend, the report frontend already links to There's An AI For That (theresanaiforthat.com), Futurepedia (futurepedia.io), and FutureTools (futuretools.io). Don't repeat these in recommendedTools — your job is to suggest specific tools for THIS business, not directories.
+
 Return ONLY valid JSON — no markdown, no explanation, no preamble. Use this exact structure:
 
 {
@@ -79,7 +84,7 @@ Return ONLY valid JSON — no markdown, no explanation, no preamble. Use this ex
       "name": "<tool name>",
       "purpose": "<1 sentence — why this tool for this business>",
       "cost": "<pricing>",
-      "url": "<homepage url>"
+      "url": "<REQUIRED: real, working homepage URL — never empty, never a search result>"
     }
   ],
   "nextSteps": {

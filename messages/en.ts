@@ -372,6 +372,15 @@ const en = {
     sectionG: "Risk flags + mitigations",
     sectionH: "Recommended tool stack",
     sectionI: "Next steps",
+    exploreMore: {
+      heading: "Find more AI tools",
+      body: "The stack above is what fits Acme today. As the AI landscape moves fast, here's where to keep an eye on what's launching:",
+      directories: [
+        { name: "There's An AI For That", url: "https://theresanaiforthat.com", desc: "The largest searchable index of AI tools — type a use case, get a sorted list." },
+        { name: "Futurepedia", url: "https://www.futurepedia.io", desc: "Curated AI tools with categories, pricing tiers, and weekly updates." },
+        { name: "FutureTools", url: "https://www.futuretools.io", desc: "Hand-picked AI tools by Matt Wolfe. Strong filters for free-tier finds." },
+      ],
+    },
     pause: "↓ Below: what Claude generated and emailed them",
     issued: "Issued · 2026.05.13",
     reportHeader: "SnapReport · AI Readiness",
@@ -550,11 +559,11 @@ const en = {
         },
       ],
       tools: [
-        { name: "Retell AI", purpose: "AI receptionist + booking voice agent", cost: "$0.08/min" },
-        { name: "Anthropic Claude", purpose: "Voice-to-quote generation + email drafts", cost: "$0.50/quote avg." },
-        { name: "Cal.com", purpose: "Online booking, embeds in website", cost: "Free–$15/mo" },
-        { name: "Make.com", purpose: "Glue layer: Jobber ↔ QuickBooks ↔ AI tools", cost: "$9–29/mo" },
-        { name: "Lindy / Magical AI", purpose: "Invoice follow-up drafts, owner-approves-then-sends", cost: "$30–50/mo" },
+        { name: "Retell AI", purpose: "AI receptionist + booking voice agent", cost: "$0.08/min", url: "https://retellai.com" },
+        { name: "Anthropic Claude", purpose: "Voice-to-quote generation + email drafts", cost: "$0.50/quote avg.", url: "https://anthropic.com" },
+        { name: "Cal.com", purpose: "Online booking, embeds in website", cost: "Free–$15/mo", url: "https://cal.com" },
+        { name: "Make.com", purpose: "Glue layer: Jobber ↔ QuickBooks ↔ AI tools", cost: "$9–29/mo", url: "https://make.com" },
+        { name: "Lindy", purpose: "Invoice follow-up drafts, owner-approves-then-sends", cost: "$30–50/mo", url: "https://lindy.ai" },
       ],
       next: {
         immediate: [
