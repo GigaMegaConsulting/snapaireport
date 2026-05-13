@@ -18,11 +18,13 @@ function pickLocale(acceptLanguage: string | null): string {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip API, internal Next assets, design page, and static files (icon, manifest)
+  // Skip API, internal Next assets, design page, /r/<id> report views,
+  // and static files (icon, manifest)
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/design") ||
+    pathname.startsWith("/r/") ||
     pathname.includes(".") // any file with extension (.svg, .png, .ico, etc.)
   ) {
     return NextResponse.next();
@@ -42,5 +44,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|design|.*\\..*).*)"],
+  matcher: ["/((?!_next|api|design|r/|.*\\..*).*)"],
 };

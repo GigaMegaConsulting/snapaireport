@@ -12,6 +12,7 @@ interface SendReportEmailParams {
 export async function sendReportEmail({
   to,
   clientName,
+  assessmentId,
   pdfBuffer,
   locale = 'en',
 }: SendReportEmailParams): Promise<void> {
@@ -24,6 +25,9 @@ export async function sendReportEmail({
 
   const bulletsHtml = t.bullets.map((b) => `<li>${b}</li>`).join('');
 
+  const viewOnlineUrl = `https://snapaireport.com/r/${assessmentId}`;
+  const viewOnlineLabel = locale === "fr" ? "Voir le rapport en ligne →" : "View the report online →";
+
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h1 style="color: #0f172a;">${t.heading}</h1>
@@ -31,7 +35,10 @@ export async function sendReportEmail({
       <p>${t.intro}</p>
       <ul>${bulletsHtml}</ul>
       <p><strong>${t.tipPrefix}</strong>${t.tipBody}</p>
-      <p style="margin-top: 32px;">
+      <p style="margin-top: 24px;">
+        <a href="${viewOnlineUrl}" style="color: #1a4d3a; font-weight: 600;">${viewOnlineLabel}</a>
+      </p>
+      <p style="margin-top: 24px;">
         <a href="https://cal.com/gigamega/ai-assessment" style="background: #1a4d3a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
           ${t.ctaLabel}
         </a>
