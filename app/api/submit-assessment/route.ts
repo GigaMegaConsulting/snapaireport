@@ -25,9 +25,10 @@ interface FormAnswers {
   automationWish?: string;
 }
 
+// fullName is intentionally NOT required — we still address the report personally if provided,
+// but the form lets users skip it.
 const REQUIRED: (keyof FormAnswers)[] = [
   "email",
-  "fullName",
   "businessName",
   "businessDescription",
   "yearsOperating",
@@ -107,7 +108,8 @@ export async function POST(request: NextRequest): Promise<Response> {
     );
   }
 
-  const clientName = body.fullName!.trim();
+  // Default client name to business name if no human name was provided.
+  const clientName = body.fullName?.trim() || body.businessName!.trim();
   const clientEmail = body.email!.trim();
   const businessType = body.businessName!.trim();
 

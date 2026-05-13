@@ -65,7 +65,7 @@ const STEPS: Step[] = [
     subtitle: "We'll email your custom AI Report once it's ready. Takes about 5 minutes — no calls, no follow-up sales.",
     fields: [
       { key: "email", label: "Your email", type: "email", placeholder: "you@yourbusiness.com", required: true },
-      { key: "fullName", label: "Your name", type: "text", placeholder: "Jane Smith", required: true },
+      { key: "fullName", label: "Your name", helper: "Optional — we'll address the report to you if you give one.", type: "text", placeholder: "Jane Smith", required: false },
     ],
   },
   {
@@ -181,9 +181,12 @@ const STEPS: Step[] = [
   },
 ];
 
+type FieldErrors = Partial<Record<AnswerKey, string>>;
+
 export default function AssessmentPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(INITIAL_ANSWERS);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -195,25 +198,40 @@ export default function AssessmentPage() {
 
   function updateAnswer(key: AnswerKey, value: string) {
     setAnswers((prev) => ({ ...prev, [key]: value }));
+    // Clear the error on this field as soon as the user touches it
+    setFieldErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
   }
 
-  function stepIsValid(): boolean {
-    return currentStep.fields.every((field) => {
-      if (!field.required) return true;
-      const v = answers[field.key]?.trim();
+  function validateStep(): FieldErrors {
+    const errs: FieldErrors = {};
+    for (const field of currentStep.fields) {
+      if (!field.required) continue;
+      const v = answers[field.key]?.trim() ?? "";
       if (field.type === "email") {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+          errs[field.key] = v.length === 0 ? "Required" : "Enter a valid email address";
+        }
+      } else if (v.length === 0) {
+        errs[field.key] = "Required";
       }
-      return v.length > 0;
-    });
+    }
+    return errs;
   }
 
   async function handleNext() {
     setError(null);
-    if (!stepIsValid()) {
-      setError("Please fill in the required fields before continuing.");
+    const errs = validateStep();
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
+      setError("Please fill in the highlighted fields before continuing.");
       return;
     }
+    setFieldErrors({});
     if (!isLast) {
       setStep((s) => s + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -240,6 +258,7 @@ export default function AssessmentPage() {
 
   function handleBack() {
     setError(null);
+    setFieldErrors({});
     if (step > 0) setStep((s) => s - 1);
   }
 
@@ -337,6 +356,7 @@ export default function AssessmentPage() {
                 index={idx + 1}
                 field={field}
                 value={answers[field.key]}
+                error={fieldErrors[field.key]}
                 onChange={(v) => updateAnswer(field.key, v)}
               />
             ))}
@@ -411,14 +431,18 @@ function FieldRow({
   index,
   field,
   value,
+  error,
   onChange,
 }: {
   index: number;
   field: StepField;
   value: string;
+  error?: string;
   onChange: (v: string) => void;
 }) {
   const id = `field-${field.key}`;
+  const fieldClass = error ? "field field-error" : "field";
+  const errorId = `${id}-error`;
 
   return (
     <div>
@@ -429,6 +453,11 @@ function FieldRow({
         <label htmlFor={id} className="serif text-xl leading-tight text-ink">
           {field.label}
           {field.required && <span className="text-stamp ml-1">*</span>}
+          {!field.required && (
+            <span className="ml-2 mono text-[10px] uppercase tracking-[0.12em] text-ink-3 align-middle">
+              optional
+            </span>
+          )}
         </label>
       </div>
       {field.helper && (
@@ -441,7 +470,9 @@ function FieldRow({
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
           rows={4}
-          className="field"
+          className={fieldClass}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
         />
       ) : field.type === "slider" ? (
         <div>
@@ -454,7 +485,7 @@ function FieldRow({
               step={1}
               value={value || String(field.min ?? 1)}
               onChange={(e) => onChange(e.target.value)}
-              className="flex-1 accent-ink"
+              className="flex-1"
               style={{ accentColor: "var(--ink)" }}
             />
             <span className="serif text-4xl text-ink w-12 text-right">
@@ -473,8 +504,19 @@ function FieldRow({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder}
-          className="field"
+          className={fieldClass}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
         />
+      )}
+      {error && (
+        <p
+          id={errorId}
+          className="mt-2 mono text-[10px] uppercase tracking-[0.18em]"
+          style={{ color: "var(--field-error)" }}
+        >
+          ⚠ {error}
+        </p>
       )}
     </div>
   );

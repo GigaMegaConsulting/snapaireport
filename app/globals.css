@@ -9,8 +9,10 @@
   --ink-3: #a3a3a3;
   --rule: rgba(10, 10, 10, 0.12);
   --rule-strong: rgba(10, 10, 10, 0.28);
-  --blueprint: #0040ff;
+  --accent: #1a4d3a;
+  --accent-2: #2d6b54;
   --stamp: #bf2127;
+  --field-error: #bf2127;
 }
 
 @theme inline {
@@ -21,8 +23,10 @@
   --color-ink-3: var(--ink-3);
   --color-rule: var(--rule);
   --color-rule-strong: var(--rule-strong);
-  --color-blueprint: var(--blueprint);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --color-stamp: var(--stamp);
+  --color-field-error: var(--field-error);
 
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-serif), Georgia, "Times New Roman", serif;
@@ -108,7 +112,13 @@ body {
   font-style: italic;
 }
 .field:focus {
-  border-color: var(--blueprint);
+  border-color: var(--accent);
+}
+.field.field-error {
+  border-color: var(--field-error);
+}
+.field.field-error:focus {
+  border-color: var(--field-error);
 }
 
 textarea.field {
@@ -134,8 +144,8 @@ textarea.field {
   transition: all 0.15s ease;
 }
 .btn-ink:hover {
-  background: var(--blueprint);
-  border-color: var(--blueprint);
+  background: var(--accent);
+  border-color: var(--accent);
 }
 .btn-ink:disabled {
   opacity: 0.4;
@@ -190,6 +200,7 @@ textarea.field {
   align-items: center;
   gap: 8px;
   padding: 4px 12px;
+  background: var(--paper);
   border: 1.5px solid var(--stamp);
   color: var(--stamp);
   font-family: var(--font-mono);
@@ -197,4 +208,6 @@ textarea.field {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   transform: rotate(-2deg);
+  position: relative;
+  z-index: 2;
 }

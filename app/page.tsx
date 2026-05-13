@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VERSION, VERSION_LABEL } from "@/lib/version";
 
 export default function Home() {
   return (
@@ -13,8 +14,8 @@ export default function Home() {
             <Link href="/" className="flex items-center gap-3">
               <Mark />
               <span className="serif text-xl">SnapReport</span>
-              <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
-                v0.1
+              <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5" title={VERSION_LABEL}>
+                v{VERSION}
               </span>
             </Link>
             <nav className="flex items-center gap-7">
@@ -79,14 +80,19 @@ export default function Home() {
             </div>
 
             <div className="md:col-span-4 md:border-l md:border-rule md:pl-8">
-              <div className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 mb-4">
-                Specimen
-              </div>
-              <ReportPreview />
-              <div className="mt-4 flex items-center justify-between mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
-                <span>Fig. 01</span>
-                <span>Output sample</span>
-              </div>
+              <Link href="/sample" className="block group" aria-label="View full specimen — Acme Plumbing">
+                <div className="flex items-center justify-between mb-4 mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
+                  <span>Specimen</span>
+                  <span className="opacity-0 group-hover:opacity-100 transition">View full →</span>
+                </div>
+                <div className="transition group-hover:-translate-y-0.5 group-hover:shadow-[0_8px_0_-6px_var(--rule-strong)]">
+                  <ReportPreview />
+                </div>
+                <div className="mt-4 flex items-center justify-between mono text-[10px] uppercase tracking-[0.12em] text-ink-3">
+                  <span>Fig. 01</span>
+                  <span className="group-hover:text-ink transition">Click to expand</span>
+                </div>
+              </Link>
             </div>
           </div>
         </section>
@@ -264,10 +270,10 @@ export default function Home() {
               <span className="mono text-ink-3">Giga Mega Consulting Inc.</span>
             </div>
             <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em]">
-              <a href="mailto:hello@gigamega.ca" className="hover:text-ink transition">
-                hello@gigamega.ca
+              <a href="mailto:info@snapaireport.com" className="hover:text-ink transition">
+                info@snapaireport.com
               </a>
-              <span className="text-ink-3">v0.1 · 2026</span>
+              <span className="text-ink-3" title={VERSION_LABEL}>{VERSION_LABEL}</span>
             </div>
           </div>
         </footer>
@@ -355,7 +361,7 @@ function ReportPreview() {
 
       <div className="mt-4 pt-3 border-t border-rule mono text-[9px] uppercase tracking-[0.18em] text-ink-3 flex items-center justify-between">
         <span>↳ continued · pg 02</span>
-        <span>SR/v0.1</span>
+        <span>SR/v{VERSION}</span>
       </div>
     </div>
   );

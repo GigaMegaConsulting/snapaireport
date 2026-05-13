@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { VERSION, VERSION_LABEL } from "@/lib/version";
 
 export const metadata: Metadata = {
   title: "SnapReport · Design Guidelines",
@@ -68,8 +69,8 @@ export default function DesignSystem() {
                 /design
               </span>
             </Link>
-            <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
-              Internal · v0.1 · 2026.05
+            <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2" title={VERSION_LABEL}>
+              Internal · {VERSION_LABEL}
             </span>
           </div>
         </header>
@@ -446,7 +447,7 @@ export default function DesignSystem() {
                     Most SMBs are still spending hours on work an AI could do in minutes.
                   </div>
                   <div className="flex items-baseline justify-between mt-4 pt-3 border-t border-rule">
-                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">SnapReport · v0.1</span>
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">SnapReport · v{VERSION}</span>
                     <Arrow />
                   </div>
                 </div>
@@ -510,7 +511,7 @@ export default function DesignSystem() {
             </div>
             <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em] text-ink-3">
               <Link href="/" className="hover:text-ink transition">← Home</Link>
-              <span>v0.1 · 2026.05</span>
+              <span title={VERSION_LABEL}>{VERSION_LABEL}</span>
             </div>
           </div>
         </footer>
