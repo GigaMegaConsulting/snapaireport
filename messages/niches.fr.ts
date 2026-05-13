@@ -63,6 +63,56 @@ const fr: NicheMessages = {
     },
     closingHeadline:
       "Dix questions séparent votre cabinet d'une feuille de route IA sur mesure — pensée pour la façon dont les avocats travaillent vraiment.",
+    formIntro:
+      "Pensé pour les cabinets d'avocats. Même formulaire de 5 minutes — les questions parlent le langage des dossiers, de l'admission et des heures facturables.",
+    formOverrides: {
+      businessName: { label: "Nom du cabinet", placeholder: "Tremblay Avocats" },
+      businessDescription: {
+        label: "Quel est votre domaine de pratique, et depuis combien de temps le cabinet est-il en activité ?",
+        helper: "Solo, boutique, droit familial, litige civil, immobilier — une ou deux phrases suffisent.",
+        placeholder: "Cabinet de droit familial de 3 avocats à Montréal. Fondé en 2018, surtout pour les résidents du Québec.",
+      },
+      teamSize: {
+        label: "Combien d'avocats et de personnel de soutien dans le cabinet ?",
+        placeholder: "3 avocats, 1 parajuriste, 1 gestionnaire de bureau",
+      },
+      teamLocation: {
+        label: "Au bureau, à distance, ou hybride ?",
+        placeholder: "Hybride — avocats au bureau 3 jours, personnel de soutien 5 jours",
+      },
+      operationsWalkthrough: {
+        label: "Décrivez un dossier typique — de l'appel d'admission jusqu'à la fermeture.",
+        helper: "Vérification de conflits, signature de mandat, rédaction, audiences, facturation, archives. Où passe vraiment le temps ?",
+        placeholder: "Le client appelle ou remplit notre formulaire d'admission → vérification de conflits → consultation → mandat signé → dossier ouvert dans Clio → rédaction → audiences → facturation mensuelle → fermeture après l'ordonnance finale...",
+      },
+      toolsInUse: {
+        label: "Quelle est votre pile de gestion de cabinet + techno ?",
+        helper: "Gestion de cabinet (Clio, MyCase, PracticePanther), facturation, calendrier, gestion documentaire, signature électronique, dépôt judiciaire électronique.",
+        placeholder: "Clio Manage pour la gestion + facturation, Microsoft 365 pour le courriel/docs, DocuSign pour les signatures, dépôt manuel via SOQUIJ...",
+      },
+      leadSources: {
+        label: "D'où viennent les nouveaux clients ?",
+        placeholder: "60 % références d'anciens clients + autres avocats, 25 % recherche Google, 10 % annuaires (Lawyers.com), 5 % autre",
+      },
+      bottlenecks: {
+        label: "Où perdez-vous le plus d'heures facturables à de l'administratif ?",
+        helper: "Admission/conflits, rédaction des requêtes types, examen de la communication préalable, saisie du temps, relance de factures, mises à jour client.",
+        placeholder: "Rédaction des requêtes types (4 à 6 h/semaine par avocat). Saisie du temps — les associés oublient de noter les appels de 15 min. Relance des comptes à recevoir.",
+      },
+      priorAiExperience: {
+        label: "Avez-vous essayé l'IA au cabinet ? Comment ça s'est passé ?",
+        helper: "Spellbook, Casetext CoCounsel, Harvey, ChatGPT pour la rédaction, Claude — tout ce qui a touché un dossier.",
+        placeholder: "Essayé ChatGPT pour les brouillons de courriels — correct, mais pas assez spécifique. Évalué Spellbook mais jamais déployé. Inquiet pour le secret professionnel sur les outils en ligne.",
+      },
+      twelveMonthGoals: {
+        label: "À quoi ressemble une belle année qui vient pour le cabinet ?",
+        placeholder: "Ajouter 1 avocat sans agrandir le personnel de soutien. Passer le taux de réalisation de 82 % à 90 %. Arrêter de travailler le dimanche.",
+      },
+      automationWish: {
+        label: "Si vous pouviez automatiser une seule chose au cabinet demain matin, ce serait quoi ?",
+        placeholder: "Mises à jour aux clients après chaque dépôt et audience — ça gruge 30 min/jour à travers les associés.",
+      },
+    },
   },
 
   accountants: {
@@ -127,6 +177,56 @@ const fr: NicheMessages = {
     },
     closingHeadline:
       "Dix questions séparent votre firme d'une feuille de route IA sur mesure — pensée pour la façon dont les comptables travaillent vraiment.",
+    formIntro:
+      "Pensé pour les firmes comptables et de tenue de livres. Même formulaire de 5 minutes — les questions parlent le langage des balances de vérification, des T1 et de la saison des impôts.",
+    formOverrides: {
+      businessName: { label: "Nom de la firme", placeholder: "Tremblay CPA" },
+      businessDescription: {
+        label: "Quelle est la composition de votre pratique, et depuis combien de temps êtes-vous en activité ?",
+        helper: "Tenue de livres, prép. d'impôts, vérification, conseil — ou tout ça. Solo, boutique, régional.",
+        placeholder: "Firme CPA boutique de 5 personnes à Montréal. ~60 % prép. d'impôts, 30 % tenue de livres, 10 % conseil. Fondée en 2014.",
+      },
+      teamSize: {
+        label: "Combien de personnes au total — associés, comptables, teneurs de livres, admin ?",
+        placeholder: "2 associés (CPA), 2 comptables, 1 teneuse de livres, 1 admin",
+      },
+      teamLocation: {
+        label: "Au bureau, à distance, ou hybride ?",
+        placeholder: "Surtout à distance depuis 2020, les associés sont au bureau 2 jours/sem, l'admin à temps plein",
+      },
+      operationsWalkthrough: {
+        label: "Décrivez un engagement client typique — de l'intégration à la livraison.",
+        helper: "Lettre de mission, collecte des documents, tenue de livres, prép. d'impôts, révision, signature, facturation. Où passe le temps du personnel ?",
+        placeholder: "Lettre de mission signée → on les configure dans QBO → tenue mensuelle → révision trimestrielle → collecte des docs de fin d'année → prép. T2 → révision associé → e-dépôt → facturation en 3 versements...",
+      },
+      toolsInUse: {
+        label: "Quelle est votre pile comptable + gestion de pratique ?",
+        helper: "Comptabilité (QBO, Xero, Sage), gestion (Karbon, TaxDome, Canopy), impôts (CCH iFirm, ProFile, TaxCycle), gestion documentaire, signature électronique.",
+        placeholder: "QBO Accountant pour les livres clients, ProFile pour T1/T2, Karbon pour le flux + portail client, Dext pour la capture de reçus, DocuSign pour les lettres de mission...",
+      },
+      leadSources: {
+        label: "D'où viennent les nouveaux clients ?",
+        placeholder: "70 % références d'anciens clients + autres pros (avocats, conseillers financiers), 20 % recherche Google, 10 % autre",
+      },
+      bottlenecks: {
+        label: "Où le temps du personnel est-il englouti ?",
+        helper: "Relance des documents clients, saisie de données, conciliation, crunch saison des impôts, prép. des notes de conseil, recouvrement des comptes.",
+        placeholder: "Relance des docs fiscaux des clients (fév-avr c'est brutal). Conciliation bancaire sur des fichiers QBO bordéliques. Saisie manuelle pour les clients qui envoient encore des PDF de reçus.",
+      },
+      priorAiExperience: {
+        label: "Avez-vous essayé l'IA à la firme ? Comment ça s'est passé ?",
+        helper: "Dext, Hubdoc, Botkeeper, Karbon AI, ChatGPT pour la rédaction, outils de recherche fiscale — tout ce que vous avez testé.",
+        placeholder: "On utilise Dext pour l'OCR des reçus — ça marche. Essayé ChatGPT pour les courriels clients, correct mais générique. Inquiet pour la confidentialité, donc on n'est pas allé plus loin.",
+      },
+      twelveMonthGoals: {
+        label: "À quoi ressemble une belle année qui vient pour la firme ?",
+        placeholder: "Faire passer le conseil de 10 % à 25 % des revenus. Réduire de moitié les heures sup. en saison des impôts. Embaucher 1 comptable sans perdre de marge.",
+      },
+      automationWish: {
+        label: "Si vous pouviez automatiser une seule chose à la firme demain matin, ce serait quoi ?",
+        placeholder: "Relancer les clients qui n'ont pas envoyé leurs docs fiscaux — on dirait un emploi à temps partiel en mars.",
+      },
+    },
   },
 };
 

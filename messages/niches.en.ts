@@ -9,6 +9,27 @@
 
 export type NicheKey = "lawyers" | "accountants";
 
+/** Form-field keys we can override per niche. Mirrors the keys in messages/en.ts form.steps. */
+export type FormFieldKey =
+  | "businessName"
+  | "businessDescription"
+  | "yearsOperating"
+  | "teamSize"
+  | "teamLocation"
+  | "operationsWalkthrough"
+  | "toolsInUse"
+  | "leadSources"
+  | "bottlenecks"
+  | "priorAiExperience"
+  | "twelveMonthGoals"
+  | "automationWish";
+
+export type FieldOverride = {
+  label?: string;
+  placeholder?: string;
+  helper?: string;
+};
+
 interface NicheContent {
   /** Slug appearing in the URL (e.g. /en/lawyers). Stays the same in FR. */
   slug: NicheKey;
@@ -32,6 +53,10 @@ interface NicheContent {
   };
   /** Closing CTA copy. */
   closingHeadline: string;
+  /** Tailored intro shown at the top of the assessment form when this niche is in the URL. */
+  formIntro?: string;
+  /** Per-field text overrides for the assessment form. Only fields that need rephrasing per niche. */
+  formOverrides?: Partial<Record<FormFieldKey, FieldOverride>>;
 }
 
 export interface NicheMessages {
@@ -98,6 +123,56 @@ const en: NicheMessages = {
     },
     closingHeadline:
       "Ten questions stand between your firm and a tailored AI roadmap — built around how lawyers actually work.",
+    formIntro:
+      "Tailored to legal practices. Same 5-minute form — the questions speak the language of matters, intake, and billables.",
+    formOverrides: {
+      businessName: { label: "Firm name", placeholder: "Tremblay Legal" },
+      businessDescription: {
+        label: "What's your practice area, and how long has the firm operated?",
+        helper: "Solo, boutique, family law, civil litigation, real-estate — one or two sentences is fine.",
+        placeholder: "We're a 3-attorney family-law firm in Montréal. Founded in 2018, mostly Quebec residents.",
+      },
+      teamSize: {
+        label: "How many attorneys + support staff in the firm?",
+        placeholder: "3 attorneys, 1 paralegal, 1 office manager",
+      },
+      teamLocation: {
+        label: "Office-based, remote, or hybrid?",
+        placeholder: "Hybrid — attorneys in office 3 days, support staff 5 days",
+      },
+      operationsWalkthrough: {
+        label: "Walk us through a typical matter — intake call to file closing.",
+        helper: "Conflicts check, retainer signing, drafting, hearings, billing, archive. Where do hours actually go?",
+        placeholder: "Client calls or fills our intake form → conflict check → consult → retainer signed → matter opened in Clio → drafting → hearings → billing monthly → close after final order...",
+      },
+      toolsInUse: {
+        label: "What's your practice-management + tech stack?",
+        helper: "Practice mgmt (Clio, MyCase, PracticePanther), billing, calendar, document mgmt, e-signature, court e-filing.",
+        placeholder: "Clio Manage for practice mgmt + billing, Microsoft 365 for email/docs, DocuSign for signatures, manual e-filing through SOQUIJ...",
+      },
+      leadSources: {
+        label: "Where do new clients come from?",
+        placeholder: "60% referrals from past clients + other lawyers, 25% Google search, 10% directory listings (Lawyers.com), 5% other",
+      },
+      bottlenecks: {
+        label: "Where do you and your attorneys lose the most billable hours to admin?",
+        helper: "Intake/conflict checks, drafting standard motions, discovery review, time capture, billing follow-ups, client status updates.",
+        placeholder: "Drafting boilerplate motions (4-6h/week each attorney). Time capture — partners forgetting to log 15-min calls. Following up on aging A/R.",
+      },
+      priorAiExperience: {
+        label: "Have you tried AI in the firm? What happened?",
+        helper: "Spellbook, Casetext CoCounsel, Harvey, ChatGPT for drafting, Claude — anything that touched a matter.",
+        placeholder: "Tried ChatGPT for first-draft emails — fine but not specific enough. Looked at Spellbook but never deployed. Worried about privilege on cloud tools.",
+      },
+      twelveMonthGoals: {
+        label: "What does a great next 12 months look like for the firm?",
+        placeholder: "Add 1 attorney without scaling support staff. Get realization rate from 82% to 90%. Stop working Sundays.",
+      },
+      automationWish: {
+        label: "If you could automate one thing in the firm tomorrow, what would it be?",
+        placeholder: "Status updates to clients after every filing and hearing — eats 30 min/day across the partners.",
+      },
+    },
   },
 
   accountants: {
@@ -158,6 +233,56 @@ const en: NicheMessages = {
     },
     closingHeadline:
       "Ten questions stand between your practice and a tailored AI roadmap — built around how accountants actually work.",
+    formIntro:
+      "Tailored to accounting and bookkeeping practices. Same 5-minute form — the questions speak the language of trial balances, T1s, and tax season.",
+    formOverrides: {
+      businessName: { label: "Firm name", placeholder: "Tremblay CPA" },
+      businessDescription: {
+        label: "What's your practice mix, and how long has the firm operated?",
+        helper: "Bookkeeping, tax prep, audit, advisory — or all of the above. Solo, boutique, regional.",
+        placeholder: "We're a 5-person boutique CPA firm in Montréal. ~60% tax prep, 30% bookkeeping, 10% advisory. Founded 2014.",
+      },
+      teamSize: {
+        label: "How many staff total — partners, accountants, bookkeepers, admin?",
+        placeholder: "2 partners (CPAs), 2 staff accountants, 1 bookkeeper, 1 admin",
+      },
+      teamLocation: {
+        label: "Office-based, remote, or hybrid?",
+        placeholder: "Mostly remote since 2020, partners come in 2 days/week, admin full-time at office",
+      },
+      operationsWalkthrough: {
+        label: "Walk us through a typical client engagement — onboarding through delivery.",
+        helper: "Engagement letter, document gathering, bookkeeping, tax prep, review, sign-off, billing. Where does staff time actually go?",
+        placeholder: "Engagement letter signed → we set them up in QBO → monthly bookkeeping → quarterly review → year-end docs collected → T2 prep → partner review → e-file → bill in 3 installments...",
+      },
+      toolsInUse: {
+        label: "What's your accounting + practice-management stack?",
+        helper: "Accounting (QBO, Xero, Sage), practice mgmt (Karbon, TaxDome, Canopy), tax prep (CCH iFirm, ProFile, TaxCycle), document mgmt, e-signature.",
+        placeholder: "QBO Accountant for client books, ProFile for T1/T2, Karbon for workflow + client portal, Dext for receipt capture, DocuSign for engagement letters...",
+      },
+      leadSources: {
+        label: "Where do new clients come from?",
+        placeholder: "70% referrals from existing clients + other professionals (lawyers, financial advisors), 20% Google search, 10% other",
+      },
+      bottlenecks: {
+        label: "Where does staff time get eaten up?",
+        helper: "Chasing client documents, data entry, reconciliation, tax-season crunch, advisory note prep, A/R collection.",
+        placeholder: "Chasing tax docs from clients (Feb-Apr is brutal). Bank reconciliation on messy QBO files. Manual data entry for clients who still email PDFs of receipts.",
+      },
+      priorAiExperience: {
+        label: "Have you tried AI in the firm? What happened?",
+        helper: "Dext, Hubdoc, Botkeeper, Karbon AI, ChatGPT for drafting, tax research tools — anything you've tested.",
+        placeholder: "Use Dext for receipt OCR — works. Tried ChatGPT for client emails, fine but generic. Worried about data confidentiality so haven't gone deeper.",
+      },
+      twelveMonthGoals: {
+        label: "What does a great next 12 months look like for the firm?",
+        placeholder: "Grow advisory revenue from 10% to 25%. Cut tax-season overtime in half. Hire 1 staff accountant without losing margin.",
+      },
+      automationWish: {
+        label: "If you could automate one thing in the firm tomorrow, what would it be?",
+        placeholder: "Following up with clients who haven't sent their tax docs — feels like a part-time job in March.",
+      },
+    },
   },
 };
 

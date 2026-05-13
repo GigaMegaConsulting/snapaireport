@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { Messages, Locale, NicheKey } from "@/lib/i18n";
+import { getNicheMessages } from "@/lib/i18n";
 
 type AnswerKey =
   | "email"
@@ -52,7 +53,32 @@ export function AssessmentForm({
   t: Messages;
   niche?: NicheKey;
 }) {
-  const STEPS = t.form.steps;
+  // Apply niche-specific text overrides on top of the base form copy.
+  // We only override label/placeholder/helper — never field type or key.
+  const STEPS: Messages["form"]["steps"] = useMemo(() => {
+    if (!niche) return t.form.steps;
+    const nicheMessages = getNicheMessages(locale, niche);
+    const overrides = nicheMessages.formOverrides;
+    if (!overrides) return t.form.steps;
+    return t.form.steps.map((step) => ({
+      ...step,
+      fields: step.fields.map((field) => {
+        const o = overrides[field.key as keyof typeof overrides];
+        if (!o) return field;
+        // Cast preserves the original union-typed shape after the merge.
+        return {
+          ...field,
+          label: o.label ?? field.label,
+          placeholder: o.placeholder ?? field.placeholder,
+          helper: o.helper ?? field.helper,
+        } as typeof field;
+      }),
+    })) as Messages["form"]["steps"];
+  }, [t.form.steps, locale, niche]);
+
+  const nicheBadge = niche ? getNicheMessages(locale, niche).badge : undefined;
+  const formIntro = niche ? getNicheMessages(locale, niche).formIntro : undefined;
+
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>(INITIAL_ANSWERS);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -135,7 +161,7 @@ export function AssessmentForm({
     return (
       <div className="min-h-screen bg-paper text-ink bp-grid">
         <div>
-          <FormHeader locale={locale} t={t} stepLabel="DONE" />
+          <FormHeader locale={locale} t={t} stepLabel="DONE" nicheBadge={nicheBadge} />
           <main className="mx-auto max-w-2xl px-6 py-24">
             <div className="eyebrow mb-6 flex items-center gap-3">
               <span>{t.form.success.eyebrow}</span>
@@ -182,6 +208,7 @@ export function AssessmentForm({
           locale={locale}
           t={t}
           stepLabel={`${String(step + 1).padStart(2, "0")} / ${String(totalSteps).padStart(2, "0")}`}
+          nicheBadge={nicheBadge}
         />
 
         <div className="border-b border-rule">
@@ -209,6 +236,11 @@ export function AssessmentForm({
             </h1>
             {currentStep.subtitle && (
               <p className="text-ink-2 leading-relaxed max-w-xl">{currentStep.subtitle}</p>
+            )}
+            {step === 0 && formIntro && (
+              <div className="mt-6 border-l-2 border-ink pl-4 text-[14px] text-ink-2 italic leading-relaxed max-w-xl">
+                {formIntro}
+              </div>
             )}
           </div>
 
@@ -279,10 +311,12 @@ function FormHeader({
   locale,
   t,
   stepLabel,
+  nicheBadge,
 }: {
   locale: Locale;
   t: Messages;
   stepLabel: string;
+  nicheBadge?: string;
 }) {
   return (
     <header className="sticky top-0 z-20 border-b border-rule bg-paper/85 backdrop-blur-md">
@@ -290,6 +324,11 @@ function FormHeader({
         <Link href={`/${locale}`} className="flex items-center gap-3">
           <Mark />
           <span className="serif text-xl">{t.common.brand}</span>
+          {nicheBadge && (
+            <span className="mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
+              {nicheBadge}
+            </span>
+          )}
         </Link>
         <span className="mono text-[10px] tracking-[0.18em] text-ink-2 uppercase">
           {t.common.misc.step} {stepLabel}
