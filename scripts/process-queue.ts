@@ -260,10 +260,14 @@ async function analyzeViaClaudeCli(submission: Submission): Promise<ReportAnalys
 }
 
 // ─── Slack notification ────────────────────────────────────────────
+// Posts to #snapaireport in Slack. The chatbot user must be a member of the
+// channel. Override the target with SNAPAIREPORT_SLACK_TARGET if you ever
+// rename the channel.
 function notifySlack(message: string) {
+  const target = process.env.SNAPAIREPORT_SLACK_TARGET ?? "#snapaireport";
   try {
     execSync(
-      `openclaw message send --channel slack --target 'channel:C0B08HRFA75' --message ${JSON.stringify(message)}`,
+      `openclaw message send --channel slack --target ${JSON.stringify(target)} --message ${JSON.stringify(message)}`,
       { stdio: "pipe" },
     );
   } catch (err) {
