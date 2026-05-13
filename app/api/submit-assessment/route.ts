@@ -138,8 +138,8 @@ export async function POST(request: NextRequest): Promise<Response> {
     status: "transcript_received",
   });
 
-  // If Claude isn't configured, return success with a warning — we still have the submission
-  if (!process.env.ANTHROPIC_API_KEY) {
+  // If the LLM isn't configured, return success with a warning — we still have the submission
+  if (!process.env.OPENROUTER_API_KEY) {
     return NextResponse.json(
       {
         ok: true,
