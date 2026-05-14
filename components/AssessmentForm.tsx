@@ -94,6 +94,10 @@ export function AssessmentForm({
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Honeypot: visually hidden field. Real users can't see/fill it; most form
+  // bots populate every input they find. Submission with a non-empty value
+  // is silently dropped server-side.
+  const [companyWebsite, setCompanyWebsite] = useState("");
 
   const totalSteps = STEPS.length;
   const isLast = step === totalSteps - 1;
@@ -145,7 +149,7 @@ export function AssessmentForm({
       const res = await fetch("/api/submit-assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...answers, locale, niche: activeNiche }),
+        body: JSON.stringify({ ...answers, locale, niche: activeNiche, companyWebsite }),
       });
       if (!res.ok) {
         const text = await res.text();
@@ -212,6 +216,26 @@ export function AssessmentForm({
 
   return (
     <div className="min-h-screen bg-paper text-ink bp-grid">
+      {/* Honeypot — visually hidden, accessibility-hidden, never tabbable.
+          Real users won't see or interact with it; most form bots will fill
+          it, and the server silently drops those submissions. */}
+      <input
+        type="text"
+        name="companyWebsite"
+        value={companyWebsite}
+        onChange={(e) => setCompanyWebsite(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          width: 1,
+          height: 1,
+          opacity: 0,
+          pointerEvents: "none",
+        }}
+      />
       <div>
         <FormHeader
           locale={locale}

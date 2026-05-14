@@ -443,6 +443,7 @@ export default async function Sample({
             </div>
             <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em] text-ink-3">
               <LocaleSwitch current={loc} />
+              <a href={`/${loc}/privacy`} className="hover:text-ink transition">{t.common.footer.privacy}</a>
               <a href="mailto:info@snapaireport.com" className="hover:text-ink transition">info@snapaireport.com</a>
               <span title={VERSION_LABEL}>v{VERSION}</span>
             </div>

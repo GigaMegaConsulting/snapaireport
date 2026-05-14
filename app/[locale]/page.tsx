@@ -319,6 +319,9 @@ export default async function Home({
             </div>
             <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em]">
               <LocaleSwitch current={loc} />
+              <a href={`/${loc}/privacy`} className="hover:text-ink transition">
+                {t.common.footer.privacy}
+              </a>
               <a href="mailto:info@snapaireport.com" className="hover:text-ink transition">
                 info@snapaireport.com
               </a>

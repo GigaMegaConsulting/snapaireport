@@ -24,6 +24,7 @@ const en = {
     footer: {
       tagline: "Made in Montréal · 2026",
       contactPrompt: "Contact",
+      privacy: "Privacy",
     },
     misc: {
       privateNote: "🔒 Private · used only to generate your report",

@@ -259,6 +259,23 @@ async function analyzeViaClaudeCli(submission: Submission): Promise<ReportAnalys
   return JSON.parse(stripJsonFences(modelText)) as ReportAnalysis;
 }
 
+// ─── Quota awareness ───────────────────────────────────────────────
+// Claude Pro CLI uses a sliding 5-hour quota window. On Pro it lands around
+// ~10–15 SnapReports per window (each generates ~3–5K output tokens of
+// structured JSON). When we get close to or hit the wall, the CLI returns
+// errors that mention "rate limit", "usage limit", "quota", or HTTP 429.
+//
+// Behaviour when we detect it:
+//   1. The pending file stays in pending/ (it always does on failure).
+//   2. We log + Slack a *specific* rate-limit alert (different from generic
+//      failures so you can tell at a glance that the queue is just paused).
+//   3. We stop processing more submissions in this run — no point burning
+//      the rest of the queue against a closed window.
+function isRateLimitError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  return /rate.?limit|usage.?limit|quota|too many requests|\b429\b/i.test(msg);
+}
+
 // ─── Slack notification ────────────────────────────────────────────
 // Posts to #snapaireport in Slack. The chatbot user must be a member of the
 // channel. Override the target with SNAPAIREPORT_SLACK_TARGET if you ever
@@ -353,6 +370,7 @@ async function main() {
 
     let processed = 0;
     let failed = 0;
+    let quotaHit = false;
 
     for (const file of pending) {
       try {
@@ -362,8 +380,24 @@ async function main() {
         failed++;
         const msg = err instanceof Error ? err.message : String(err);
         log(`  ✗ failed: ${msg.slice(0, 400)}`);
+
+        if (isRateLimitError(err)) {
+          // Pro quota hit — leave this and remaining submissions in pending/
+          // and break out of the loop. They'll be retried on the next run.
+          quotaHit = true;
+          const remaining = pending.length - processed - failed + 1;
+          notifySlack(
+            `:hourglass: SnapReport · Claude Pro quota hit. ${remaining} submission(s) still in queue — will retry on the next worker run (every ~2 min). Quota typically resets within a 5h sliding window.`,
+          );
+          break;
+        }
+
         notifySlack(`:warning: SnapReport submission ${path.basename(file, ".json")} failed: ${msg.slice(0, 300)}`);
       }
+    }
+
+    if (quotaHit) {
+      log(`stopping early — Claude Pro quota hit. ${processed} sent before stop.`);
     }
 
     if (processed > 0 || failed > 0) {

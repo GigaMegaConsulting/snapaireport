@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { isLocale, isNiche, type Locale, type NicheKey } from "@/lib/i18n";
+import { checkRateLimit, getRequestIp } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 30; // generous — actual work is one HTTP call
@@ -24,6 +25,9 @@ interface FormAnswers {
   anythingElse?: string;
   locale?: string;
   niche?: string;
+  // Honeypot field — real users never see it (hidden via CSS). Bots that fill
+  // every input will populate it, and we silently drop the submission.
+  companyWebsite?: string;
 }
 
 // fullName is intentionally NOT required — the form lets users skip it.
@@ -104,6 +108,34 @@ export async function POST(request: NextRequest): Promise<Response> {
     body = (await request.json()) as FormAnswers;
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  // ── Abuse guards ───────────────────────────────────────────────────
+  // 1. Honeypot: real users never see/fill this hidden field. Bots usually do.
+  //    Respond 200 OK so bots can't differentiate "rejected" from "accepted".
+  if (body.companyWebsite && body.companyWebsite.trim() !== "") {
+    console.warn("[submit-assessment] honeypot tripped", {
+      ip: getRequestIp(request),
+      userAgent: request.headers.get("user-agent")?.slice(0, 120),
+    });
+    return NextResponse.json({ ok: true, id: randomUUID(), queued: false }, { status: 200 });
+  }
+
+  // 2. Missing User-Agent — almost all real browsers send one. Most basic
+  //    bots forget. Reject with a generic 400.
+  const userAgent = request.headers.get("user-agent");
+  if (!userAgent || userAgent.length < 8) {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  // 3. Per-IP rate limit (best-effort, in-memory).
+  const ip = getRequestIp(request);
+  const rl = checkRateLimit(ip);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many submissions from this address. Please try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSeconds) } },
+    );
   }
 
   const missing = REQUIRED.filter((k) => !body[k] || String(body[k]).trim() === "");

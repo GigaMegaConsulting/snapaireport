@@ -38,11 +38,19 @@ export const metadata: Metadata = {
     "SnapReport",
   ],
   authors: [{ name: "SnapReport" }],
+  metadataBase: new URL("https://snapaireport.com"),
   openGraph: {
     title: "SnapReport — Your AI Business Assessment in 5 Minutes",
     description: "Find $10K+ in hidden AI opportunities in your business. Free for the first 3.",
     type: "website",
     url: "https://snapaireport.com",
+    siteName: "SnapReport",
+    locale: "en_CA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SnapReport — Your AI Business Assessment in 5 Minutes",
+    description: "Find $10K+ in hidden AI opportunities in your business. Free for the first 3.",
   },
 };
 

@@ -26,6 +26,7 @@ const fr: typeof en = {
     footer: {
       tagline: "Fait à Montréal · 2026",
       contactPrompt: "Contact",
+      privacy: "Confidentialité",
     },
     misc: {
       privateNote: "🔒 Confidentiel · utilisé uniquement pour générer votre rapport",
