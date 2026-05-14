@@ -32,9 +32,14 @@ export async function sendReportEmail({
   // SNAPAIREPORT_CAL_URL env var, the button becomes a Book-a-call CTA pointing
   // at it. Otherwise we fall back to a "Reply to this email" mailto so there's
   // always an action — useful while the Cal.com handle is still being set up.
+  //
+  // When the Cal.com URL is set, we also append the assessment ID as a query
+  // param so Cal.com prefills (and locks, if configured) the matching booking-
+  // form field. The Cal.com question must have field identifier "assessment-id"
+  // with "Disable input if the URL identifier is prefilled" turned ON.
   const calUrl = process.env.SNAPAIREPORT_CAL_URL?.trim();
   const ctaHref = calUrl
-    ? calUrl
+    ? `${calUrl}${calUrl.includes('?') ? '&' : '?'}assessment-id=${encodeURIComponent(assessmentId)}`
     : 'mailto:info@snapaireport.com?subject=Re:%20My%20SnapReport%20review';
   const ctaLabel = calUrl ? t.ctaBookLabel : t.ctaLabel;
 
