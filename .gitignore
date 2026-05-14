@@ -43,3 +43,6 @@ next-env.d.ts
 # Assessment data (contains client PII)
 data/assessments/*.json
 data/assessments/*.pdf
+
+# Per-developer Claude Preview launch config
+.claude/
