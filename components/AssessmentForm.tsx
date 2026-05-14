@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { LocaleSwitch } from "@/components/LocaleSwitch";
 import type { Messages, Locale, NicheKey } from "@/lib/i18n";
 import { getNicheMessages } from "@/lib/i18n";
 
@@ -381,9 +382,14 @@ function FormHeader({
             </span>
           )}
         </Link>
-        <span className="mono text-[10px] tracking-[0.18em] text-ink-2 uppercase whitespace-nowrap">
-          {stepLabel && (t.common.misc.step + " " + stepLabel)}
-        </span>
+        <div className="flex items-center gap-4 whitespace-nowrap">
+          {stepLabel && (
+            <span className="mono text-[10px] tracking-[0.18em] text-ink-2 uppercase">
+              {t.common.misc.step + " " + stepLabel}
+            </span>
+          )}
+          <LocaleSwitch current={locale} />
+        </div>
       </div>
     </header>
   );

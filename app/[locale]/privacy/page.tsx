@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { isLocale, type Locale } from "@/lib/i18n";
+import { LocaleSwitch } from "@/components/LocaleSwitch";
 
 export async function generateMetadata({
   params,
@@ -31,13 +32,16 @@ export default async function PrivacyPage({
   return (
     <div className="min-h-screen bg-paper text-ink bp-grid">
       <div className="mx-auto max-w-3xl px-6 pt-16 pb-24">
-        {/* Back link */}
-        <Link
-          href={`/${loc}`}
-          className="mono text-[11px] uppercase tracking-[0.18em] text-ink-2 hover:text-ink"
-        >
-          ← {c.back}
-        </Link>
+        {/* Back link + locale toggle */}
+        <div className="flex items-center justify-between gap-4">
+          <Link
+            href={`/${loc}`}
+            className="mono text-[11px] uppercase tracking-[0.18em] text-ink-2 hover:text-ink"
+          >
+            ← {c.back}
+          </Link>
+          <LocaleSwitch current={loc} />
+        </div>
 
         {/* Title block */}
         <div className="mt-10 mb-12">
