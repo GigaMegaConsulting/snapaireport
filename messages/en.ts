@@ -284,7 +284,7 @@ const en = {
           {
             key: "operationsWalkthrough",
             label:
-              "From the moment a customer reaches out to when you deliver — what happens?",
+              "Walk us through a typical customer journey — from first contact to final delivery.",
             helper:
               "Stream-of-consciousness is fine. More detail → better report.",
             placeholder:
@@ -509,7 +509,7 @@ const en = {
       },
       {
         q:
-          "Walk me through your main day-to-day operations — what happens from when a customer reaches out to when you deliver?",
+          "Walk us through a typical customer journey — from first contact to final delivery.",
         a:
           "Customer calls our main line OR fills out our website form. Office staff (Sylvie) takes the info, decides if it's an emergency or scheduled. For emergencies she radios the nearest tech. For scheduled jobs she books in Jobber. Tech arrives, diagnoses, gives a price verbally or via printed quote. Customer approves, work happens, tech logs hours in Jobber, then we invoice through QuickBooks two days later. Follow-up call from Sylvie a week after for satisfaction.",
       },

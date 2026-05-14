@@ -295,7 +295,7 @@ const fr: typeof en = {
           {
             key: "operationsWalkthrough",
             label:
-              "Du premier contact à la livraison du service — que se passe-t-il ?",
+              "Décrivez un parcours client typique — du premier contact à la livraison finale.",
             helper:
               "Décrivez librement. Plus c'est détaillé, meilleur sera le rapport.",
             placeholder:
@@ -526,7 +526,7 @@ const fr: typeof en = {
       },
       {
         q:
-          "Décrivez vos opérations courantes — du premier contact du client à la livraison du service.",
+          "Décrivez un parcours client typique — du premier contact à la livraison finale.",
         a:
           "Le client appelle notre ligne principale OU remplit notre formulaire en ligne. Sylvie au bureau prend l'info et décide si c'est une urgence ou planifié. Pour les urgences, elle joint le tech le plus proche par radio. Pour le planifié, elle réserve dans Jobber. Le tech arrive, diagnostique, donne un prix verbalement ou avec une soumission papier. Le client approuve, le travail se fait, le tech consigne les heures dans Jobber, puis on facture par QuickBooks deux jours plus tard. Sylvie rappelle une semaine après pour le suivi de satisfaction.",
       },
