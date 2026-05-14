@@ -91,6 +91,12 @@ export default async function ReportView({
               <span className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
                 Report · {entry.id.slice(0, 6)}
               </span>
+              <span
+                className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] uppercase border px-1.5 py-0.5"
+                style={{ borderColor: "var(--stamp)", color: "var(--stamp)" }}
+              >
+                {t.sample.confidential}
+              </span>
               {nicheBadge && (
                 <span className="hidden md:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5">
                   {nicheBadge}
@@ -110,21 +116,25 @@ export default async function ReportView({
         <section className="border-b border-rule">
           <div className="mx-auto max-w-5xl px-6 py-20">
             <div className="tick-frame border border-ink p-10 bg-paper">
-              <div className="flex items-baseline justify-between mb-6">
+              <div className="flex items-start justify-between gap-6 mb-6">
                 <div className="eyebrow">{t.sample.reportHeader}</div>
-                <div className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3">
-                  {loc === "fr" ? "Émis" : "Issued"} ·{" "}
-                  {new Date(entry.processedAt ?? entry.submittedAt).toLocaleDateString(
-                    loc === "fr" ? "fr-CA" : "en-CA",
-                  )}
-                </div>
+                <span className="stamp">{t.sample.confidential}</span>
               </div>
-              <h1 className="serif text-5xl md:text-6xl leading-[1] tracking-tight mb-2">
+              <h1 className="serif text-5xl md:text-6xl leading-[1] tracking-tight mb-3">
                 {entry.businessName}
               </h1>
               <div className="mono text-[11px] uppercase tracking-[0.12em] text-ink-2">
                 {entry.clientName} · {entry.clientEmail}
               </div>
+              <div className="mono text-[10px] uppercase tracking-[0.18em] text-ink-3 mt-2">
+                {t.sample.issuedShort} ·{" "}
+                {new Date(entry.processedAt ?? entry.submittedAt).toLocaleDateString(
+                  loc === "fr" ? "fr-CA" : "en-CA",
+                )}
+              </div>
+              <p className="serif italic text-[13px] leading-relaxed text-ink-2 mt-6 pt-5 border-t border-rule max-w-2xl">
+                {t.sample.confidentialNote}
+              </p>
             </div>
           </div>
         </section>
