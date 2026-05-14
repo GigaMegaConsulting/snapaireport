@@ -10,10 +10,22 @@ import { LOCALES, type Locale } from "@/lib/i18n";
  *
  * Preserves the current path beneath the locale segment so users stay
  * on the same page when switching languages.
+ *
+ * Defensive guard: if the current pathname does NOT begin with a known
+ * locale segment (e.g. /r/<id>, /design, /api/…), we render nothing.
+ * Without this, the component would strip segments[0] as if it were
+ * always a locale and turn /r/abc → /fr/abc → 404. Pages that have no
+ * locale should normally just not mount the component, but the guard
+ * makes a misplacement a no-op rather than a broken link.
  */
 export function LocaleSwitch({ current }: { current: Locale }) {
   const pathname = usePathname() ?? `/${current}`;
   const segments = pathname.split("/").filter(Boolean);
+
+  if (segments.length === 0 || !(LOCALES as readonly string[]).includes(segments[0])) {
+    return null;
+  }
+
   const rest = segments.slice(1).join("/");
   const suffix = rest ? `/${rest}` : "";
 

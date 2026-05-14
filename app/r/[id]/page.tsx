@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VERSION, VERSION_LABEL } from "@/lib/version";
 import { getMessages, type Locale, isLocale, type NicheKey, isNiche, getNicheMessages } from "@/lib/i18n";
-import { LocaleSwitch } from "@/components/LocaleSwitch";
 import type { ReportAnalysis } from "@/types/report";
 
 export const dynamic = "force-dynamic"; // always fetch fresh — reports update rarely but cache invalidation isn't worth wiring
@@ -104,7 +103,9 @@ export default async function ReportView({
               )}
             </Link>
             <div className="flex items-center gap-4">
-              <LocaleSwitch current={loc} />
+              {/* No locale toggle here — the report's language is fixed at the
+                  time of submission (Claude wrote the body in either EN or FR
+                  and can't be re-translated client-side). */}
               <Link href={`/${loc}/assessment`} className="btn-ghost text-[13px] !py-2 !px-3 sm:!px-4">
                 {t.sample.getOwn}
               </Link>
