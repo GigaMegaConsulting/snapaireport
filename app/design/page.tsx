@@ -471,6 +471,178 @@ export default function DesignSystem() {
               Each composition has: paper background, dot-grid or hairline frame, one editorial element (serif headline OR big number), mono metadata at top and/or bottom, single accent ratio.
             </p>
           </div>
+
+          {/* Character compositions — ASCII / box-drawing illustrations */}
+          <div className="mt-14">
+            <div className="eyebrow mb-4">Character compositions — type as illustration</div>
+            <p className="text-ink-2 leading-relaxed mb-6 max-w-2xl text-[14px]">
+              When we need imagery (OG cards, email banners, blog headers,
+              loading states, divider art), prefer compositions built from
+              letters, box-drawing characters, and Unicode blocks instead of
+              stock illustration. Reads like an e-ink screensaver, prints
+              cleanly on any background, and stays on-brand without a
+              dedicated illustrator.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-px bg-rule border border-rule">
+              {/* A: mountain horizon — Kindle screensaver vibe */}
+              <div className="bg-paper p-6">
+                <div className="h-full border border-rule p-5 flex flex-col">
+                  <div className="flex items-baseline justify-between mb-4">
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      Fig. A · HORIZON
+                    </span>
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      OG / banner
+                    </span>
+                  </div>
+                  <pre className="mono text-ink text-[11px] leading-[1.15] whitespace-pre mb-4 select-all">
+{`                            /\\
+                           /  \\
+                /\\        /    \\          /\\
+               /  \\      /      \\        /  \\
+          /\\  /    \\    /        \\      /    \\
+         /  \\/      \\  /          \\    /      \\___
+   _____/            \\/            \\__/             \\___
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ░ ▒ ▓ █  ·  the map before the territory  ·  █ ▓ ▒ ░`}
+                  </pre>
+                  <div className="mt-auto flex items-baseline justify-between pt-3 border-t border-rule">
+                    <span className="serif italic text-ink-2 text-[13px]">
+                      Slow horizon, single peak, dithered foreground.
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* B: gradient score plate */}
+              <div className="bg-paper p-6">
+                <div className="h-full border border-rule p-5 flex flex-col">
+                  <div className="flex items-baseline justify-between mb-4">
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      Fig. B · PLATE
+                    </span>
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      score card
+                    </span>
+                  </div>
+                  <pre className="mono text-ink text-[11px] leading-[1.15] whitespace-pre mb-4 select-all">
+{`   ┌─                                 ─┐
+
+
+
+            ░ ░ ░ AI READINESS ░ ░ ░
+
+
+
+                    6 7
+                ─ / 1 0 0 ─
+
+            //  industry avg: 5 4  //
+
+
+
+   └─                                 ─┘`}
+                  </pre>
+                  <div className="mt-auto flex items-baseline justify-between pt-3 border-t border-rule">
+                    <span className="serif italic text-ink-2 text-[13px]">
+                      Corner-tick specimen with one big numeric anchor.
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* C: pipeline schematic */}
+              <div className="bg-paper p-6">
+                <div className="h-full border border-rule p-5 flex flex-col">
+                  <div className="flex items-baseline justify-between mb-4">
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      Fig. C · FLOW
+                    </span>
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      explainer
+                    </span>
+                  </div>
+                  <pre className="mono text-ink text-[11px] leading-[1.2] whitespace-pre mb-4 select-all">
+{`   ┌─────────┐      ┌─────────┐      ┌─────────┐
+   │  intake │ ───▶ │  claude │ ───▶ │  report │
+   └────┬────┘      └────┬────┘      └────┬────┘
+        │                │                │
+        ▼                ▼                ▼
+     answers          prompt              PDF
+        ·                ·                ·
+      .  .  .         .  .  .          .  .  .
+
+   //  3 STEPS  ·  ZERO FRICTION  ·  ≈ 5 MIN  //`}
+                  </pre>
+                  <div className="mt-auto flex items-baseline justify-between pt-3 border-t border-rule">
+                    <span className="serif italic text-ink-2 text-[13px]">
+                      Boxes + arrows, mono callouts. No icons needed.
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* D: stamped emblem / compass */}
+              <div className="bg-paper p-6">
+                <div className="h-full border border-rule p-5 flex flex-col">
+                  <div className="flex items-baseline justify-between mb-4">
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      Fig. D · EMBLEM
+                    </span>
+                    <span className="mono text-[9px] uppercase tracking-[0.18em] text-ink-3">
+                      seal / stamp
+                    </span>
+                  </div>
+                  <pre className="mono text-ink text-[11px] leading-[1.15] whitespace-pre mb-4 select-all">
+{`   ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·
+
+         ┌─────────────────────────┐
+         │             N           │
+         │             ▲           │
+         │             │           │
+         │      W ◀────┼────▶ E    │
+         │             │           │
+         │             ▼           │
+         │             S           │
+         │                         │
+         │      § 01   ·   ✦       │
+         └─────────────────────────┘
+
+   ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·`}
+                  </pre>
+                  <div className="mt-auto flex items-baseline justify-between pt-3 border-t border-rule">
+                    <span className="serif italic text-ink-2 text-[13px]">
+                      Double-bordered seal. Rotate −2° in production for stamp feel.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 mt-8 max-w-3xl text-[13px] leading-relaxed text-ink-2">
+              <div>
+                <div className="eyebrow mb-2">Recipe</div>
+                <ol className="space-y-1.5 list-decimal pl-4">
+                  <li>JetBrains Mono only. Tight line-height (1.15–1.2).</li>
+                  <li>Build with these glyphs: <span className="mono text-ink">░ ▒ ▓ █ · ─ │ ┌ ┐ └ ┘ ▲ ▼ ◀ ▶</span></li>
+                  <li>One composition = one shape. Don&apos;t cram two metaphors.</li>
+                  <li>Wrap in a hairline frame to anchor it on paper.</li>
+                  <li>Add mono eyebrows at top corners (figure number + role).</li>
+                </ol>
+              </div>
+              <div>
+                <div className="eyebrow mb-2">Where to use it</div>
+                <ul className="space-y-1.5 list-disc pl-4">
+                  <li>Open Graph / social cards (paper bg, ASCII centered)</li>
+                  <li>Email banner above the salutation</li>
+                  <li>Blog header art (one composition per post)</li>
+                  <li>Loading / empty states inside the app</li>
+                  <li>Section dividers — single line of <span className="mono text-ink">░ ▒ ▓ █ ▓ ▒ ░</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </Section>
 
         {/* ── § 08 Don'ts ─────────────────────────────────────────── */}
