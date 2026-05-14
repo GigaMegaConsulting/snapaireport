@@ -33,13 +33,23 @@ export async function sendReportEmail({
   // at it. Otherwise we fall back to a "Reply to this email" mailto so there's
   // always an action — useful while the Cal.com handle is still being set up.
   //
-  // When the Cal.com URL is set, we also append the assessment ID as a query
-  // param so Cal.com prefills (and locks, if configured) the matching booking-
-  // form field. The Cal.com question must have field identifier "assessment-id"
-  // with "Disable input if the URL identifier is prefilled" turned ON.
+  // When the Cal.com URL is set, we also prefill three fields via query params
+  // so the customer lands on a booking page already populated:
+  //   - name           (Cal.com built-in)
+  //   - email          (Cal.com built-in)
+  //   - assessment-id  (custom field; identifier must match in Cal.com setup,
+  //                     with "Disable input if the URL identifier is prefilled"
+  //                     turned ON so the field is locked.)
   const calUrl = process.env.SNAPAIREPORT_CAL_URL?.trim();
   const ctaHref = calUrl
-    ? `${calUrl}${calUrl.includes('?') ? '&' : '?'}assessment-id=${encodeURIComponent(assessmentId)}`
+    ? (() => {
+        const params = new URLSearchParams({
+          name: clientName,
+          email: to,
+          'assessment-id': assessmentId,
+        });
+        return `${calUrl}${calUrl.includes('?') ? '&' : '?'}${params.toString()}`;
+      })()
     : 'mailto:info@snapaireport.com?subject=Re:%20My%20SnapReport%20review';
   const ctaLabel = calUrl ? t.ctaBookLabel : t.ctaLabel;
 
