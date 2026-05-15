@@ -38,7 +38,7 @@ const fr: typeof en = {
   landing: {
     metaTitle: "SnapReport — Votre évaluation IA en 5 minutes",
     metaDescription:
-      "Découvrez plus de 10 000 $ d'opportunités IA cachées. Répondez à 10 questions et recevez par courriel un rapport sur mesure. Gratuit pour les 3 premières entreprises.",
+      "Découvrez plus de 10 000 $ d'opportunités IA cachées. Consacrez ~5 minutes à un court formulaire et recevez un rapport sur mesure par courriel. Gratuit pendant notre bêta.",
 
     hero: {
       eyebrow: "§ 00 · INTAKE",
@@ -51,8 +51,8 @@ const fr: typeof en = {
       ],
       headlineItalicIndex: 1,
       lead:
-        "Répondez à 10 questions sur votre façon d'opérer. Claude les lit, identifie les usages d'IA à plus fort levier pour votre situation, et vous envoie un rapport sur mesure par courriel. Pas d'appel. Pas de vente. Juste de la clarté.",
-      badges: ["10 questions", "PDF par courriel", "Gratuit pour les 3 premiers"],
+        "Répondez à quelques questions sur votre façon d'opérer. Notre équipe les analyse, identifie les usages d'IA à plus fort levier pour votre situation, et vous envoie un rapport sur mesure par courriel. Pas d'appel. Pas de vente. Juste de la clarté.",
+      badges: ["~5 min", "PDF par courriel", "Gratuit pendant la bêta"],
       specimenLabel: "Échantillon",
       specimenCaption: "Fig. 01",
       specimenAction: "Exemple de rapport",
@@ -67,16 +67,16 @@ const fr: typeof en = {
       steps: [
         {
           n: "01",
-          title: "Répondez à 10 questions",
+          title: "Remplissez le formulaire",
           desc:
             "Un court formulaire couvre vos opérations, équipe, outils, sources de clients, freins, expérience avec l'IA et objectifs sur 12 mois.",
           meta: "≈ 5 minutes",
         },
         {
           n: "02",
-          title: "Claude les lit",
+          title: "Notre équipe l'analyse",
           desc:
-            "Vos réponses sont analysées par Claude (le modèle de pointe d'Anthropic) — comparées à des milliers de profils de PME.",
+            "Vos réponses sont examinées par nos spécialistes et comparées à des milliers de profils de PME.",
           meta: "≈ 30 secondes",
         },
         {
@@ -109,8 +109,8 @@ const fr: typeof en = {
       sectionNumber: "§ 03 · CONDITIONS",
       title: "Gratuit, pour l'instant.",
       lead:
-        "Nous menons la première cohorte sans frais pour bâtir nos études de cas. Les rapports sont normalement offerts à 1 000 $.",
-      stamp: "Première cohorte · Limité",
+        "Les rapports sont gratuits pendant notre bêta pour bâtir nos études de cas. Ils seront offerts à 1 000 $ une fois le lancement officiel.",
+      stamp: "Bêta · Gratuit",
       price: "0 $",
       strikePrice: "1 000 $",
       priceCaption: "Une fois · Sans abonnement · Sans carte",
@@ -127,7 +127,7 @@ const fr: typeof en = {
     closingCta: {
       eyebrow: "// FIN DU PROSPECTUS",
       headline:
-        "Dix questions séparent votre entreprise d'une feuille de route IA sur mesure.",
+        "~5 minutes séparent votre entreprise d'une feuille de route IA sur mesure.",
     },
     tailored: {
       sectionNumber: "§ 01b · SUR MESURE",
@@ -185,7 +185,7 @@ const fr: typeof en = {
       fallbackBusiness: "votre entreprise",
       nextHeader: "Ce qui suit",
       nextSteps: [
-        "Claude lit vos réponses",
+        "Notre équipe examine vos réponses",
         "Le rapport est rédigé et exporté en PDF",
         "Il arrive dans votre boîte — généralement en moins de 5 minutes",
         "Répondez si vous voulez un suivi en visio",
@@ -418,7 +418,7 @@ const fr: typeof en = {
     heroTitle: ["À quoi ressemble", "vraiment un SnapReport."],
     heroTitleItalicIndex: 1,
     heroLead:
-      "Ci-dessous : une entreprise de plomberie montréalaise fictive, les 10 réponses qu'elle a données au formulaire, et le rapport complet que Claude a généré pour elle. Même processus que vous suivrez. Même genre de rapport que vous recevrez.",
+      "Ci-dessous : une entreprise de plomberie montréalaise fictive, les réponses qu'elle a données au formulaire, et le rapport complet que notre équipe a produit pour elle. Même processus que vous suivrez. Même genre de rapport que vous recevrez.",
     note:
       "Note : Plomberie Acme est inventée pour la démonstration. Aucune donnée réelle de client n'est affichée.",
     getOwn: "Obtenez le vôtre →",
@@ -483,7 +483,7 @@ const fr: typeof en = {
         { name: "FutureTools", url: "https://www.futuretools.io", desc: "Outils choisis à la main par Matt Wolfe. Bons filtres pour les versions gratuites." },
       ],
     },
-    pause: "↓ Ci-dessous : ce que Claude a généré et envoyé par courriel",
+    pause: "↓ Ci-dessous : ce que notre équipe a produit et envoyé par courriel",
     issued: "Émis · 2026.05.13",
     reportHeader: "SnapReport · Aptitude à l'IA",
     confidential: "Confidentiel",

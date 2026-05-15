@@ -36,7 +36,7 @@ const en = {
   landing: {
     metaTitle: "SnapReport — Your AI Business Assessment in 5 Minutes",
     metaDescription:
-      "Find $10K+ in hidden AI opportunities. Answer 10 questions, get a custom AI readiness report by email. First 3 reports are free.",
+      "Find $10K+ in hidden AI opportunities. Spend ~5 minutes on a short form and get a custom AI readiness report by email. Free during our beta.",
 
     hero: {
       eyebrow: "§ 00 · INTAKE",
@@ -44,8 +44,8 @@ const en = {
       headline: ["Map the AI", "opportunities", "hiding in your", "business."],
       headlineItalicIndex: 1,
       lead:
-        "Answer 10 questions about how you operate. Claude reads them, finds the highest-leverage AI plays for your specific situation, and emails you a tailored report. No call. No pitch. Just clarity.",
-      badges: ["10 questions", "PDF in inbox", "Free for first 3"],
+        "Answer a short set of questions about how you operate. Our team reviews them, finds the highest-leverage AI plays for your specific situation, and emails you a tailored report. No call. No pitch. Just clarity.",
+      badges: ["~5 min", "PDF in inbox", "Free during beta"],
       specimenLabel: "Specimen",
       specimenCaption: "Fig. 01",
       specimenAction: "Output sample",
@@ -60,16 +60,16 @@ const en = {
       steps: [
         {
           n: "01",
-          title: "Answer 10 questions",
+          title: "Fill the short form",
           desc:
             "A short web form covers your operations, team, tools, leads, bottlenecks, AI experience, and 12-month goals.",
           meta: "≈ 5 minutes",
         },
         {
           n: "02",
-          title: "Claude reads them",
+          title: "Our team reviews it",
           desc:
-            "Your answers are analyzed by Claude (Anthropic's frontier model) — pattern-matched against thousands of SMB profiles.",
+            "Your answers are reviewed by our specialists and matched against thousands of SMB profiles.",
           meta: "≈ 30 seconds",
         },
         {
@@ -102,8 +102,8 @@ const en = {
       sectionNumber: "§ 03 · TERMS",
       title: "Free, for now.",
       lead:
-        "We're running the first cohort at no cost to build case studies. Reports normally retail at $1,000.",
-      stamp: "First Cohort · Limited",
+        "Reports are free while we're in beta to build case studies. They'll retail at $1,000 once we officially launch.",
+      stamp: "Beta · Free",
       price: "$0",
       strikePrice: "$1,000",
       priceCaption: "One-time · No subscription · No card required",
@@ -119,7 +119,7 @@ const en = {
 
     closingCta: {
       eyebrow: "// END OF PROSPECTUS",
-      headline: "Ten questions stand between you and a tailored AI roadmap.",
+      headline: "~5 minutes stand between you and a tailored AI roadmap.",
     },
     tailored: {
       sectionNumber: "§ 01b · TAILORED",
@@ -176,7 +176,7 @@ const en = {
       fallbackBusiness: "your business",
       nextHeader: "What happens next",
       nextSteps: [
-        "Claude reads your answers",
+        "Our team reviews your answers",
         "Report is drafted and rendered as PDF",
         "Lands in your inbox — usually under 5 minutes",
         "Reply if you want a follow-up walkthrough",
@@ -401,7 +401,7 @@ const en = {
     heroTitle: ["What a SnapReport", "actually looks like."],
     heroTitleItalicIndex: 1,
     heroLead:
-      "Below: a fictional Montreal plumbing company, the 10 answers they gave the form, and the full report Claude generated for them. Same process you'll go through. Same kind of report you'll get back.",
+      "Below: a fictional Montreal plumbing company, the answers they gave the form, and the full report our team produced for them. Same process you'll go through. Same kind of report you'll get back.",
     note:
       "Note: Acme Plumbing is invented for demonstration. No real customer data shown.",
     getOwn: "Get your own →",
@@ -466,7 +466,7 @@ const en = {
         { name: "FutureTools", url: "https://www.futuretools.io", desc: "Hand-picked AI tools by Matt Wolfe. Strong filters for free-tier finds." },
       ],
     },
-    pause: "↓ Below: what Claude generated and emailed them",
+    pause: "↓ Below: what our team produced and emailed them",
     issued: "Issued · 2026.05.13",
     reportHeader: "SnapReport · AI Readiness",
     confidential: "Confidential",

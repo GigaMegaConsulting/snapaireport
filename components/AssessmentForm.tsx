@@ -376,6 +376,9 @@ function FormHeader({
         <Link href={`/${locale}`} className="flex items-center gap-3 min-w-0">
           <Mark />
           <span className="serif text-xl">{t.common.brand}</span>
+          <span className="mono text-[10px] tracking-[0.18em] text-amber-600 uppercase border border-amber-300 px-1.5 py-0.5">
+            Beta
+          </span>
           {nicheBadge && (
             <span className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5 truncate">
               {nicheBadge}

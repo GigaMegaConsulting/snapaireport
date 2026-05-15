@@ -125,7 +125,7 @@ const en: NicheMessages = {
       "— in 5 minutes."],
     headlineItalicIndex: 1,
     lead:
-      "Discovery summaries. Drafting standard motions. Triaging intake calls. Reconciling billable hours. There's an AI workflow for every billable-time leak in your practice — and 10 questions is all we need to map yours.",
+      "Discovery summaries. Drafting standard motions. Triaging intake calls. Reconciling billable hours. There's an AI workflow for every billable-time leak in your practice — and ~5 minutes on a short form is all we need to map yours.",
     badges: ["Built for solo & small firms", "Quebec & Ontario", "No software to install"],
     bottlenecks: {
       title: ["The leaks every", "small firm has."],
@@ -172,7 +172,7 @@ const en: NicheMessages = {
       ],
     },
     closingHeadline:
-      "Ten questions stand between your firm and a tailored AI roadmap — built around how lawyers actually work.",
+      "~5 minutes stand between your firm and a tailored AI roadmap — built around how lawyers actually work.",
     formIntro:
       "Tailored to legal practices. Same 5-minute form — the questions speak the language of matters, intake, and billables.",
     formOverrides: {
@@ -378,7 +378,7 @@ const en: NicheMessages = {
       "— in 5 minutes."],
     headlineItalicIndex: 1,
     lead:
-      "Bookkeeping cleanup. Client document chasing. Tax prep first drafts. Audit fieldwork. There's an AI workflow for every hour your team loses to repetitive work — and 10 questions is all we need to map yours.",
+      "Bookkeeping cleanup. Client document chasing. Tax prep first drafts. Audit fieldwork. There's an AI workflow for every hour your team loses to repetitive work — and ~5 minutes on a short form is all we need to map yours.",
     badges: ["Built for SMB firms", "Quebec & Ontario", "No software to install"],
     bottlenecks: {
       title: ["The work that", "should be automated."],
@@ -425,7 +425,7 @@ const en: NicheMessages = {
       ],
     },
     closingHeadline:
-      "Ten questions stand between your practice and a tailored AI roadmap — built around how accountants actually work.",
+      "~5 minutes stand between your practice and a tailored AI roadmap — built around how accountants actually work.",
     formIntro:
       "Tailored to accounting and bookkeeping practices. Same 5-minute form — the questions speak the language of trial balances, T1s, and tax season.",
     formOverrides: {

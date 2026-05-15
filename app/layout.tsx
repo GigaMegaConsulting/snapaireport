@@ -27,7 +27,7 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "SnapReport — Your AI Business Assessment in 5 Minutes",
   description:
-    "Find $10K+ in hidden AI opportunities. Answer 10 questions, get a custom AI readiness report by email. First 3 reports are free.",
+    "Find $10K+ in hidden AI opportunities. Spend ~5 minutes on a short form and get a custom AI readiness report by email. Free during our beta.",
   keywords: [
     "AI consulting",
     "AI business assessment",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://snapaireport.com"),
   openGraph: {
     title: "SnapReport — Your AI Business Assessment in 5 Minutes",
-    description: "Find $10K+ in hidden AI opportunities in your business. Free for the first 3.",
+    description: "Find $10K+ in hidden AI opportunities in your business. Free during our beta.",
     type: "website",
     url: "https://snapaireport.com",
     siteName: "SnapReport",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "SnapReport — Your AI Business Assessment in 5 Minutes",
-    description: "Find $10K+ in hidden AI opportunities in your business. Free for the first 3.",
+    description: "Find $10K+ in hidden AI opportunities in your business. Free during our beta.",
   },
 };
 

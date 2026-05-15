@@ -36,6 +36,9 @@ export default async function Home({
             <Link href={`/${loc}`} className="flex items-center gap-3">
               <Mark />
               <span className="serif text-xl">{t.common.brand}</span>
+              <span className="mono text-[10px] tracking-[0.18em] text-amber-600 uppercase border border-amber-300 px-1.5 py-0.5">
+                Beta
+              </span>
               <span className="hidden sm:inline-block mono text-[10px] tracking-[0.18em] text-ink-3 uppercase border border-rule px-1.5 py-0.5" title={VERSION_LABEL}>
                 v{VERSION}
               </span>
@@ -310,14 +313,14 @@ export default async function Home({
 
         {/* ─── Footer ──────────────────────────────────────────────── */}
         <footer>
-          <div className="mx-auto max-w-6xl px-6 py-8 flex items-center justify-between text-[12px] text-ink-2">
+          <div className="mx-auto max-w-6xl px-6 py-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between text-[12px] text-ink-2">
             <div className="flex items-center gap-3">
               <Mark size={14} />
               <span className="mono">{t.common.brand}</span>
               <span className="mono text-ink-3">·</span>
               <span className="mono text-ink-3">{t.common.footer.tagline}</span>
             </div>
-            <div className="flex items-center gap-6 mono text-[11px] uppercase tracking-[0.12em]">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 mono text-[11px] uppercase tracking-[0.12em]">
               <LocaleSwitch current={loc} />
               <a href={`/${loc}/privacy`} className="hover:text-ink transition">
                 {t.common.footer.privacy}

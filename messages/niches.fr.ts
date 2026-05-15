@@ -11,7 +11,7 @@ const fr: NicheMessages = {
       "— en 5 minutes."],
     headlineItalicIndex: 1,
     lead:
-      "Sommaires de découverte. Rédaction des requêtes standards. Triage des appels d'admission. Conciliation des heures facturables. Il y a un usage de l'IA pour chaque fuite d'heures facturables dans votre pratique — et 10 questions suffisent pour cartographier les vôtres.",
+      "Sommaires de découverte. Rédaction des requêtes standards. Triage des appels d'admission. Conciliation des heures facturables. Il y a un usage de l'IA pour chaque fuite d'heures facturables dans votre pratique — et ~5 minutes sur un court formulaire suffisent pour les cartographier.",
     badges: [
       "Conçu pour les cabinets de petite taille",
       "Québec et Ontario",
@@ -62,7 +62,7 @@ const fr: NicheMessages = {
       ],
     },
     closingHeadline:
-      "Dix questions séparent votre cabinet d'une feuille de route IA sur mesure — pensée pour la façon dont les avocats travaillent vraiment.",
+      "~5 minutes séparent votre cabinet d'une feuille de route IA sur mesure — pensée pour la façon dont les avocats travaillent vraiment.",
     formIntro:
       "Pensé pour les cabinets d'avocats. Même formulaire de 5 minutes — les questions parlent le langage des dossiers, de l'admission et des heures facturables.",
     formOverrides: {
@@ -268,7 +268,7 @@ const fr: NicheMessages = {
       "— en 5 minutes."],
     headlineItalicIndex: 1,
     lead:
-      "Nettoyage de tenue de livres. Relance de documents clients. Premières versions des déclarations. Travail sur le terrain pour vos vérifications. Il y a un usage de l'IA pour chaque heure que votre équipe perd dans le travail répétitif — et 10 questions suffisent pour les cartographier.",
+      "Nettoyage de tenue de livres. Relance de documents clients. Premières versions des déclarations. Travail sur le terrain pour vos vérifications. Il y a un usage de l'IA pour chaque heure que votre équipe perd dans le travail répétitif — et ~5 minutes sur un court formulaire suffisent pour les cartographier.",
     badges: [
       "Conçu pour les firmes PME",
       "Québec et Ontario",
@@ -319,7 +319,7 @@ const fr: NicheMessages = {
       ],
     },
     closingHeadline:
-      "Dix questions séparent votre firme d'une feuille de route IA sur mesure — pensée pour la façon dont les comptables travaillent vraiment.",
+      "~5 minutes séparent votre firme d'une feuille de route IA sur mesure — pensée pour la façon dont les comptables travaillent vraiment.",
     formIntro:
       "Pensé pour les firmes comptables et de tenue de livres. Même formulaire de 5 minutes — les questions parlent le langage des balances de vérification, des T1 et de la saison des impôts.",
     formOverrides: {
