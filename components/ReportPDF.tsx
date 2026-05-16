@@ -811,11 +811,10 @@ export function ReportPDF({ analysis: rawAnalysis, clientName, locale = 'en' }: 
                 ${analysis.financialImpact.netMonthlySavings.toLocaleString(t.dateLocale)}
               </Text>
               <Text style={styles.financeFormula}>
-                {t.finance.formula(
-                  analysis.financialImpact.weeklyHoursReclaimed,
-                  analysis.financialImpact.hourlyRateAssumption,
-                  analysis.financialImpact.monthlyToolCost,
-                )}
+                {t.finance.formula
+                  .replace('{h}', String(analysis.financialImpact.weeklyHoursReclaimed))
+                  .replace('{rate}', String(analysis.financialImpact.hourlyRateAssumption))
+                  .replace('{tool}', String(analysis.financialImpact.monthlyToolCost))}
               </Text>
             </View>
           </View>

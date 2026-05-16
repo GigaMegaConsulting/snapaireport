@@ -772,8 +772,8 @@ const fr: typeof en = {
     },
     finance: {
       eyebrow: "Valeur mensuelle nette",
-      formula: (h: number, rate: number, tool: number) =>
-        `(${h} h/sem × 4,33 × ${rate} $/h)\n− ${tool} $/mois en outils`,
+      // Template: {h} = weekly hours, {rate} = hourly rate, {tool} = monthly tool cost.
+      formula: "({h} h/sem × 4,33 × {rate} $/h)\n− {tool} $/mois en outils",
     },
     plan: {
       dayLabel: "Jour",

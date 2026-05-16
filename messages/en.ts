@@ -759,8 +759,10 @@ const en = {
     },
     finance: {
       eyebrow: "Net monthly value",
-      formula: (h: number, rate: number, tool: number) =>
-        `(${h} h/week × 4.33 × $${rate}/hr)\n− $${tool}/mo tool cost`,
+      // Template: {h} = weekly hours, {rate} = hourly rate, {tool} = monthly tool cost.
+      // Function-typed values can't cross the server→client serialization boundary,
+      // so we keep it as a plain string and substitute in ReportPDF.tsx.
+      formula: "({h} h/week × 4.33 × ${rate}/hr)\n− ${tool}/mo tool cost",
     },
     plan: {
       dayLabel: "Day",
