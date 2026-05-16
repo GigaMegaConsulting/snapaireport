@@ -18,8 +18,8 @@ const OPENROUTER_BASE = 'https://openrouter.ai/api/v1';
 const DEFAULT_MODEL = 'anthropic/claude-haiku-4.5';
 
 const LANGUAGE_DIRECTIVES: Record<Locale, string> = {
-  en: 'Write all output in English.',
-  fr: 'Écris toutes les sorties en français (français du Québec : utilise « courriel » plutôt que « email », évite les anglicismes). Toutes les valeurs textuelles du JSON doivent être en français — titres, descriptions, recommandations, étapes suivantes. Conserve les noms de marques et les chaînes structurelles (« low | medium | high », « QW.01 », etc.) en anglais.',
+  en: 'Write all output in English, INCLUDING the nextSteps.cta field — translate the example CTA naturally if needed but keep it in English.',
+  fr: 'Écris toutes les sorties en français (français du Québec : utilise « courriel » plutôt que « email », évite les anglicismes). Toutes les valeurs textuelles du JSON doivent être en français — titres, descriptions, recommandations, étapes suivantes, Y COMPRIS la valeur du champ nextSteps.cta (NE PAS copier l\'exemple anglais — réécris la phrase en français). Conserve les noms de marques et les chaînes structurelles (« low | medium | high », « QW.01 », etc.) en anglais.',
 };
 
 /**

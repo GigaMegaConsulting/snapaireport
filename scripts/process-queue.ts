@@ -111,8 +111,8 @@ interface Submission {
 }
 
 const LANGUAGE_DIRECTIVES: Record<Locale, string> = {
-  en: "Write all output in English.",
-  fr: "Écris toutes les sorties en français (français du Québec : utilise « courriel » plutôt que « email », évite les anglicismes). Toutes les valeurs textuelles du JSON doivent être en français — titres, descriptions, recommandations, étapes suivantes. Conserve les noms de marques et les chaînes structurelles (« low | medium | high », « QW.01 », etc.) en anglais.",
+  en: "Write all output in English, INCLUDING the nextSteps.cta field — translate the example CTA naturally if needed but keep it in English.",
+  fr: "Écris toutes les sorties en français (français du Québec : utilise « courriel » plutôt que « email », évite les anglicismes). Toutes les valeurs textuelles du JSON doivent être en français — titres, descriptions, recommandations, étapes suivantes, Y COMPRIS la valeur du champ nextSteps.cta (NE PAS copier l'exemple anglais — réécris la phrase en français). Conserve les noms de marques et les chaînes structurelles (« low | medium | high », « QW.01 », etc.) en anglais.",
 };
 
 const NICHE_DIRECTIVES: Record<NicheKey, string> = {
@@ -303,7 +303,7 @@ async function processOne(filePath: string): Promise<{ ok: boolean; id: string; 
   log(`  ✓ analysis done · score ${analysis.aiReadinessScore.overall}/100`);
 
   // 2. PDF
-  const pdfBuffer = await generatePDF(analysis, submission.clientName);
+  const pdfBuffer = await generatePDF(analysis, submission.clientName, submission.locale);
   log(`  ✓ pdf generated · ${(pdfBuffer.length / 1024).toFixed(1)} KB`);
 
   // 3. Email

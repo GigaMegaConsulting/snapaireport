@@ -1,6 +1,7 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
 import type { ReportAnalysis } from '@/types/report';
+import { getMessages, type Locale } from '@/lib/i18n';
 
 // Paper/blueprint palette — mirrors app/globals.css so the PDF matches the
 // snapaireport.com look exactly (paper background, ink black, forest accent,
@@ -556,26 +557,6 @@ function severityStyle(severity: 'low' | 'medium' | 'high') {
   return { color: C.accent, borderColor: C.accent, backgroundColor: C.paper };
 }
 
-const SCORE_LABELS: Record<keyof ReportAnalysis['aiReadinessScore']['breakdown'], string> = {
-  digitalFoundation: 'Digital foundation',
-  processMaturity: 'Process maturity',
-  teamReadiness: 'Team readiness',
-  dataQuality: 'Data quality',
-  leadershipBuyIn: 'Leadership buy-in',
-};
-
-function Footer() {
-  return (
-    <Text
-      style={styles.footer}
-      fixed
-      render={({ pageNumber, totalPages }) =>
-        `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`
-      }
-    />
-  );
-}
-
 function SectionHead({ letter, title }: { letter: string; title: string }) {
   return (
     <View>
@@ -591,13 +572,30 @@ function SectionHead({ letter, title }: { letter: string; title: string }) {
 interface ReportPDFProps {
   analysis: ReportAnalysis;
   clientName: string;
+  locale?: Locale;
 }
 
-export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps) {
+export function ReportPDF({ analysis: rawAnalysis, clientName, locale = 'en' }: ReportPDFProps) {
   // Strip Unicode glyphs Helvetica can't render (→, ⟶, ◀, etc).
   const analysis = deepSanitize(rawAnalysis);
 
-  const today = new Date().toLocaleDateString('en-US', {
+  const t = getMessages(locale).pdf;
+
+  const scoreLabels: Record<keyof ReportAnalysis['aiReadinessScore']['breakdown'], string> = {
+    digitalFoundation: t.score.digitalFoundation,
+    processMaturity: t.score.processMaturity,
+    teamReadiness: t.score.teamReadiness,
+    dataQuality: t.score.dataQuality,
+    leadershipBuyIn: t.score.leadershipBuyIn,
+  };
+
+  const severityLabel: Record<'low' | 'medium' | 'high', string> = {
+    low: t.severity.low,
+    medium: t.severity.medium,
+    high: t.severity.high,
+  };
+
+  const today = new Date().toLocaleDateString(t.dateLocale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -605,7 +603,7 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
 
   return (
     <Document
-      title={`AI Business Assessment — ${clientName}`}
+      title={`${t.title} — ${clientName}`}
       author="SnapReport"
     >
       {/* ───────── Cover ───────── */}
@@ -615,40 +613,37 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
           <View>
             <View style={styles.coverHeader}>
               <Text style={styles.coverEyebrow}>SnapReport · v1</Text>
-              <Text style={styles.coverStamp}>Confidential</Text>
+              <Text style={styles.coverStamp}>{t.confidential}</Text>
             </View>
 
             <View style={styles.coverMain}>
-              <Text style={styles.coverEyebrow}>AI Readiness Report</Text>
+              <Text style={styles.coverEyebrow}>{t.eyebrow}</Text>
               <View style={[styles.coverDivider, { marginTop: 8 }]} />
-              <Text style={styles.coverTitle}>AI Business{'\n'}Assessment</Text>
-              <Text style={styles.coverSubtitle}>
-                A practical, custom-fit look at where AI can save time and unlock
-                growth for your business — in the next 30 days, and beyond.
-              </Text>
+              <Text style={styles.coverTitle}>{t.title}</Text>
+              <Text style={styles.coverSubtitle}>{t.subtitle}</Text>
             </View>
           </View>
 
           {/* Bottom meta block */}
           <View>
             <View style={styles.coverMetaRow}>
-              <Text style={styles.coverMetaLabel}>Prepared for</Text>
+              <Text style={styles.coverMetaLabel}>{t.preparedFor}</Text>
               <Text style={styles.coverMetaValue}>{clientName}</Text>
             </View>
             <View style={styles.coverMetaRow}>
-              <Text style={styles.coverMetaLabel}>Issued</Text>
+              <Text style={styles.coverMetaLabel}>{t.issued}</Text>
               <Text style={styles.coverMetaValue}>{today}</Text>
             </View>
           </View>
         </View>
-        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   ${t.footer.page} ${pageNumber} / ${totalPages}`} />
       </Page>
 
       {/* ───────── Page 2: Summary + Score + Quick wins ───────── */}
       <Page size="LETTER" style={styles.page}>
         {/* A · Executive Summary */}
         <View style={styles.sectionWrap}>
-          <SectionHead letter="A ·" title="Executive summary" />
+          <SectionHead letter={`${t.sectionLetters.execSummary} ·`} title={t.sectionTitles.execSummary} />
           {analysis.executiveSummary.map((point, i) => (
             <View key={i} style={styles.bulletRow}>
               <Text style={styles.bulletMark}>—</Text>
@@ -659,19 +654,19 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
 
         {/* B · AI Readiness Score */}
         <View style={styles.sectionWrap} wrap={false}>
-          <SectionHead letter="B ·" title="AI readiness score" />
+          <SectionHead letter={`${t.sectionLetters.score} ·`} title={t.sectionTitles.score} />
           <View style={styles.scoreCard}>
             <Text style={styles.scoreBig}>{analysis.aiReadinessScore.overall}</Text>
             <Text style={styles.scoreOf}>/ 100</Text>
             <View style={styles.scoreLabelBlock}>
-              <Text style={styles.scoreLabelEyebrow}>Overall</Text>
-              <Text style={styles.scoreLabelText}>Readiness index</Text>
+              <Text style={styles.scoreLabelEyebrow}>{t.score.overall}</Text>
+              <Text style={styles.scoreLabelText}>{t.score.readinessIndex}</Text>
             </View>
           </View>
           <View>
-            {(Object.keys(SCORE_LABELS) as Array<keyof typeof SCORE_LABELS>).map((key) => (
+            {(Object.keys(scoreLabels) as Array<keyof typeof scoreLabels>).map((key) => (
               <View key={key} style={styles.scoreBreakRow}>
-                <Text style={styles.scoreBreakLabel}>{SCORE_LABELS[key]}</Text>
+                <Text style={styles.scoreBreakLabel}>{scoreLabels[key]}</Text>
                 <Text style={styles.scoreBreakValue}>
                   {analysis.aiReadinessScore.breakdown[key]} / 100
                 </Text>
@@ -680,14 +675,14 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
           </View>
         </View>
 
-        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   ${t.footer.page} ${pageNumber} / ${totalPages}`} />
       </Page>
 
       {/* ───────── Page 3: Quick wins + Strategic opportunities ───────── */}
       <Page size="LETTER" style={styles.page}>
         {/* C · Quick Wins */}
         <View style={styles.sectionWrap}>
-          <SectionHead letter="C ·" title="Top quick wins" />
+          <SectionHead letter={`${t.sectionLetters.quickWins} ·`} title={t.sectionTitles.quickWins} />
           {/* Render every quick win Claude generated (not just the first 3);
               losing a high-value recommendation to a hard slice is worse than
               letting the PDF spill one more page when the LLM judged 4 was right. */}
@@ -699,10 +694,10 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
               </View>
               <Text style={styles.cardDesc}>{win.description}</Text>
               <View style={styles.metaRow}>
-                <Text style={styles.metaPill}>Effort · {win.effort}</Text>
-                <Text style={styles.metaPill}>Impact · {win.impact}</Text>
-                <Text style={styles.metaPill}>Timeline · {win.timeline}</Text>
-                <Text style={styles.metaPill}>Cost · {win.estimatedCost}</Text>
+                <Text style={styles.metaPill}>{t.pills.effort} · {win.effort}</Text>
+                <Text style={styles.metaPill}>{t.pills.impact} · {win.impact}</Text>
+                <Text style={styles.metaPill}>{t.pills.timeline} · {win.timeline}</Text>
+                <Text style={styles.metaPill}>{t.pills.cost} · {win.estimatedCost}</Text>
               </View>
             </View>
           ))}
@@ -710,7 +705,7 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
 
         {/* D · Strategic Opportunities */}
         <View style={styles.sectionWrap}>
-          <SectionHead letter="D ·" title="Strategic opportunities" />
+          <SectionHead letter={`${t.sectionLetters.strategic} ·`} title={t.sectionTitles.strategic} />
           {analysis.strategicOpportunities.map((opp, i) => (
             <View key={i} style={styles.card} wrap={false}>
               <View style={styles.cardHeader}>
@@ -719,21 +714,21 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
               </View>
               <Text style={styles.cardDesc}>{opp.description}</Text>
               <View style={styles.metaRow}>
-                <Text style={styles.metaPill}>ROI · {opp.roiPotential}</Text>
-                <Text style={styles.metaPill}>Timeline · {opp.timeline}</Text>
+                <Text style={styles.metaPill}>{t.pills.roi} · {opp.roiPotential}</Text>
+                <Text style={styles.metaPill}>{t.pills.timeline} · {opp.timeline}</Text>
               </View>
             </View>
           ))}
         </View>
 
-        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   ${t.footer.page} ${pageNumber} / ${totalPages}`} />
       </Page>
 
       {/* ───────── Page 4: Risks + Tools ───────── */}
       <Page size="LETTER" style={styles.page}>
         {/* E · Risk Flags */}
         <View style={styles.sectionWrap}>
-          <SectionHead letter="E ·" title="Risk flags" />
+          <SectionHead letter={`${t.sectionLetters.risks} ·`} title={t.sectionTitles.risks} />
           {analysis.riskFlags.map((risk, i) => {
             const sev = severityStyle(risk.severity);
             return (
@@ -745,12 +740,12 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
                       { color: sev.color, borderColor: sev.borderColor },
                     ]}
                   >
-                    {risk.severity}
+                    {severityLabel[risk.severity]}
                   </Text>
                 </View>
                 <View style={styles.riskBody}>
                   <Text style={styles.riskFlag}>{risk.flag}</Text>
-                  <Text style={styles.riskMitigationLabel}>Mitigation</Text>
+                  <Text style={styles.riskMitigationLabel}>{t.risks.mitigationLabel}</Text>
                   <Text style={styles.riskMitigation}>{risk.mitigation}</Text>
                 </View>
               </View>
@@ -760,11 +755,11 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
 
         {/* F · Recommended Tools */}
         <View style={styles.sectionWrap}>
-          <SectionHead letter="F ·" title="Recommended tools" />
+          <SectionHead letter={`${t.sectionLetters.tools} ·`} title={t.sectionTitles.tools} />
           <View style={styles.toolHead}>
-            <Text style={[styles.toolHeadCell, { width: 130 }]}>Tool</Text>
-            <Text style={[styles.toolHeadCell, { flex: 1 }]}>Purpose</Text>
-            <Text style={[styles.toolHeadCell, { width: 80, textAlign: 'right' }]}>Cost</Text>
+            <Text style={[styles.toolHeadCell, { width: 130 }]}>{t.toolsTable.tool}</Text>
+            <Text style={[styles.toolHeadCell, { flex: 1 }]}>{t.toolsTable.purpose}</Text>
+            <Text style={[styles.toolHeadCell, { width: 80, textAlign: 'right' }]}>{t.toolsTable.cost}</Text>
           </View>
           {analysis.recommendedTools.map((tool, i) => (
             <View key={i} style={styles.toolRow} wrap={false}>
@@ -784,15 +779,12 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
 
           {/* Tool directories — keep together on one page */}
           <View style={styles.directoryBlock} wrap={false}>
-            <Text style={styles.directoryEyebrow}>Find more AI tools</Text>
-            <Text style={styles.directoryIntro}>
-              The AI landscape moves fast. These directories index thousands of
-              tools so you can keep an eye on what&apos;s launching:
-            </Text>
+            <Text style={styles.directoryEyebrow}>{t.directory.header}</Text>
+            <Text style={styles.directoryIntro}>{t.directory.intro}</Text>
             {[
-              { name: "There's An AI For That", url: 'https://theresanaiforthat.com', desc: 'Largest searchable AI tool index — type a use case, get a sorted list.' },
-              { name: 'Futurepedia', url: 'https://www.futurepedia.io', desc: 'Curated AI tools, categorized, with pricing tiers.' },
-              { name: 'FutureTools', url: 'https://www.futuretools.io', desc: 'Hand-picked AI tools. Good filters for free-tier finds.' },
+              { name: "There's An AI For That", url: 'https://theresanaiforthat.com', desc: t.directory.items.taaft },
+              { name: 'Futurepedia', url: 'https://www.futurepedia.io', desc: t.directory.items.futurepedia },
+              { name: 'FutureTools', url: 'https://www.futuretools.io', desc: t.directory.items.futuretools },
             ].map((d) => (
               <View key={d.url} style={styles.directoryRow}>
                 <Text style={styles.directoryName}>
@@ -804,7 +796,7 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
           </View>
         </View>
 
-        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   ${t.footer.page} ${pageNumber} / ${totalPages}`} />
       </Page>
 
       {/* ───────── Page 5: Financial impact + 4-day plan + Next steps ───────── */}
@@ -812,15 +804,18 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
         {/* G · Financial Impact */}
         {analysis.financialImpact && (
           <View style={styles.sectionWrap} wrap={false}>
-            <SectionHead letter="G ·" title="Financial impact" />
+            <SectionHead letter={`${t.sectionLetters.finance} ·`} title={t.sectionTitles.finance} />
             <View style={styles.financeBox}>
-              <Text style={styles.financeEyebrow}>Net monthly value</Text>
+              <Text style={styles.financeEyebrow}>{t.finance.eyebrow}</Text>
               <Text style={styles.financeBig}>
-                ${analysis.financialImpact.netMonthlySavings.toLocaleString('en-US')}
+                ${analysis.financialImpact.netMonthlySavings.toLocaleString(t.dateLocale)}
               </Text>
               <Text style={styles.financeFormula}>
-                ({analysis.financialImpact.weeklyHoursReclaimed} h/week × 4.33 × ${analysis.financialImpact.hourlyRateAssumption}/hr)
-                {'\n'}− ${analysis.financialImpact.monthlyToolCost}/mo tool cost
+                {t.finance.formula(
+                  analysis.financialImpact.weeklyHoursReclaimed,
+                  analysis.financialImpact.hourlyRateAssumption,
+                  analysis.financialImpact.monthlyToolCost,
+                )}
               </Text>
             </View>
           </View>
@@ -829,10 +824,10 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
         {/* H · 4-Day Plan */}
         {analysis.quickWinPlan && analysis.quickWinPlan.length > 0 && (
           <View style={styles.sectionWrap}>
-            <SectionHead letter="H ·" title="4-day quick-win plan" />
+            <SectionHead letter={`${t.sectionLetters.plan} ·`} title={t.sectionTitles.plan} />
             {analysis.quickWinPlan.map((d) => (
               <View key={d.day} style={styles.planRow} wrap={false}>
-                <Text style={styles.planDay}>Day {d.day}</Text>
+                <Text style={styles.planDay}>{t.plan.dayLabel} {d.day}</Text>
                 <Text style={styles.planAction}>{d.action}</Text>
               </View>
             ))}
@@ -841,10 +836,10 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
 
         {/* I · Next steps */}
         <View style={styles.sectionWrap}>
-          <SectionHead letter="I ·" title="Next steps" />
+          <SectionHead letter={`${t.sectionLetters.nextSteps} ·`} title={t.sectionTitles.nextSteps} />
 
           <View style={styles.nextBlock}>
-            <Text style={styles.nextEyebrow}>This week</Text>
+            <Text style={styles.nextEyebrow}>{t.nextSteps.thisWeek}</Text>
             {analysis.nextSteps.immediate.map((step, i) => (
               <View key={i} style={styles.bulletRow}>
                 <Text style={styles.bulletMark}>—</Text>
@@ -854,7 +849,7 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
           </View>
 
           <View style={styles.nextBlock}>
-            <Text style={styles.nextEyebrow}>Next 30 days</Text>
+            <Text style={styles.nextEyebrow}>{t.nextSteps.thirtyDays}</Text>
             {analysis.nextSteps.thirtyDays.map((step, i) => (
               <View key={i} style={styles.bulletRow}>
                 <Text style={styles.bulletMark}>—</Text>
@@ -868,7 +863,7 @@ export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps)
           </View>
         </View>
 
-        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   Page ${pageNumber} / ${totalPages}`} />
+        <Text style={styles.footer} fixed render={({ pageNumber, totalPages }) => `SnapReport · info@snapaireport.com   ·   ${t.footer.page} ${pageNumber} / ${totalPages}`} />
       </Page>
     </Document>
   );

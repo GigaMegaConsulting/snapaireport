@@ -682,6 +682,97 @@ const en = {
     },
   },
 
+  // PDF template chrome — every label / heading / pill / footer used by
+  // components/ReportPDF.tsx. The body text (analysis content) comes from
+  // Claude in whichever locale the form was submitted in; this namespace
+  // localizes the SCAFFOLDING around it.
+  pdf: {
+    eyebrow: "AI Readiness Report",
+    title: "AI Business Assessment",
+    subtitle:
+      "A practical, custom-fit look at where AI can save time and unlock growth for your business — in the next 30 days, and beyond.",
+    confidential: "Confidential",
+    preparedFor: "Prepared for",
+    issued: "Issued",
+    dateLocale: "en-US",
+    sectionLetters: {
+      execSummary: "A",
+      score: "B",
+      quickWins: "C",
+      strategic: "D",
+      risks: "E",
+      tools: "F",
+      finance: "G",
+      plan: "H",
+      nextSteps: "I",
+    },
+    sectionTitles: {
+      execSummary: "Executive summary",
+      score: "AI readiness score",
+      quickWins: "Top quick wins",
+      strategic: "Strategic opportunities",
+      risks: "Risk flags",
+      tools: "Recommended tools",
+      finance: "Financial impact",
+      plan: "4-day quick-win plan",
+      nextSteps: "Next steps",
+    },
+    score: {
+      overall: "Overall",
+      readinessIndex: "Readiness index",
+      digitalFoundation: "Digital foundation",
+      processMaturity: "Process maturity",
+      teamReadiness: "Team readiness",
+      dataQuality: "Data quality",
+      leadershipBuyIn: "Leadership buy-in",
+    },
+    pills: {
+      effort: "Effort",
+      impact: "Impact",
+      timeline: "Timeline",
+      cost: "Cost",
+      roi: "ROI",
+    },
+    toolsTable: {
+      tool: "Tool",
+      purpose: "Purpose",
+      cost: "Cost",
+    },
+    directory: {
+      header: "Find more AI tools",
+      intro:
+        "The AI landscape moves fast. These directories index thousands of tools so you can keep an eye on what's launching:",
+      items: {
+        taaft: "Largest searchable AI tool index — type a use case, get a sorted list.",
+        futurepedia: "Curated AI tools, categorized, with pricing tiers.",
+        futuretools: "Hand-picked AI tools. Good filters for free-tier finds.",
+      },
+    },
+    severity: {
+      low: "low",
+      medium: "medium",
+      high: "high",
+    },
+    risks: {
+      mitigationLabel: "Mitigation",
+    },
+    finance: {
+      eyebrow: "Net monthly value",
+      formula: (h: number, rate: number, tool: number) =>
+        `(${h} h/week × 4.33 × $${rate}/hr)\n− $${tool}/mo tool cost`,
+    },
+    plan: {
+      dayLabel: "Day",
+    },
+    nextSteps: {
+      thisWeek: "This week",
+      thirtyDays: "Next 30 days",
+    },
+    footer: {
+      page: "Page",
+    },
+  },
+
   email: {
     subject: "Your AI Business Assessment Report",
     heading: "Your AI Business Assessment is Ready",

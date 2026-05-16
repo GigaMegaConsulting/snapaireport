@@ -699,6 +699,93 @@ const fr: typeof en = {
     },
   },
 
+  pdf: {
+    eyebrow: "Rapport d'aptitude à l'IA",
+    title: "Évaluation IA d'affaires",
+    subtitle:
+      "Un regard pratique et sur mesure sur les endroits où l'IA peut faire gagner du temps et débloquer de la croissance dans votre entreprise — d'ici 30 jours et au-delà.",
+    confidential: "Confidentiel",
+    preparedFor: "Préparé pour",
+    issued: "Émis",
+    dateLocale: "fr-CA",
+    sectionLetters: {
+      execSummary: "A",
+      score: "B",
+      quickWins: "C",
+      strategic: "D",
+      risks: "E",
+      tools: "F",
+      finance: "G",
+      plan: "H",
+      nextSteps: "I",
+    },
+    sectionTitles: {
+      execSummary: "Sommaire exécutif",
+      score: "Score d'aptitude à l'IA",
+      quickWins: "Gains rapides prioritaires",
+      strategic: "Opportunités stratégiques",
+      risks: "Drapeaux rouges",
+      tools: "Outils recommandés",
+      finance: "Impact financier",
+      plan: "Plan d'attaque 4 jours",
+      nextSteps: "Prochaines étapes",
+    },
+    score: {
+      overall: "Global",
+      readinessIndex: "Indice d'aptitude",
+      digitalFoundation: "Fondation numérique",
+      processMaturity: "Maturité des processus",
+      teamReadiness: "Aptitude de l'équipe",
+      dataQuality: "Qualité des données",
+      leadershipBuyIn: "Adhésion de la direction",
+    },
+    pills: {
+      effort: "Effort",
+      impact: "Impact",
+      timeline: "Délai",
+      cost: "Coût",
+      roi: "ROI",
+    },
+    toolsTable: {
+      tool: "Outil",
+      purpose: "Usage",
+      cost: "Coût",
+    },
+    directory: {
+      header: "Trouvez d'autres outils IA",
+      intro:
+        "Le paysage de l'IA évolue vite. Ces répertoires recensent des milliers d'outils pour suivre ce qui se lance :",
+      items: {
+        taaft: "Plus grand index d'outils IA — tapez un cas d'usage, obtenez une liste triée.",
+        futurepedia: "Outils IA sélectionnés, catégorisés, avec les paliers de prix.",
+        futuretools: "Outils IA triés sur le volet. Bons filtres pour les options gratuites.",
+      },
+    },
+    severity: {
+      low: "faible",
+      medium: "moyen",
+      high: "haut",
+    },
+    risks: {
+      mitigationLabel: "Mitigation",
+    },
+    finance: {
+      eyebrow: "Valeur mensuelle nette",
+      formula: (h: number, rate: number, tool: number) =>
+        `(${h} h/sem × 4,33 × ${rate} $/h)\n− ${tool} $/mois en outils`,
+    },
+    plan: {
+      dayLabel: "Jour",
+    },
+    nextSteps: {
+      thisWeek: "Cette semaine",
+      thirtyDays: "Prochains 30 jours",
+    },
+    footer: {
+      page: "Page",
+    },
+  },
+
   email: {
     subject: "Votre rapport d'évaluation IA",
     heading: "Votre évaluation IA est prête",
