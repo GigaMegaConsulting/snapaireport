@@ -515,6 +515,37 @@ const styles = StyleSheet.create({
   },
 });
 
+// Helvetica (the built-in @react-pdf font) lacks a handful of glyphs Claude
+// commonly emits. When they're missing the PDF engine silently substitutes
+// them (e.g. → renders as an apostrophe). Walk the analysis tree once at
+// render time and rewrite every string with ASCII fallbacks so the output is
+// always legible. Keeping this in one place avoids dotting `safeText(...)`
+// calls across every <Text> in the report.
+function sanitizeForPdf(s: string): string {
+  return s
+    .replace(/→/g, '->')   // U+2192 right arrow
+    .replace(/⟶/g, '->')   // U+27F6 long right arrow
+    .replace(/⇒/g, '=>')   // U+21D2 right double arrow
+    .replace(/←/g, '<-')   // U+2190 left arrow
+    .replace(/⟵/g, '<-')   // U+27F5 long left arrow
+    .replace(/▶/g, '>')    // U+25B6 black right triangle
+    .replace(/►/g, '>')    // U+25BA right pointer
+    .replace(/◀/g, '<');   // U+25C0 black left triangle
+}
+
+function deepSanitize<T>(value: T): T {
+  if (typeof value === 'string') return sanitizeForPdf(value) as unknown as T;
+  if (Array.isArray(value)) return value.map(deepSanitize) as unknown as T;
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const k of Object.keys(value as Record<string, unknown>)) {
+      out[k] = deepSanitize((value as Record<string, unknown>)[k]);
+    }
+    return out as T;
+  }
+  return value;
+}
+
 function severityStyle(severity: 'low' | 'medium' | 'high') {
   if (severity === 'high') {
     return { color: C.stamp, borderColor: C.stamp, backgroundColor: C.paper };
@@ -562,7 +593,10 @@ interface ReportPDFProps {
   clientName: string;
 }
 
-export function ReportPDF({ analysis, clientName }: ReportPDFProps) {
+export function ReportPDF({ analysis: rawAnalysis, clientName }: ReportPDFProps) {
+  // Strip Unicode glyphs Helvetica can't render (→, ⟶, ◀, etc).
+  const analysis = deepSanitize(rawAnalysis);
+
   const today = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -654,7 +688,10 @@ export function ReportPDF({ analysis, clientName }: ReportPDFProps) {
         {/* C · Quick Wins */}
         <View style={styles.sectionWrap}>
           <SectionHead letter="C ·" title="Top quick wins" />
-          {analysis.quickWins.slice(0, 3).map((win, i) => (
+          {/* Render every quick win Claude generated (not just the first 3);
+              losing a high-value recommendation to a hard slice is worse than
+              letting the PDF spill one more page when the LLM judged 4 was right. */}
+          {analysis.quickWins.map((win, i) => (
             <View key={i} style={styles.card} wrap={false}>
               <View style={styles.cardHeader}>
                 <Text style={styles.cardIndex}>QW.{String(i + 1).padStart(2, '0')}</Text>
