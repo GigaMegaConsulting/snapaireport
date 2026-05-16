@@ -192,6 +192,7 @@ const fr: typeof en = {
       ],
       inboxHint:
         "Note : les premiers courriels d'un nouvel expéditeur atterrissent parfois dans l'onglet Promotions ou les indésirables — vérifiez là si vous ne le voyez pas dans votre boîte principale en 5 minutes.",
+      stepDoneLabel: "Terminé",
     },
     optionalTag: "facultatif",
     sliderLow: "1 · réfractaire",

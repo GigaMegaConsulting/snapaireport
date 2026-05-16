@@ -175,7 +175,7 @@ export function AssessmentForm({
     return (
       <div className="min-h-screen bg-paper text-ink bp-grid">
         <div>
-          <FormHeader locale={locale} t={t} stepLabel="DONE" nicheBadge={nicheBadge} />
+          <FormHeader locale={locale} t={t} stepLabel={t.form.success.stepDoneLabel} nicheBadge={nicheBadge} />
           <main className="mx-auto max-w-2xl px-6 py-24">
             <div className="eyebrow mb-6 flex items-center gap-3">
               <span>{t.form.success.eyebrow}</span>

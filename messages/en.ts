@@ -183,6 +183,7 @@ const en = {
       ],
       inboxHint:
         "Heads up: first emails from a new sender sometimes land in the Promotions tab or spam — check there if you don't see it in your primary inbox within 5 minutes.",
+      stepDoneLabel: "Done",
     },
     optionalTag: "optional",
     sliderLow: "1 · phobic",
