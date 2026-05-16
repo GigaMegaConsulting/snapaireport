@@ -190,6 +190,8 @@ const fr: typeof en = {
         "Il arrive dans votre boîte — généralement en moins de 5 minutes",
         "Répondez si vous voulez un suivi en visio",
       ],
+      inboxHint:
+        "Note : les premiers courriels d'un nouvel expéditeur atterrissent parfois dans l'onglet Promotions ou les indésirables — vérifiez là si vous ne le voyez pas dans votre boîte principale en 5 minutes.",
     },
     optionalTag: "facultatif",
     sliderLow: "1 · réfractaire",

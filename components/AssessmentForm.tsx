@@ -206,6 +206,10 @@ export function AssessmentForm({
               </ol>
             </div>
 
+            <p className="mt-6 max-w-2xl text-[13px] leading-relaxed text-ink-2 italic">
+              {t.form.success.inboxHint}
+            </p>
+
             <Link href={`/${locale}`} className="mt-12 inline-flex items-center gap-2 mono text-[12px] uppercase tracking-[0.12em] text-ink-2 hover:text-ink transition">
               ← {t.common.cta.backToHome}
             </Link>

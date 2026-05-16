@@ -103,18 +103,28 @@ export async function sendReportEmail({
   const fromAddress =
     process.env.RESEND_FROM ?? 'SnapReport <info@snapaireport.com>';
 
+  // Personalize the subject with the client's first name. Gmail weights
+  // personalized subjects toward Primary; templated ones toward Promotions.
+  const firstName = clientName.split(/\s+/)[0]?.trim();
+  const subject = firstName ? `${t.subject}, ${firstName}` : t.subject;
+
   const result = await resend.emails.send({
     from: fromAddress,
     replyTo: t.sigEmail,
     to,
-    subject: t.subject,
+    subject,
     html,
     text,
     // Help inbox providers classify this as transactional, not bulk marketing.
     // We don't have a real unsubscribe endpoint yet — the mailto reaches us.
+    // Feedback-ID helps Gmail attribute reputation to the specific send-stream
+    // (campaign segmentation). Format: <campaign>:<customer>:<mailstream>:<sender>.
     headers: {
       'List-Unsubscribe': '<mailto:info@snapaireport.com?subject=Unsubscribe>',
       'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      'Feedback-ID': `snapreport:${locale}:transactional:snapaireport.com`,
+      'X-Entity-Ref-ID': assessmentId,
+      'X-Auto-Response-Suppress': 'All',
     },
     attachments: [
       {
