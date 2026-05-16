@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { LocaleSwitch } from "@/components/LocaleSwitch";
 import type { Messages, Locale, NicheKey } from "@/lib/i18n";
 import { getNicheMessages } from "@/lib/i18n";
+import { trackEvent, Events } from "@/lib/analytics";
 
 type AnswerKey =
   | "email"
@@ -99,6 +100,9 @@ export function AssessmentForm({
   // bots populate every input they find. Submission with a non-empty value
   // is silently dropped server-side.
   const [companyWebsite, setCompanyWebsite] = useState("");
+  // Track-once flag: fire `assessment_started` exactly once per session, the
+  // first time the user advances past step 0.
+  const startedRef = useRef(false);
 
   const totalSteps = STEPS.length;
   const isLast = step === totalSteps - 1;
@@ -140,7 +144,25 @@ export function AssessmentForm({
       return;
     }
     setFieldErrors({});
+
+    // Fire `assessment_started` the first time the user advances past step 0.
+    // We don't fire on page load because most visitors bounce without engaging.
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent(Events.AssessmentStarted, {
+        niche: activeNiche ?? "general",
+        locale,
+      });
+    }
+
     if (!isLast) {
+      // Track per-step advancement so we can see where in the funnel people drop.
+      trackEvent(Events.AssessmentStepAdvanced, {
+        step_number: step + 1,
+        step_total: totalSteps,
+        niche: activeNiche ?? "general",
+        locale,
+      });
       setStep((s) => s + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
@@ -156,8 +178,20 @@ export function AssessmentForm({
         const text = await res.text();
         throw new Error(text || `Server returned ${res.status}`);
       }
+      // The conversion event — mark this as a Key event in GA Admin so it
+      // shows up in the default funnel reports.
+      trackEvent(Events.AssessmentSubmitted, {
+        niche: activeNiche ?? "general",
+        locale,
+        step_count: totalSteps,
+      });
       setSubmitted(true);
     } catch (err) {
+      trackEvent(Events.AssessmentSubmitFailed, {
+        niche: activeNiche ?? "general",
+        locale,
+        error: err instanceof Error ? err.message.slice(0, 120) : "unknown",
+      });
       setError(err instanceof Error ? err.message : t.form.errors.submitFailed);
     } finally {
       setSubmitting(false);
