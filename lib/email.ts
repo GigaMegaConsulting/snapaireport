@@ -53,29 +53,51 @@ export async function sendReportEmail({
     : 'mailto:info@snapaireport.com?subject=Re:%20My%20SnapReport%20review';
   const ctaLabel = calUrl ? t.ctaBookLabel : t.ctaLabel;
 
+  // HTML version — kept simple so Gmail doesn't classify it as Promotions.
+  // Heavy styling + green CTA buttons + bullet lists are well-known promo
+  // signals. We keep one mild CTA button and otherwise lean on plain text.
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <h1 style="color: #0f172a;">${t.heading}</h1>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a; line-height: 1.55;">
       <p>${t.greeting} ${clientName},</p>
       <p>${t.intro}</p>
-      <ul>${bulletsHtml}</ul>
-      <p><strong>${t.tipPrefix}</strong>${t.tipBody}</p>
-      <p style="margin-top: 24px;">
-        <a href="${viewOnlineUrl}" style="color: #1a4d3a; font-weight: 600;">${viewOnlineLabel}</a>
+      <p>What's in your report:</p>
+      <ul style="padding-left: 20px;">${bulletsHtml}</ul>
+      <p>${t.tipPrefix}${t.tipBody}</p>
+      <p style="margin-top: 20px;">
+        <a href="${viewOnlineUrl}" style="color: #1a4d3a;">${viewOnlineLabel}</a>
       </p>
-      <p style="margin-top: 24px;">
-        <a href="${ctaHref}" style="background: #1a4d3a; color: #faf8f1; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-          ${ctaLabel}
-        </a>
+      <p style="margin-top: 12px;">
+        <a href="${ctaHref}" style="display: inline-block; padding: 10px 18px; background: #1a4d3a; color: #faf8f1; text-decoration: none; border-radius: 4px;">${ctaLabel}</a>
       </p>
-      <p style="margin-top: 24px; color: #64748b; font-size: 14px;">
+      <p style="margin-top: 24px; color: #525252; font-size: 14px;">
         ${t.closing}<br><br>
         &mdash; ${t.signature}<br>
-        SnapReport · snapaireport.com<br>
-        ${t.sigCompany}
+        SnapReport &middot; snapaireport.com
       </p>
     </div>
   `;
+
+  // Plaintext alternative — biggest single lever for landing in Primary
+  // instead of Promotions. Gmail strongly favours multipart/alternative
+  // emails over HTML-only.
+  const text = [
+    `${t.greeting} ${clientName},`,
+    '',
+    t.intro,
+    '',
+    "What's in your report:",
+    ...t.bullets.map((b) => `  - ${b}`),
+    '',
+    `${t.tipPrefix}${t.tipBody}`,
+    '',
+    `${viewOnlineLabel.replace(/[→]/g, '->').replace(/\s*->\s*$/, '')}: ${viewOnlineUrl}`,
+    `${ctaLabel.replace(/[→]/g, '->').replace(/\s*->\s*$/, '')}: ${ctaHref}`,
+    '',
+    t.closing,
+    '',
+    `— ${t.signature}`,
+    'SnapReport · snapaireport.com',
+  ].join('\n');
 
   // Sender uses info@snapaireport.com (forwarded to the project owner via Namecheap).
   const fromAddress =
@@ -87,6 +109,13 @@ export async function sendReportEmail({
     to,
     subject: t.subject,
     html,
+    text,
+    // Help inbox providers classify this as transactional, not bulk marketing.
+    // We don't have a real unsubscribe endpoint yet — the mailto reaches us.
+    headers: {
+      'List-Unsubscribe': '<mailto:info@snapaireport.com?subject=Unsubscribe>',
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
     attachments: [
       {
         filename: `SnapReport-${clientName.replace(/\s+/g, '-')}.pdf`,

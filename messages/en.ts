@@ -688,7 +688,7 @@ const en = {
       "Thank you for completing your AI readiness assessment. Your personalized report is attached to this email.",
     bullets: [
       "Your AI Readiness Score",
-      "Top 3 Quick Wins you can implement in 30 days",
+      "Quick Wins you can implement in 30 days",
       "Strategic AI opportunities for 6–12 months",
       "Specific tool recommendations with pricing",
       "Risk flags and how to address them",

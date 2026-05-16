@@ -705,7 +705,7 @@ const fr: typeof en = {
       "Merci d'avoir complété votre évaluation d'aptitude à l'IA. Votre rapport personnalisé est joint à ce courriel.",
     bullets: [
       "Votre score d'aptitude à l'IA",
-      "3 gains rapides à mettre en œuvre en 30 jours",
+      "Gains rapides à mettre en œuvre en 30 jours",
       "Opportunités IA stratégiques pour 6 à 12 mois",
       "Recommandations d'outils précises avec tarifs",
       "Drapeaux rouges et comment les adresser",
