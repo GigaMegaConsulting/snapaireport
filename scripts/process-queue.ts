@@ -97,6 +97,82 @@ function listPendingSubmissions(): string[] {
     .map((f) => path.join(dir, f));
 }
 
+function listPendingUnsubscribes(): string[] {
+  const dir = path.join(QUEUE_DIR, "unsubscribes");
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".json") && f !== "README.md")
+    .map((f) => path.join(dir, f));
+}
+
+// ─── Unsubscribe processing ────────────────────────────────────────
+// The public site writes one JSON file per click into `unsubscribes/`.
+// We read each, flip the matching lead in the Mission Control leads
+// file to `opted-out`, then delete the queue file so it isn't replayed.
+//
+// CASL requires us to honour these within 10 business days; we do it
+// on the very next worker run (≤ 2 min).
+const LEADS_FILE = process.env.SNAPAIREPORT_EMAIL_LEADS_FILE
+  ?? "/Users/samagentbot/.openclaw/workspace/data/snapaireport-email-leads.json";
+
+interface UnsubscribeEntry {
+  leadId: string;
+  receivedAt: string;
+  source?: string;
+  ip?: string;
+  userAgent?: string;
+}
+
+function processUnsubscribes(): { applied: number; missing: number } {
+  const files = listPendingUnsubscribes();
+  if (files.length === 0) return { applied: 0, missing: 0 };
+  log(`found ${files.length} unsubscribe request(s) — applying`);
+
+  // Read leads once, apply all, write once.
+  let leads: Array<Record<string, unknown>> = [];
+  try {
+    leads = JSON.parse(readFileSync(LEADS_FILE, "utf8"));
+  } catch (err) {
+    log(`  ✗ couldn't read leads file at ${LEADS_FILE}: ${(err as Error).message.slice(0, 200)}`);
+    // Leave the queue files in place — they'll be retried on the next run.
+    return { applied: 0, missing: files.length };
+  }
+
+  let applied = 0;
+  let missing = 0;
+  const leadsById = new Map(leads.map((l) => [l.id as string, l]));
+
+  for (const file of files) {
+    try {
+      const entry = JSON.parse(readFileSync(file, "utf8")) as UnsubscribeEntry;
+      const lead = leadsById.get(entry.leadId);
+      if (!lead) {
+        log(`  · unsubscribe for unknown leadId ${entry.leadId} (already removed?) — discarding`);
+        missing++;
+        // Still delete the queue file — nothing more to do with it.
+        unlinkSync(file);
+        continue;
+      }
+      if (lead.status !== "opted-out") {
+        lead.status = "opted-out";
+        lead.optedOutAt = entry.receivedAt;
+      }
+      unlinkSync(file);
+      applied++;
+      log(`  ✓ opted-out ${entry.leadId} (source=${entry.source ?? "?"})`);
+    } catch (err) {
+      log(`  ✗ couldn't apply ${path.basename(file)}: ${(err as Error).message.slice(0, 200)}`);
+      // Leave the file — retry next run.
+    }
+  }
+
+  if (applied > 0) {
+    writeFileSync(LEADS_FILE, JSON.stringify(leads, null, 2), "utf8");
+    log(`  → wrote ${applied} opt-out(s) back to ${path.basename(LEADS_FILE)}`);
+  }
+  return { applied, missing };
+}
+
 // ─── Claude CLI invocation ─────────────────────────────────────────
 interface Submission {
   id: string;
@@ -365,6 +441,14 @@ async function main() {
   try {
     log("starting queue sync");
     syncQueueRepo();
+
+    // Apply unsubscribes before processing pending — if someone opted out
+    // and is also queued, we honour the opt-out immediately.
+    const unsubResult = processUnsubscribes();
+    if (unsubResult.applied > 0 || unsubResult.missing > 0) {
+      log(`unsubscribes: ${unsubResult.applied} applied, ${unsubResult.missing} unknown`);
+    }
+
     const pending = listPendingSubmissions();
     log(`found ${pending.length} pending submission(s)`);
 
@@ -400,16 +484,22 @@ async function main() {
       log(`stopping early — Claude Pro quota hit. ${processed} sent before stop.`);
     }
 
-    if (processed > 0 || failed > 0) {
-      // Push processed/* + deleted pending/* back to the queue repo
+    const unsubsToPush = unsubResult.applied + unsubResult.missing;
+    if (processed > 0 || failed > 0 || unsubsToPush > 0) {
+      // Push processed/* + deleted pending/* + deleted unsubscribes/* back to queue repo
       execSync("git add -A", { cwd: QUEUE_DIR });
       try {
+        const parts = [];
+        if (processed > 0) parts.push(`${processed} sent`);
+        if (failed > 0) parts.push(`${failed} failed`);
+        if (unsubsToPush > 0) parts.push(`${unsubsToPush} unsubs`);
+        const msg = `process: ${parts.join(", ")}`;
         execSync(
-          `git -c user.email=worker@snapaireport.com -c user.name="SnapReport Worker" commit -q -m "process: ${processed} sent, ${failed} failed"`,
+          `git -c user.email=worker@snapaireport.com -c user.name="SnapReport Worker" commit -q -m "${msg}"`,
           { cwd: QUEUE_DIR },
         );
         execSync("git push -q", { cwd: QUEUE_DIR });
-        log(`pushed: ${processed} sent, ${failed} failed`);
+        log(`pushed: ${msg}`);
       } catch (err) {
         log(`commit/push failed (probably nothing to commit): ${(err as Error).message.slice(0, 200)}`);
       }
