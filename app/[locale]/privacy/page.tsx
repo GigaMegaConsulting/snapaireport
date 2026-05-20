@@ -237,7 +237,7 @@ const FR = {
       list: [
         "L'opérateur de SnapReport (une personne, à Montréal)",
         "Anthropic, le fournisseur IA dont le modèle rédige votre rapport — selon ses conditions commerciales (n'entraîne pas par défaut sur les données clients)",
-        "Resend, le service courriel qui livre le PDF dans votre boîte",
+        "Resend, le service qui livre le PDF dans votre boîte de courriel",
         "GitHub, où la file de soumissions chiffrée est stockée pour traitement",
         "Vercel, notre hébergeur web",
       ],

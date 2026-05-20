@@ -81,7 +81,7 @@ const fr: typeof en = {
         },
         {
           n: "03",
-          title: "Rapport dans votre boîte",
+          title: "Rapport dans votre boîte de courriel",
           desc:
             "Le PDF arrive à l'adresse que vous avez fournie. Score d'aptitude, trois gains rapides, trois plays stratégiques, pile d'outils, prochaines étapes.",
           meta: "≈ 2 minutes",
@@ -187,11 +187,11 @@ const fr: typeof en = {
       nextSteps: [
         "Notre équipe examine vos réponses",
         "Le rapport est rédigé et exporté en PDF",
-        "Il arrive dans votre boîte — généralement en moins de 5 minutes",
+        "Il arrive dans votre boîte de courriel — généralement en moins de 5 minutes",
         "Répondez si vous voulez un suivi en visio",
       ],
       inboxHint:
-        "Note : les premiers courriels d'un nouvel expéditeur atterrissent parfois dans l'onglet Promotions ou les indésirables — vérifiez là si vous ne le voyez pas dans votre boîte principale en 5 minutes.",
+        "Note : les premiers courriels d'un nouvel expéditeur atterrissent parfois dans l'onglet Promotions ou les indésirables — vérifiez là si vous ne le voyez pas dans votre boîte de courriel principale en 5 minutes.",
       stepDoneLabel: "Terminée",
     },
     optionalTag: "facultatif",
