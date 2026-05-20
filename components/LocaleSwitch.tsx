@@ -18,7 +18,23 @@ import { LOCALES, type Locale } from "@/lib/i18n";
  * locale should normally just not mount the component, but the guard
  * makes a misplacement a no-op rather than a broken link.
  */
-export function LocaleSwitch({ current }: { current: Locale }) {
+/**
+ * Optional override: pages whose translated counterpart lives at a
+ * different slug (e.g. blog posts, where EN slug "ai-tools-for-quebec-..."
+ * pairs with FR slug "outils-ia-pour-...") pass the explicit href for the
+ * other locale so the toggle doesn't 404.
+ *
+ * Shape: { [otherLocale]: "/fr/blog/outils-ia-..." }
+ *
+ * If omitted, falls back to swapping just the locale prefix.
+ */
+export function LocaleSwitch({
+  current,
+  hrefOverride,
+}: {
+  current: Locale;
+  hrefOverride?: Partial<Record<Locale, string>>;
+}) {
   const pathname = usePathname() ?? `/${current}`;
   const segments = pathname.split("/").filter(Boolean);
 
@@ -31,22 +47,25 @@ export function LocaleSwitch({ current }: { current: Locale }) {
 
   return (
     <div className="inline-flex items-center gap-1 mono text-[11px] uppercase tracking-[0.18em]">
-      {LOCALES.map((loc, i) => (
-        <span key={loc} className="flex items-center">
-          {i > 0 && <span className="text-ink-3 mx-1">/</span>}
-          {loc === current ? (
-            <span className="text-ink">{loc}</span>
-          ) : (
-            <Link
-              href={`/${loc}${suffix}`}
-              className="text-ink-3 hover:text-ink transition"
-              aria-label={`Switch to ${loc.toUpperCase()}`}
-            >
-              {loc}
-            </Link>
-          )}
-        </span>
-      ))}
+      {LOCALES.map((loc, i) => {
+        const href = hrefOverride?.[loc] ?? `/${loc}${suffix}`;
+        return (
+          <span key={loc} className="flex items-center">
+            {i > 0 && <span className="text-ink-3 mx-1">/</span>}
+            {loc === current ? (
+              <span className="text-ink">{loc}</span>
+            ) : (
+              <Link
+                href={href}
+                className="text-ink-3 hover:text-ink transition"
+                aria-label={`Switch to ${loc.toUpperCase()}`}
+              >
+                {loc}
+              </Link>
+            )}
+          </span>
+        );
+      })}
     </div>
   );
 }

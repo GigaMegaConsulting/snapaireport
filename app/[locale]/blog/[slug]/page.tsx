@@ -120,6 +120,16 @@ export default async function BlogPostPage({
   const c = POST_COPY[loc];
   const minutes = readingTimeMinutes(post.content);
   const canonical = `https://snapaireport.com/${loc}/blog/${slug}`;
+  const altLocale: Locale = loc === "en" ? "fr" : "en";
+  // Per-post locale override: the translated post lives at a different slug
+  // (e.g. EN "ai-tools-..." ↔ FR "outils-ia-..."), so swap to the explicit
+  // translation URL when present, or fall back to the blog index in the
+  // other locale (so the toggle never 404s).
+  const localeSwitchOverride = {
+    [altLocale]: fm.translationSlug
+      ? `/${altLocale}/blog/${fm.translationSlug}`
+      : `/${altLocale}/blog`,
+  };
 
   // Schema.org Article for rich SERP results.
   const jsonLd = {
@@ -158,7 +168,7 @@ export default async function BlogPostPage({
             </span>
           </Link>
           <div className="flex items-center gap-4">
-            <LocaleSwitch current={loc} />
+            <LocaleSwitch current={loc} hrefOverride={localeSwitchOverride} />
           </div>
         </div>
       </header>
