@@ -5,7 +5,7 @@ import nichesFr from "@/messages/niches.fr";
 
 export type { NicheKey };
 
-export const NICHE_KEYS: readonly NicheKey[] = ["lawyers", "accountants"];
+export const NICHE_KEYS: readonly NicheKey[] = ["lawyers", "accountants", "daycare"];
 
 export const LOCALES = ["en", "fr"] as const;
 export type Locale = (typeof LOCALES)[number];

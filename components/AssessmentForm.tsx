@@ -23,7 +23,9 @@ type AnswerKey =
   | "techComfortScore"
   | "twelveMonthGoals"
   | "automationWish"
-  | "anythingElse";
+  | "anythingElse"
+  | "currentSystems"
+  | "currentSystemsOther";
 
 type Answers = Record<AnswerKey, string>;
 
@@ -44,7 +46,23 @@ const INITIAL_ANSWERS: Answers = {
   twelveMonthGoals: "",
   automationWish: "",
   anythingElse: "",
+  currentSystems: "",
+  currentSystemsOther: "",
 };
+
+/** Separator for multi-select answers (options never contain it). */
+const CHOICE_SEP = " | ";
+
+type FormField = Messages["form"]["steps"][number]["fields"][number];
+type ChoiceField = FormField & {
+  options: string[];
+  otherOption: string;
+  otherPlaceholder: string;
+};
+
+function isChoiceField(field: FormField): field is ChoiceField {
+  return (field.type as string) === "choices";
+}
 
 type FieldErrors = Partial<Record<AnswerKey, string>>;
 
@@ -67,25 +85,55 @@ export function AssessmentForm({
 
   // Apply niche-specific text overrides on top of the base form copy.
   // We only override label/placeholder/helper — never field type or key.
+  // Niche-only extra questions (e.g. daycare software checklist) are
+  // spliced in right before their `beforeKey` field.
   const STEPS: Messages["form"]["steps"] = useMemo(() => {
     if (!activeNiche) return t.form.steps;
     const nicheMessages = getNicheMessages(locale, activeNiche);
-    const overrides = nicheMessages.formOverrides;
-    if (!overrides) return t.form.steps;
+    const overrides = nicheMessages.formOverrides ?? {};
+    const extras = nicheMessages.extraFields ?? [];
     return t.form.steps.map((step) => ({
       ...step,
-      fields: step.fields.map((field) => {
+      fields: step.fields.flatMap((field) => {
         const o = overrides[field.key as keyof typeof overrides];
-        if (!o) return field;
-        return {
-          ...field,
-          label: o.label ?? field.label,
-          placeholder: o.placeholder ?? field.placeholder,
-          helper: o.helper ?? field.helper,
-        } as typeof field;
+        const base = o
+          ? ({
+              ...field,
+              label: o.label ?? field.label,
+              placeholder: o.placeholder ?? field.placeholder,
+              helper: o.helper ?? field.helper,
+            } as typeof field)
+          : field;
+        const before = extras
+          .filter((x) => x.beforeKey === field.key)
+          .map(
+            (x) =>
+              ({
+                key: x.key,
+                label: x.label,
+                helper: x.helper,
+                placeholder: "",
+                required: x.required,
+                type: "choices",
+                options: x.options,
+                otherOption: x.otherOption,
+                otherPlaceholder: x.otherPlaceholder,
+              }) as unknown as typeof field
+          );
+        return [...before, base];
       }),
     })) as Messages["form"]["steps"];
   }, [t.form.steps, locale, activeNiche]);
+
+  // Unlisted niches (e.g. daycare) only get a selector card when the
+  // visitor arrived with ?for=<key> — keeps them off the public form.
+  const hiddenSelectorOption =
+    initialNiche && !t.form.industrySelector.options.some((o) => o.value === initialNiche)
+      ? (() => {
+          const opt = getNicheMessages(locale, initialNiche).selectorOption;
+          return opt ? { value: initialNiche, ...opt } : undefined;
+        })()
+      : undefined;
 
   const nicheBadge = activeNiche ? getNicheMessages(locale, activeNiche).badge : undefined;
   const formIntro = activeNiche ? getNicheMessages(locale, activeNiche).formIntro : undefined;
@@ -331,6 +379,7 @@ export function AssessmentForm({
               t={t}
               value={selectedNiche}
               onChange={setSelectedNiche}
+              extraOption={hiddenSelectorOption}
             />
           )}
 
@@ -343,6 +392,8 @@ export function AssessmentForm({
                 value={answers[field.key as AnswerKey]}
                 error={fieldErrors[field.key as AnswerKey]}
                 onChange={(v) => updateAnswer(field.key as AnswerKey, v)}
+                otherValue={answers[`${field.key}Other` as AnswerKey]}
+                onOtherChange={(v) => updateAnswer(`${field.key}Other` as AnswerKey, v)}
                 t={t}
               />
             ))}
@@ -442,13 +493,17 @@ function FieldRow({
   value,
   error,
   onChange,
+  otherValue,
+  onOtherChange,
   t,
 }: {
   index: number;
-  field: Messages["form"]["steps"][number]["fields"][number];
+  field: FormField;
   value: string;
   error?: string;
   onChange: (v: string) => void;
+  otherValue?: string;
+  onOtherChange?: (v: string) => void;
   t: Messages;
 }) {
   const id = `field-${field.key}`;
@@ -474,7 +529,18 @@ function FieldRow({
       {field.helper && (
         <p className="text-[13px] text-ink-2 mb-3 italic">{field.helper}</p>
       )}
-      {field.type === "textarea" ? (
+      {isChoiceField(field) ? (
+        <ChoiceList
+          id={id}
+          field={field}
+          value={value}
+          onChange={onChange}
+          otherValue={otherValue ?? ""}
+          onOtherChange={onOtherChange ?? (() => {})}
+          error={error}
+          errorId={errorId}
+        />
+      ) : field.type === "textarea" ? (
         <textarea
           id={id}
           value={value}
@@ -533,6 +599,90 @@ function FieldRow({
   );
 }
 
+/* ─── Multi-select checklist ────────────────────────────────────
+ * Used by niche-only questions (e.g. "which daycare software?").
+ * Selected options are stored as one string joined by CHOICE_SEP;
+ * picking the "other" option reveals a free-text box.
+ */
+function ChoiceList({
+  id,
+  field,
+  value,
+  onChange,
+  otherValue,
+  onOtherChange,
+  error,
+  errorId,
+}: {
+  id: string;
+  field: ChoiceField;
+  value: string;
+  onChange: (v: string) => void;
+  otherValue: string;
+  onOtherChange: (v: string) => void;
+  error?: string;
+  errorId: string;
+}) {
+  const selected = value ? value.split(CHOICE_SEP) : [];
+  const otherSelected = selected.includes(field.otherOption);
+
+  function toggle(opt: string) {
+    const next = selected.includes(opt)
+      ? selected.filter((s) => s !== opt)
+      : field.options.filter((o) => o === opt || selected.includes(o));
+    onChange(next.join(CHOICE_SEP));
+  }
+
+  return (
+    <div id={id} role="group" aria-describedby={error ? errorId : undefined}>
+      <div
+        className={`grid grid-cols-1 sm:grid-cols-2 gap-px bg-rule border ${
+          error ? "border-[var(--field-error)]" : "border-rule"
+        }`}
+      >
+        {field.options.map((opt) => {
+          const on = selected.includes(opt);
+          return (
+            <button
+              type="button"
+              key={opt}
+              onClick={() => toggle(opt)}
+              aria-pressed={on}
+              className={`text-left px-4 py-3 flex items-center gap-3 transition cursor-pointer ${
+                on ? "bg-paper-2" : "bg-paper hover:bg-paper-2/60"
+              }`}
+            >
+              <span
+                className={`w-3.5 h-3.5 flex-shrink-0 border flex items-center justify-center ${
+                  on ? "bg-ink border-ink" : "border-rule-strong"
+                }`}
+                aria-hidden
+              >
+                {on && (
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8 L7 12 L13 4" stroke="var(--paper)" strokeWidth="2" fill="none" />
+                  </svg>
+                )}
+              </span>
+              <span className="text-[15px] leading-tight">{opt}</span>
+            </button>
+          );
+        })}
+      </div>
+      {otherSelected && (
+        <input
+          type="text"
+          value={otherValue}
+          onChange={(e) => onOtherChange(e.target.value)}
+          placeholder={field.otherPlaceholder}
+          className="field mt-4"
+          autoFocus
+        />
+      )}
+    </div>
+  );
+}
+
 /* ─── Industry selector ─────────────────────────────────────────
  * Renders on step 0 above the email/name fields. Lets the visitor
  * pick their practice type. Selection drives the niche-specific
@@ -542,12 +692,15 @@ function IndustrySelector({
   t,
   value,
   onChange,
+  extraOption,
 }: {
   t: Messages;
   value: NicheKey | "general";
   onChange: (v: NicheKey | "general") => void;
+  extraOption?: { value: string; label: string; desc: string };
 }) {
   const sel = t.form.industrySelector;
+  const options = extraOption ? [...sel.options, extraOption] : sel.options;
   return (
     <div className="mb-12">
       <div className="flex items-baseline gap-3 mb-3">
@@ -560,8 +713,12 @@ function IndustrySelector({
       {sel.helper && (
         <p className="text-[13px] text-ink-2 mb-4 italic">{sel.helper}</p>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-rule border border-rule">
-        {sel.options.map((opt) => {
+      <div
+        className={`grid grid-cols-1 ${
+          options.length === 4 ? "sm:grid-cols-2" : "sm:grid-cols-3"
+        } gap-px bg-rule border border-rule`}
+      >
+        {options.map((opt) => {
           const selected = value === opt.value;
           return (
             <button

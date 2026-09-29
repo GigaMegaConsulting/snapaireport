@@ -23,6 +23,9 @@ interface FormAnswers {
   twelveMonthGoals?: string;
   automationWish?: string;
   anythingElse?: string;
+  // Niche-only checklist (daycare): selected systems joined by " | ", plus free text.
+  currentSystems?: string;
+  currentSystemsOther?: string;
   locale?: string;
   niche?: string;
   // Honeypot field — real users never see it (hidden via CSS). Bots that fill
@@ -48,12 +51,23 @@ const REQUIRED: (keyof FormAnswers)[] = [
   "automationWish",
 ];
 
+/** Niche checklist answer ("Amisgest, Other: Kidlink"), or "" if not asked. */
+function systemsAnswer(a: FormAnswers): string {
+  const picked = (a.currentSystems ?? "").split(" | ").map((s) => s.trim()).filter(Boolean);
+  const other = (a.currentSystemsOther ?? "").trim();
+  if (!other) return picked.join(", ");
+  return [...picked.filter((s) => s !== "Other" && s !== "Autre"), `Other: ${other}`].join(", ");
+}
+
 /** Build the Q&A transcript that the Mac mini's worker will feed to Claude. */
 function buildTranscript(a: FormAnswers): string {
   const sections: [string, string][] = [
     ["Q: What does your business do, and how long have you been operating?", `A: ${a.businessName} — ${a.businessDescription} They have been operating for ${a.yearsOperating}.`],
     ["Q: How many employees do you have, and are they local or remote?", `A: ${a.teamSize}. ${a.teamLocation}.`],
     ["Q: Walk me through your main day-to-day operations — what happens from when a customer reaches out to when you deliver?", `A: ${a.operationsWalkthrough}`],
+    ...(systemsAnswer(a)
+      ? ([["Q: Which management system does the business already use?", `A: ${systemsAnswer(a)}`]] as [string, string][])
+      : []),
     ["Q: What software or tools does your team use daily?", `A: ${a.toolsInUse}`],
     ["Q: Where do most of your leads or customers come from right now?", `A: ${a.leadSources}`],
     ["Q: What are your biggest bottlenecks — the things that slow you down or take too much time?", `A: ${a.bottlenecks}`],

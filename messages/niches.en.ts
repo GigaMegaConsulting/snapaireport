@@ -7,7 +7,7 @@
  * key in the submission so Claude knows to tailor the report.
  */
 
-export type NicheKey = "lawyers" | "accountants";
+export type NicheKey = "lawyers" | "accountants" | "daycare";
 
 /** Form-field keys we can override per niche. Mirrors the keys in messages/en.ts form.steps. */
 export type FormFieldKey =
@@ -29,6 +29,24 @@ export type FieldOverride = {
   label?: string;
   placeholder?: string;
   helper?: string;
+};
+
+/**
+ * Niche-only question rendered as a multi-select checklist with an
+ * optional "Other" free-text box. Inserted into the step that holds
+ * `beforeKey`. Answer is posted as `key` (selected options joined by
+ * " | ") and `${key}Other` (free text).
+ */
+export type ExtraChoiceField = {
+  key: "currentSystems";
+  beforeKey: FormFieldKey;
+  label: string;
+  helper?: string;
+  required: boolean;
+  options: string[];
+  /** Label of the option that reveals the free-text box. Must be in `options`. */
+  otherOption: string;
+  otherPlaceholder: string;
 };
 
 interface NicheContent {
@@ -58,6 +76,14 @@ interface NicheContent {
   formIntro?: string;
   /** Per-field text overrides for the assessment form. Only fields that need rephrasing per niche. */
   formOverrides?: Partial<Record<FormFieldKey, FieldOverride>>;
+  /** Niche-only extra questions (e.g. "which daycare software do you use?"). */
+  extraFields?: ExtraChoiceField[];
+  /**
+   * Industry-selector card for unlisted niches. The public form only shows
+   * the options in messages; this card appears only when the visitor
+   * arrives with ?for=<key>, so unlisted niches stay hidden from the site.
+   */
+  selectorOption?: { label: string; desc: string };
   /** Niche-specific specimen — overrides profile + answers + report on /sample?niche=<key>. */
   sample?: NicheSample;
 }
@@ -112,6 +138,7 @@ export interface NicheSample {
 export interface NicheMessages {
   lawyers: NicheContent;
   accountants: NicheContent;
+  daycare: NicheContent;
 }
 
 const en: NicheMessages = {
@@ -618,6 +645,148 @@ const en: NicheMessages = {
           { day: 4, action: "Set up the TaxDome doc-chase flow for 5 corporate clients. Send the welcome flow + first document request." },
         ],
       },
+    },
+  },
+  daycare: {
+    slug: "daycare",
+    badge: "For Daycares",
+    eyebrow: "§ 00 · CHILDCARE",
+    headline: [
+      "The AI playbook",
+      "for your daycare",
+      "— in 5 minutes."],
+    headlineItalicIndex: 1,
+    lead:
+      "Waitlist calls. Parent messages. Attendance sheets and RL-24 slips. Educational files. Last-minute replacements. There's an AI workflow for every hour your team spends on paperwork instead of the children — and ~5 minutes on a short form is all we need to map yours.",
+    badges: ["Built for CPEs & private daycares", "Quebec", "No software to install"],
+    bottlenecks: {
+      title: ["The paperwork that", "steals time from the kids."],
+      titleItalicIndex: 1,
+      lead:
+        "Most daycare directors we talk to spend 10–15 hours/week on admin: answering the same parent questions, chasing payments, filling Ministère paperwork, and scrambling for replacements. AI handles the repetitive part so your team stays on the floor with the children.",
+      items: [
+        {
+          tag: "01",
+          title: "Waitlist & parent inquiries",
+          desc:
+            "\"Do you have a spot for September?\" — an AI assistant answers calls, emails and Facebook messages 24/7, explains your process and La Place 0-5, and logs every inquiry. No more voicemails piling up.",
+        },
+        {
+          tag: "02",
+          title: "Parent communication",
+          desc:
+            "Newsletters, closure notices, pedagogical-day reminders, incident follow-ups — drafted in seconds, in French and English, in your tone. You review and send.",
+        },
+        {
+          tag: "03",
+          title: "Attendance, billing & RL-24",
+          desc:
+            "Attendance sheets, monthly invoices, late-payment reminders and year-end Relevé 24 slips pulled together automatically instead of re-typed by hand every month.",
+        },
+        {
+          tag: "04",
+          title: "Educational files & observations",
+          desc:
+            "Educators dictate quick notes; AI turns them into clean observation entries and draft periodic portraits for each child's educational file. Educators review — they don't start from a blank page.",
+        },
+        {
+          tag: "05",
+          title: "Staff scheduling & replacements",
+          desc:
+            "An educator calls in sick at 6 a.m. — the system texts your replacement list, confirms coverage, and checks ratios. The director wakes up to a solved problem.",
+        },
+        {
+          tag: "06",
+          title: "Menus, allergies & compliance",
+          desc:
+            "Weekly menus built around each child's allergies, grocery lists generated automatically, and the documents inspectors ask for kept organized and ready.",
+        },
+      ],
+    },
+    closingHeadline:
+      "~5 minutes stand between your daycare and a tailored AI roadmap — built around how daycares actually run.",
+    formIntro:
+      "Tailored to daycares — CPEs, subsidized and non-subsidized private daycares, and home daycares. Same 5-minute form — the questions speak the language of groups, ratios, parents and the Ministère.",
+    formOverrides: {
+      businessName: { label: "Daycare name", placeholder: "Garderie Les Petits Soleils" },
+      businessDescription: {
+        label: "What type of daycare is it, and how long have you been operating?",
+        helper: "CPE, subsidized or non-subsidized private daycare, home daycare. Number of places, age groups.",
+        placeholder: "Non-subsidized private daycare in Laval, 60 places (18 months to 5 years), 5 groups. Opened in 2017.",
+      },
+      teamSize: {
+        label: "How many people on the team — educators, cook, admin, management?",
+        placeholder: "Director + assistant director, 9 educators, 2 replacements on call, 1 cook",
+      },
+      teamLocation: {
+        label: "One location or several? Who handles the admin?",
+        placeholder: "One location. The director does most of the admin, the assistant helps with billing.",
+      },
+      operationsWalkthrough: {
+        label: "Walk us through a typical day and week — from drop-off to invoicing.",
+        helper: "Arrivals, attendance, meals, daily reports to parents, activities, departures, billing, Ministère paperwork. Where does admin time actually go?",
+        placeholder: "7 a.m. arrivals, attendance on tablet → meals and naps → educators write daily notes for parents → 6 p.m. pickups. Friday: invoices and payment follow-ups. Monthly: attendance sheets for the Ministère...",
+      },
+      toolsInUse: {
+        label: "Any other software or tools the team uses day-to-day?",
+        helper: "Email, parent group chat, Facebook page, accounting, payroll, scheduling, shared drives.",
+        placeholder: "Gmail, a private Facebook group for parents, QuickBooks for accounting, Excel for staff schedules, Nethris for payroll...",
+      },
+      leadSources: {
+        label: "How do new families find you?",
+        placeholder: "Mostly La Place 0-5 and word of mouth from current parents. Some from Google and our Facebook page.",
+      },
+      bottlenecks: {
+        label: "Where does admin time get eaten up?",
+        helper: "Parent calls and emails, waitlist, billing and late payments, attendance sheets, educational files, replacements, menus, Ministère paperwork.",
+        placeholder: "Answering the same waitlist questions every day. Chasing late payments. Finding a replacement at 6 a.m. Writing the periodic portraits twice a year takes educators forever.",
+      },
+      priorAiExperience: {
+        label: "Have you tried AI or automation at the daycare? What happened?",
+        helper: "ChatGPT for newsletters, auto-replies, parent app features, anything you've tested.",
+        placeholder: "Tried ChatGPT to write the monthly newsletter — it helped. Nervous about putting children's information into AI tools.",
+      },
+      twelveMonthGoals: {
+        label: "What does a great next 12 months look like for the daycare?",
+        placeholder: "Director spends less time in the office and more on the floor. Fewer unpaid invoices. Keep our educators — less burnout from paperwork.",
+      },
+      automationWish: {
+        label: "If you could automate one thing at the daycare tomorrow, what would it be?",
+        placeholder: "Answering waitlist calls and emails — it's non-stop and we rarely have a spot anyway.",
+      },
+      anythingElse: {
+        helper:
+          "Privacy concerns about children's data, a software you're stuck with, an upcoming inspection, staff shortage, a second location in the works — anything that shapes what's actually doable.",
+        placeholder:
+          "We're opening a second location next year. Staff aren't very techy — anything we adopt has to be dead simple on a tablet.",
+      },
+    },
+    extraFields: [
+      {
+        key: "currentSystems",
+        beforeKey: "toolsInUse",
+        label: "Do you already use a daycare management system?",
+        helper: "Check everything that applies — attendance, billing, parent app, RL-24.",
+        required: true,
+        options: [
+          "Amisgest",
+          "ACCEO Tiempo",
+          "MyDaycare Plus",
+          "Lillio (formerly HiMama)",
+          "Brightwheel",
+          "QuickBooks / Sage (accounting only)",
+          "Excel / Google Sheets",
+          "Paper / binders",
+          "No system yet",
+          "Other",
+        ],
+        otherOption: "Other",
+        otherPlaceholder: "Which one? e.g. an app from your daycare association, a custom tool...",
+      },
+    ],
+    selectorOption: {
+      label: "Daycare",
+      desc: "CPE, private daycare (subsidized or not), home daycare",
     },
   },
 };

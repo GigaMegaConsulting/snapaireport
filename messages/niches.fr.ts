@@ -514,6 +514,148 @@ const fr: NicheMessages = {
       },
     },
   },
+  daycare: {
+    slug: "daycare",
+    badge: "Pour garderies",
+    eyebrow: "§ 00 · SERVICES DE GARDE",
+    headline: [
+      "Le plan IA",
+      "de votre garderie",
+      "— en 5 minutes."],
+    headlineItalicIndex: 1,
+    lead:
+      "Appels pour la liste d'attente. Messages des parents. Fiches d'assiduité et relevés 24. Dossiers éducatifs. Remplacements de dernière minute. Il existe un flux IA pour chaque heure que votre équipe passe dans la paperasse plutôt qu'avec les enfants — et ~5 minutes sur un court formulaire suffisent pour cartographier le vôtre.",
+    badges: ["Pensé pour CPE et garderies privées", "Québec", "Aucun logiciel à installer"],
+    bottlenecks: {
+      title: ["La paperasse qui", "vole du temps aux enfants."],
+      titleItalicIndex: 1,
+      lead:
+        "La plupart des directrices de garderie à qui nous parlons consacrent 10 à 15 heures par semaine à l'administration : répondre aux mêmes questions des parents, relancer les paiements, remplir la paperasse du Ministère et chercher des remplaçantes. L'IA s'occupe du répétitif pour que votre équipe reste auprès des enfants.",
+      items: [
+        {
+          tag: "01",
+          title: "Liste d'attente et demandes des parents",
+          desc:
+            "« Avez-vous une place pour septembre ? » — un assistant IA répond aux appels, courriels et messages Facebook 24 h/24, explique votre processus et La Place 0-5, et consigne chaque demande. Fini les boîtes vocales qui débordent.",
+        },
+        {
+          tag: "02",
+          title: "Communications aux parents",
+          desc:
+            "Infolettres, avis de fermeture, rappels de journées pédagogiques, suivis d'incidents — rédigés en quelques secondes, en français et en anglais, dans votre ton. Vous révisez et envoyez.",
+        },
+        {
+          tag: "03",
+          title: "Assiduité, facturation et relevé 24",
+          desc:
+            "Fiches d'assiduité, factures mensuelles, rappels de paiements en retard et relevés 24 de fin d'année compilés automatiquement plutôt que retapés à la main chaque mois.",
+        },
+        {
+          tag: "04",
+          title: "Dossier éducatif et observations",
+          desc:
+            "Les éducatrices dictent de courtes notes ; l'IA les transforme en observations claires et en brouillons de portraits périodiques pour le dossier éducatif de chaque enfant. Les éducatrices révisent — elles ne partent plus d'une page blanche.",
+        },
+        {
+          tag: "05",
+          title: "Horaires et remplacements",
+          desc:
+            "Une éducatrice se déclare malade à 6 h — le système texte votre liste de remplaçantes, confirme la couverture et vérifie les ratios. La direction se réveille avec un problème déjà réglé.",
+        },
+        {
+          tag: "06",
+          title: "Menus, allergies et conformité",
+          desc:
+            "Menus de la semaine adaptés aux allergies de chaque enfant, listes d'épicerie générées automatiquement, et les documents demandés lors des inspections classés et prêts.",
+        },
+      ],
+    },
+    closingHeadline:
+      "~5 minutes vous séparent d'une feuille de route IA sur mesure — pensée pour la réalité d'une garderie.",
+    formIntro:
+      "Pensé pour les services de garde — CPE, garderies privées subventionnées ou non, et milieux familiaux. Même formulaire de 5 minutes — les questions parlent le langage des groupes, des ratios, des parents et du Ministère.",
+    formOverrides: {
+      businessName: { label: "Nom de la garderie", placeholder: "Garderie Les Petits Soleils" },
+      businessDescription: {
+        label: "Quel type de service de garde est-ce, et depuis combien de temps êtes-vous en activité ?",
+        helper: "CPE, garderie privée subventionnée ou non, milieu familial. Nombre de places, groupes d'âge.",
+        placeholder: "Garderie privée non subventionnée à Laval, 60 places (18 mois à 5 ans), 5 groupes. Ouverte en 2017.",
+      },
+      teamSize: {
+        label: "Combien de personnes dans l'équipe — éducatrices, cuisinière, administration, direction ?",
+        placeholder: "Directrice + directrice adjointe, 9 éducatrices, 2 remplaçantes sur appel, 1 cuisinière",
+      },
+      teamLocation: {
+        label: "Une installation ou plusieurs ? Qui s'occupe de l'administration ?",
+        placeholder: "Une seule installation. La directrice fait l'essentiel de l'administration, l'adjointe aide pour la facturation.",
+      },
+      operationsWalkthrough: {
+        label: "Décrivez une journée et une semaine typiques — de l'arrivée des enfants à la facturation.",
+        helper: "Arrivées, présences, repas, rapports quotidiens aux parents, activités, départs, facturation, paperasse du Ministère. Où va vraiment le temps administratif ?",
+        placeholder: "Arrivées à 7 h, présences sur tablette → repas et siestes → les éducatrices écrivent le rapport du jour aux parents → départs à 18 h. Le vendredi : factures et suivis de paiements. Chaque mois : fiches d'assiduité pour le Ministère...",
+      },
+      toolsInUse: {
+        label: "Quels autres logiciels ou outils l'équipe utilise-t-elle au quotidien ?",
+        helper: "Courriel, groupe de discussion avec les parents, page Facebook, comptabilité, paie, horaires, dossiers partagés.",
+        placeholder: "Gmail, un groupe Facebook privé pour les parents, QuickBooks pour la comptabilité, Excel pour les horaires, Nethris pour la paie...",
+      },
+      leadSources: {
+        label: "Comment les nouvelles familles vous trouvent-elles ?",
+        placeholder: "Surtout La Place 0-5 et le bouche-à-oreille des parents actuels. Quelques-unes via Google et notre page Facebook.",
+      },
+      bottlenecks: {
+        label: "Où le temps administratif est-il englouti ?",
+        helper: "Appels et courriels des parents, liste d'attente, facturation et retards de paiement, fiches d'assiduité, dossiers éducatifs, remplacements, menus, paperasse du Ministère.",
+        placeholder: "Répondre aux mêmes questions sur la liste d'attente chaque jour. Relancer les paiements en retard. Trouver une remplaçante à 6 h du matin. Les portraits périodiques deux fois par année prennent un temps fou aux éducatrices.",
+      },
+      priorAiExperience: {
+        label: "Avez-vous essayé l'IA ou l'automatisation à la garderie ? Comment ça s'est passé ?",
+        helper: "ChatGPT pour les infolettres, réponses automatiques, fonctions de l'application parents — tout ce que vous avez testé.",
+        placeholder: "Essayé ChatGPT pour écrire l'infolettre mensuelle — ça aide. Inquiète à l'idée de mettre des informations sur les enfants dans des outils d'IA.",
+      },
+      twelveMonthGoals: {
+        label: "À quoi ressemblent 12 excellents mois pour la garderie ?",
+        placeholder: "La directrice passe moins de temps au bureau et plus avec les groupes. Moins de factures impayées. Garder nos éducatrices — moins d'épuisement lié à la paperasse.",
+      },
+      automationWish: {
+        label: "Si vous pouviez automatiser une seule chose à la garderie demain, laquelle serait-ce ?",
+        placeholder: "Répondre aux appels et courriels pour la liste d'attente — ça n'arrête jamais et on a rarement une place de toute façon.",
+      },
+      anythingElse: {
+        helper:
+          "Inquiétudes sur la confidentialité des données des enfants, un logiciel dont vous êtes prisonnière, une inspection à venir, la pénurie de personnel, une deuxième installation en projet — tout ce qui influence ce qui est réellement faisable.",
+        placeholder:
+          "On ouvre une deuxième installation l'an prochain. L'équipe n'est pas très techno — tout ce qu'on adopte doit être ultra simple sur une tablette.",
+      },
+    },
+    extraFields: [
+      {
+        key: "currentSystems",
+        beforeKey: "toolsInUse",
+        label: "Utilisez-vous déjà un logiciel de gestion de garderie ?",
+        helper: "Cochez tout ce qui s'applique — présences, facturation, application parents, relevé 24.",
+        required: true,
+        options: [
+          "Amisgest",
+          "ACCEO Tiempo",
+          "MyDaycare Plus",
+          "Lillio (anciennement HiMama)",
+          "Brightwheel",
+          "QuickBooks / Sage (comptabilité seulement)",
+          "Excel / Google Sheets",
+          "Papier / cartables",
+          "Aucun système pour l'instant",
+          "Autre",
+        ],
+        otherOption: "Autre",
+        otherPlaceholder: "Lequel ? p. ex. une application de votre association, un outil maison...",
+      },
+    ],
+    selectorOption: {
+      label: "Garderie",
+      desc: "CPE, garderie privée (subventionnée ou non), milieu familial",
+    },
+  },
 };
 
 export default fr;
