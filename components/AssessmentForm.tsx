@@ -156,6 +156,9 @@ export function AssessmentForm({
   const isLast = step === totalSteps - 1;
   const currentStep = STEPS[step];
   const progress = ((step + 1) / totalSteps) * 100;
+  // Red → orange → blue → green (last step) so people see the end coming.
+  const progressColor =
+    progress >= 100 ? "#15803D" : progress >= 70 ? "#2563EB" : progress >= 45 ? "#EA580C" : "#BF2127";
 
   function updateAnswer(key: AnswerKey, value: string) {
     setAnswers((prev) => ({ ...prev, [key]: value }));
@@ -343,13 +346,16 @@ export function AssessmentForm({
               <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
                 § {currentStep.number}
               </span>
-              <div className="flex-1 h-px bg-rule relative">
+              <div className="flex-1 h-[3px] bg-rule relative">
                 <div
-                  className="absolute inset-y-0 left-0 bg-ink transition-all duration-300"
-                  style={{ width: `${progress}%` }}
+                  className="absolute inset-y-0 left-0 transition-all duration-500"
+                  style={{ width: `${progress}%`, backgroundColor: progressColor }}
                 />
               </div>
-              <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
+              <span
+                className="mono text-[10px] uppercase tracking-[0.18em] transition-colors duration-500"
+                style={{ color: progressColor }}
+              >
                 {Math.round(progress)}%
               </span>
             </div>
