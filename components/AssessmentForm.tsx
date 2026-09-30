@@ -338,7 +338,7 @@ export function AssessmentForm({
         />
 
         {step > 0 && (
-          <div className="border-b border-rule">
+          <div className="sticky top-[57px] z-10 border-b border-rule bg-paper/85 backdrop-blur-md">
             <div className="mx-auto max-w-3xl px-6 py-3 flex items-center gap-3">
               <span className="mono text-[10px] uppercase tracking-[0.18em] text-ink-2">
                 § {currentStep.number}
